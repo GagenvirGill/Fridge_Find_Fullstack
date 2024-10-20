@@ -44,24 +44,24 @@ Project Topic: Kitchen management app
 
 ## A Brief Project Description
 
-## The Domain of the Application
-### Management of Food Items in Homeowners' Kitchen
+### The Domain of the Application
+Management of Food Items in Homeowners' Kitchen
 The domain of our application focuses on homeowners with kitchens. Specifically, it deals with organizing a kitchen's ingredients and a user’s recipes. The user can see, based on a few factors, if they can complete a recipe. This allows them to cater meals to different crowds based on allergy ingredients and ensures they prioritize cooking perishable items. The application will also indicate whether the user can complete a recipe (that they or someone else created) based on whether they have all the necessary ingredients.
 
-## The Aspects of the Domain Modeled by the Database
-### Kitchen Ingredients Management
+### The Aspects of the Domain Modeled by the Database
+Kitchen Ingredients Management
 Our users will need to track the ingredients in their kitchen to ensure they have enough portion size and quantity of certain items to make the meals they would like to cook.
 
-### Recipes
+Recipes
 Our users will be able to create and follow recipes by adding the necessary ingredients, steps, and optional category tags. This will allow the user to recreate the recipe in the future by following the steps they (or another user) created.
 
-### Recipe Lists
+Recipe Lists
 Our users would like to store previous meals or their favorite recipes so that meals will become easier to replicate in the future. They can store recipes within lists of recipes. Additionally, depending on the crowd the user is trying to serve, they can cook meals to navigate dietary or allergy restrictions. Users will also be able to look at other users’ lists to find new recipes to try out. Recipes will have optional category tags to allow for users to filter through them. For example, a possible category tag could be ‘Vegetarian.’
 
-### Perishable Item Tracking: 
+Perishable Item Tracking: 
 Our users will have many ingredients on hand which can lead them to be unsure which ones are expiring first. They can combat this by storing an expiry date of each grocery item so they can prioritize cooking the most perishable items first before they expire. The application will also send a notification to a user before an item expires to remind them to utilize the ingredient.
 
-### The key distinctions between this project idea and those listed on the blacklist
+The key distinctions between this project idea and those listed on the blacklist
 Domain Difference: 
 While most ideas on the blacklist focus on services offered by public organizations, government entities, or corporations, this project is a home kitchen management application designed to assist individuals in the daily tasks of managing food ingredients, cooking, and meal preparation.
 
