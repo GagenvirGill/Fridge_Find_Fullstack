@@ -1,6 +1,6 @@
 # Kitchen Management Application
 
-### CPSC304 2024W1 Project - Group 30
+### CPSC304 2024W1 Project - Group 28
 
 ### Contributors
 - Gagenvir Gill
@@ -35,3 +35,50 @@ Users can store favorite recipes in personalized lists, making it easier to repl
 
 ##### 4. Perishable Item Tracking
 Users can log the expiry dates of ingredients, helping them prioritize the use of perishable items before they spoil. The app also sends notifications when an item is nearing its expiration date.
+
+
+### Milestone 1
+Deliverable 2
+● Project Topic: Kitchen management app
+● A brief project description
+○ The domain of the application:
+■ Management of Food Items in Homeowners Kitchen:
+The domain of our application would be a homeowner that has a kitchen,
+particularly the application deals with organizing a kitchen's ingredients
+and a user’s recipes. The user can see based on a few factors if they can
+complete a recipe. This allows them to cater meals to different crowds
+based on allergy ingredients and ensure they prioritize cooking perishable
+items, and if they can or cannot complete a recipe (that they or someone
+else created) based on if they have all of the ingredients.
+○ The aspects of the domain modeled by the database:
+■ Kitchen Ingredients Management:
+Our users will need to track the ingredients in their kitchen to ensure they
+have enough portion size and of the certain item to make the meals they
+would like to cook
+Recipes:
+Our users will be able to create and follow recipes by adding the
+necessary ingredients, steps and optional category tags. This will allow
+the user to recreate the recipe in the future by following the steps they (or
+another user) created.
+■ Recipe Lists:
+Our users would like to store previous meals or their favorite recipes so
+that meals will become easier to replicate in the future. They can store
+recipes within lists of recipes. Additionally, depending on the crowd the
+user is trying to serve, they can cook meals to navigate dietary or allergy
+restrictions. Users will also be able to look at other users’ lists to find new
+recipes to try out. Recipes will have optional Category tags to allow for
+users to filter through them. For example, a possible category tag could
+be ‘Vegetarian.’
+Perishable Item Tracking:
+Our users will have many ingredients on hand which can lead them to be
+unsure which ones are expiring first. They can combat this by storing an
+expiry date of each grocery item so they can prioritize cooking the most
+perishable items first before they expire. The application will also send a
+notification to a user before an item expires to remind them to utilize the
+ingredient.
+
+
+
+
+
+
