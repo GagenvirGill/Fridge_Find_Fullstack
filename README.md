@@ -35,3 +35,5 @@ Users can store favorite recipes in personalized lists, making it easier to repl
 
 ##### 4. Perishable Item Tracking
 Users can log the expiry dates of ingredients, helping them prioritize the use of perishable items before they spoil. The app also sends notifications when an item is nearing its expiration date.
+
+Commit to Repo 
