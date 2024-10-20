@@ -1,6 +1,6 @@
 # Kitchen Management Application
 
-### CPSC304 2024W1 Project - Group 28
+### CPSC304 2024W1 Project - Group 30
 
 ### Contributors
 - Gagenvir Gill
