@@ -68,7 +68,7 @@ While most ideas on the blacklist focus on services offered by public organizati
 Feature Difference: 
 This application offers a range of features, including kitchen ingredient management, recipe creation, storage, and expiration date tracking, aimed at optimizing meal planning, cooking, and ingredient usage. In contrast, each idea on the blacklist typically focuses on a single feature.
 
-# Deliverable 3
+## Deliverable 3
 Database specifications: What functionality will the database provide? i.e., what kinds of things will people using the database be able to do. 
 
 ### User Management
