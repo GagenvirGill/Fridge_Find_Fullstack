@@ -6,6 +6,7 @@
 - Gagenvir Gill
 - Preston Lai
 - Mave Hur
+- 
 
 ### Project Summary
 This kitchen management application allows users to organize their ingredients, recipes, and other information for future use. It enables users to find recipes based on what they currently have at home or informs them of any missing ingredients for a recipe. The app also assists users in discovering new recipes created by other users, with the ability to filter recipes by categories and the user's allergies.
