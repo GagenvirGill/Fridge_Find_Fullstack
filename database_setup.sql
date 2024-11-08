@@ -265,3 +265,5 @@ INSERT INTO RecipeList (RecipeListID, RecipeListName, PrivacyLevel, Username) VA
 INSERT INTO RecipeList (RecipeListID, RecipeListName, PrivacyLevel, Username) VALUES (3, 'Desserts', 'Private', 'Jason');
 INSERT INTO RecipeList (RecipeListID, RecipeListName, PrivacyLevel, Username) VALUES (4, 'Vegan Dishes', 'Public', 'Jason');
 INSERT INTO RecipeList (RecipeListID, RecipeListName, PrivacyLevel, Username) VALUES (5, 'Protein Food', 'Private', 'Jason');
+
+COMMIT;
