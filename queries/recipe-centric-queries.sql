@@ -22,6 +22,20 @@ SELECT DISTINCT rhc.CategoryName
 FROM Recipe r
 JOIN RecipeHasCategory rhc ON rhc.RecipeID = r.RecipeID
 WHERE r.Username = 'Charlie';
+---- Aggregation with HAVING 1
+SELECT r.*, COUNT(ri.IngredientID) AS NumIngredients
+FROM Recipe r
+JOIN RecipeIngredient ri ON r.RecipeID = ri.RecipeID
+GROUP BY r.RecipeID
+HAVING NumIngredients < 5
+---- Aggregation with HAVING 2
+SELECT r.*, COUNT(rs.StepNumber) AS NumSteps
+FROM Recipe r
+JOIN RecipeStep rs ON r.RecipeID = rs.RecipeID
+GROUP BY r.RecipeID
+HAVING NumSteps < 5
+---- Division
+-- Would be hard to implement but a query that returns all recipes in which the kitchen inventory has all the nessessary ingredients
 
 
 
@@ -104,9 +118,24 @@ FROM Category c
 JOIN RecipeHasCategory rhc ON c.CategoryName = rhc.CategoryName
 WHERE c.CategoryName = 'Dessert'
 ---- Aggregation with GROUP BY
--- get all the categories and order them by the most to least used by recipes
----- Aggregation with HAVING
--- get all the categories and order them by the most to least used by recipes and with more than 10 recipes
+SELECT c.CategoryName, COUNT(rhc.RecipeID) AS NumRecipes
+FROM Category c
+JOIN RecipeHasCategory rhc ON c.CategoryName = rhc.CategoryName
+GROUP BY c.CategoryName
+ORDER BY DESC
+---- Nested Aggregation with GROUP BY
+SELECT c.CategoryName, COUNT(rhc.RecipeID) AS NumRecipes
+FROM Category c
+JOIN RecipeHasCategory rhc ON c.CategoryName = rhc.CategoryName
+GROUP BY c.CategoryName
+HAVING NumRecipes > (
+    SELECT AVG(RecipeCount)
+    FROM (
+        SELECT CategoryName, COUNT(RecipeID) AS RecipeCount
+        FROM RecipeHasCategory
+        GROUP BY CategoryName   
+    ) AS AVGRecipeCount
+)
 
 
 
