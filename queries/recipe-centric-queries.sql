@@ -10,6 +10,18 @@ WHERE RecipeID = 1;
 ---- DELETE
 DELETE FROM Recipe
 WHERE RecipeID = 1;
+---- Selection
+SELECT *
+FROM Recipe
+WHERE PrivacyLevel = 'Public' AND Username = 'Charlie'
+---- Projection
+SELECT RecipeName
+FROM Recipe
+---- JOIN
+SELECT DISTINCT rhc.CategoryName
+FROM Recipe r
+JOIN RecipeHasCategory rhc ON rhc.RecipeID = r.RecipeID
+WHERE r.Username = 'Charlie';
 
 
 
@@ -23,6 +35,19 @@ WHERE IngredientID = 1;
 ---- DELETE
 DELETE FROM RecipeIngredient
 WHERE IngredientID = 1;
+---- Selection
+SELECT RecipeID
+FROM RecipeIngredient
+WHERE IngredientName = 'Apple' AND Amount <= 1 AND UnitOfMeasurement = 'pounds';
+---- Projection
+SELECT DISTINCT RecipeID
+FROM RecipeIngredient
+WHERE UnitOfMeasurement = 'kilograms';
+---- JOIN
+SELECT DISTINCT RecipeID, RecipeName
+FROM RecipeIngredient ri
+JOIN Recipe r ON r.RecipeID = ri.RecipeID
+WHERE IngredientName = 'Apple' OR IngredientName = 'Banana';
 
 
 
@@ -36,6 +61,23 @@ WHERE RecipeID = 1 AND StepNumber = 1;
 ---- DELETE
 DELETE FROM RecipeStep
 WHERE RecipeID = 1 AND StepNumber = 1;
+---- Selection
+SELECT StepInformation
+FROM RecipeStep
+WHERE RecipeID = 1 AND StepNumber = 3;
+---- Projection
+SELECT StepInformation
+FROM RecipeStep
+WHERE RecipeID = 1;
+---- JOIN
+SELECT r.*
+FROM RecipeStep rs
+JOIN Recipe r ON r.RecipeID = rs.RecipeID
+EXCEPT
+SELECT r.*
+FROM RecipeStep rs
+JOIN Recipe r ON r.RecipeID = rs.RecipeID
+WHERE rs.StepNumber > 5;
 
 
 
@@ -49,6 +91,22 @@ WHERE CategoryName = 'Dessert';
 ---- DELETE
 DELETE FROM Category
 WHERE CategoryName = 'Dessert';
+---- Selection
+SELECT CategoryName
+FROM Category
+WHERE CategoryName LIKE 'Veg';
+---- Projection
+SELECT CategoryName
+FROM Category;
+---- JOIN
+SELECT rhc.RecipeID
+FROM Category c
+JOIN RecipeHasCategory rhc ON c.CategoryName = rhc.CategoryName
+WHERE c.CategoryName = 'Dessert'
+---- Aggregation with GROUP BY
+-- get all the categories and order them by the most to least used by recipes
+---- Aggregation with HAVING
+-- get all the categories and order them by the most to least used by recipes and with more than 10 recipes
 
 
 
@@ -60,6 +118,12 @@ INSERT INTO RecipeHasCategory (RecipeID, CategoryName) VALUES (1, 'Dessert');
 ---- DELETE
 DELETE FROM RecipeHasCategory
 WHERE CategoryName = 'Dessert' AND RecipeID = 1;
+---- Selection
+-- There isn't a use case in which this table should be selected on
+---- Projection
+-- There isn't a use case in which this table should be projected on
+---- JOIN
+-- The two join queries this table can do have been done by other tables already (recipe and category)
 
 
 
@@ -73,14 +137,35 @@ WHERE RecipeListID = 1;
 ---- DELETE
 DELETE FROM RecipeList
 WHERE RecipeListID = 1;
+---- Selection
+SELECT RecipeListName
+FROM RecipeList
+WHERE Username = 'Charlie';
+---- Projection
+SELECT DISTINCT Username
+FROM RecipeList
+---- JOIN
+SELECT rlhr.RecipeID
+FROM RecipeList rl
+JOIN RecipeListHasRecipe rlhr ON rl.RecipeListID = rlhr.RecipeListID
+JOIN RecipeHasCategory rhc ON rlhc.RecipeID = rhc.RecipeID
+WHERE rhc.CategoryName = 'Vegetarian';
 
 
 
--- RecipeListHasRecipes Queries
+-- RecipeListHasRecipe Queries
 ---- INSERT
-INSERT INTO RecipeListHasRecipe (RecipeListID, RecipeID) VALES (1, 1);
+INSERT INTO RecipeListHasRecipe (RecipeListID, RecipeID) VALuES (1, 1);
 ---- UPDATE
 -- There isn't a use case in which this table should be updated
 ---- DELETE
 DELETE FROM RecipeListHasRecipe
 WHERE RecipeListID = 1 AND RecipeID = 1;
+---- Selection
+-- There isn't a use case in which this table should be selected on
+---- Projection
+-- There isn't a use case in which this table should be projected on
+---- JOIN
+SELECT DISTINCT rl.RecipeListID
+FROM RecipeListHasRecipe rlhr
+JOIN RecipeList rl ON rlhr.RecipeListID = rl.RecipeListID
