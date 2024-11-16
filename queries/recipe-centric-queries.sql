@@ -184,7 +184,7 @@ WHERE rhc.CategoryName = 'Vegetarian';
 
 -- RecipeListHasRecipe Queries
 ---- INSERT
-INSERT INTO RecipeListHasRecipe (RecipeListID, RecipeID) VALuES (1, 1);
+INSERT INTO RecipeListHasRecipe (RecipeListID, RecipeID) VALUES (1, 1);
 ---- UPDATE
 -- There isn't a use case in which this table should be updated
 ---- DELETE
