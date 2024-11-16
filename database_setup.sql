@@ -19,6 +19,7 @@ DROP TABLE RecipeStep CASCADE CONSTRAINTS;
 DROP TABLE Category CASCADE CONSTRAINTS;
 DROP TABLE RecipeHasCategory CASCADE CONSTRAINTS;
 DROP TABLE RecipeList CASCADE CONSTRAINTS;
+DROP TABLE RecipeListHasRecipe CASCADE CONSTRAINTS;
 
 COMMIT;
 
@@ -157,6 +158,14 @@ CREATE TABLE RecipeList (
     FOREIGN KEY (Username) REFERENCES AppUser(Username)
 );
 
+CREATE TABLE RecipeListHasRecipe (
+    RecipeListID NUMBER,
+    RecipeID NUMBER,
+    PRIMARY KEY (RecipeListID, RecipeID),
+    FOREIGN KEY (RecipeID) REFERENCES Recipe(RecipeID),
+    FOREIGN KEY (RecipeListID) REFERENCES RecipeList(RecipeListID)
+)
+
 
 
 -- Insert Sample Data
@@ -265,3 +274,16 @@ INSERT INTO RecipeList (RecipeListID, RecipeListName, PrivacyLevel, Username) VA
 INSERT INTO RecipeList (RecipeListID, RecipeListName, PrivacyLevel, Username) VALUES (3, 'Desserts', 'Private', 'Jason');
 INSERT INTO RecipeList (RecipeListID, RecipeListName, PrivacyLevel, Username) VALUES (4, 'Vegan Dishes', 'Public', 'Jason');
 INSERT INTO RecipeList (RecipeListID, RecipeListName, PrivacyLevel, Username) VALUES (5, 'Protein Food', 'Private', 'Jason');
+
+INSERT INTO RecipeListHasRecipe (RecipeListID, RecipeID) VALUES (1, 1);
+INSERT INTO RecipeListHasRecipe (RecipeListID, RecipeID) VALUES (1, 2);
+INSERT INTO RecipeListHasRecipe (RecipeListID, RecipeID) VALUES (1, 3);
+INSERT INTO RecipeListHasRecipe (RecipeListID, RecipeID) VALUES (1, 4);
+INSERT INTO RecipeListHasRecipe (RecipeListID, RecipeID) VALUES (1, 5);
+INSERT INTO RecipeListHasRecipe (RecipeListID, RecipeID) VALUES (2, 2);
+INSERT INTO RecipeListHasRecipe (RecipeListID, RecipeID) VALUES (3, 3);
+INSERT INTO RecipeListHasRecipe (RecipeListID, RecipeID) VALUES (4, 4);
+INSERT INTO RecipeListHasRecipe (RecipeListID, RecipeID) VALUES (5, 5);
+INSERT INTO RecipeListHasRecipe (RecipeListID, RecipeID) VALUES (5, 1);
+
+COMMIT;
