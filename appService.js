@@ -233,5 +233,6 @@ module.exports = {
     // Ingredient Centric
 
     // General
+    validateUsername,
     initiateTables,
 };
