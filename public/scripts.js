@@ -28,12 +28,12 @@ async function checkDbConnection() {
     statusElem.style.display = 'inline';
 
     response.text()
-    .then((text) => {
-        statusElem.textContent = text;
-    })
-    .catch((error) => {
-        statusElem.textContent = 'connection timed out';  // Adjust error handling if required.
-    });
+        .then((text) => {
+            statusElem.textContent = text;
+        })
+        .catch((error) => {
+            statusElem.textContent = 'connection timed out';  // Adjust error handling if required.
+        });
 }
 
 // Fetches data from the demotable and displays it.
@@ -154,17 +154,94 @@ async function countDemotable() {
     }
 }
 
+// ----------------------------------------------------------
+// User Centric methods
+
+
+
+// ----------------------------------------------------------
+// Recipe Centric methods
+
+// Inserts new records into the recipe table.
+async function insertRecipe(event) {
+    event.preventDefault();
+
+    const recipeIDValue = document.getElementById('insertRecipeID').value;
+    const recipeNameValue = document.getElementById('insertRecipeName').value;
+    const privacyLevelValue = document.getElementById('insertPrivacyLevel').value;
+    const usernameValue = document.getElementById('insertUsername').value;
+
+    const response = await fetch('/insert-recipe', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            RecipeID: recipeIDValue,
+            RecipeName: recipeNameValue,
+            PrivacyLevel: privacyLevelValue,
+            Username: usernameValue
+        })
+    });
+
+    const responseData = await response.json();
+    const messageElement = document.getElementById('insertRecipeResultMsg');
+
+    if (responseData.success) {
+        messageElement.textContent = "Recipe Data inserted successfully!";
+        fetchTableData();
+    } else {
+        messageElement.textContent = "Error inserting Recipe data!";
+    }
+}
+
+
+// ----------------------------------------------------------
+// Ingredient Centric methods
+
+
+
+// ----------------------------------------------------------
+// General Methods
+
+// This function resets or initializes all of the tables.
+async function resetTables() {
+    const response = await fetch("/initiate-tables", {
+        method: 'POST'
+    });
+    const responseData = await response.json();
+
+    if (responseData.success) {
+        const messageElement = document.getElementById('resetTablesResultMsg');
+        messageElement.textContent = "All tables initiated successfully!";
+        fetchTableData();
+    } else {
+        alert("Error initiating tables!");
+    }
+}
+
 
 // ---------------------------------------------------------------
 // Initializes the webpage functionalities.
 // Add or remove event listeners based on the desired functionalities.
-window.onload = function() {
+window.onload = function () {
     checkDbConnection();
     fetchTableData();
     document.getElementById("resetDemotable").addEventListener("click", resetDemotable);
     document.getElementById("insertDemotable").addEventListener("submit", insertDemotable);
     document.getElementById("updataNameDemotable").addEventListener("submit", updateNameDemotable);
     document.getElementById("countDemotable").addEventListener("click", countDemotable);
+
+    // user centric
+
+
+    // recipe centric
+    document.getElementById("insertRecipe").addEventListener("submit", insertRecipe);
+
+    // ingredient centric
+
+    // general
+    document.getElementById("resetTables").addEventListener("click", resetTables)
 };
 
 // General function to refresh the displayed table data. 

@@ -1,4 +1,5 @@
 const oracledb = require('oracledb');
+const fs = require('fs');
 const loadEnvFile = require('./utils/envUtil');
 
 const envVariables = loadEnvFile('./.env');
@@ -89,7 +90,7 @@ async function initiateDemotable() {
     return await withOracleDB(async (connection) => {
         try {
             await connection.execute(`DROP TABLE DEMOTABLE`);
-        } catch(err) {
+        } catch (err) {
             console.log('Table might not exist, proceeding to create...');
         }
 
@@ -142,11 +143,95 @@ async function countDemotable() {
     });
 }
 
+
+// ----------------------------------------------------------
+// User Centric service
+
+
+
+// ----------------------------------------------------------
+// Recipe Centric service
+
+async function insertRecipe(RecipeID, RecipeName, PrivacyLevel, Username) {
+    // validate username
+    const isUsernameValid = await validateUsername(Username);
+
+    // If it doesnt return false
+    if (!isUsernameValid) {
+        return false;
+    }
+
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            `INSERT INTO Recipe (RecipeID, RecipeName, PrivacyLevel, Username) VALUES (:RecipeID, :RecipeName, :PrivacyLevel, :Username)`,
+            [RecipeID, RecipeName, PrivacyLevel, Username],
+            { autoCommit: true }
+        );
+
+        return result.rowsAffected && result.rowsAffected > 0;
+    }).catch(() => {
+        return false;
+    });
+}
+
+
+// ----------------------------------------------------------
+// Ingredient Centric service
+
+
+
+// ----------------------------------------------------------
+// General service methods
+
+async function validateUsername(Username) {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            `SELECT COUNT(*) AS count FROM AppUser WHERE Username = :Username`,
+            [Username]
+        )
+
+        return result.rows[0].COUNT > 0;
+    }).catch(() => {
+        return false;
+    });
+}
+
+async function initiateTables() {
+    return await withOracleDB(async (connection) => {
+        // Read the database setup sql file
+        const sql = fs.readFileSync('database_setup.sql', 'utf8');
+
+        try {
+            await connection.execute(sql);
+            console.log('Database Initialized Successfully')
+        } catch (err) {
+            console.log('An error occured initializing the database');
+        }
+
+        return true;
+    }).catch(() => {
+        return false;
+    });
+}
+
+
+// ----------------------------------------------------------
+
 module.exports = {
     testOracleConnection,
     fetchDemotableFromDb,
-    initiateDemotable, 
-    insertDemotable, 
-    updateNameDemotable, 
-    countDemotable
+    initiateDemotable,
+    insertDemotable,
+    updateNameDemotable,
+    countDemotable,
+    // User Centric
+
+
+    // Recipe Centric
+    insertRecipe,
+
+    // Ingredient Centric
+
+    // General
+    initiateTables,
 };

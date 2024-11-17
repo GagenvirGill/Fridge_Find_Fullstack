@@ -78,6 +78,36 @@
     <!-- A placeholder to display the count result. -->
     <div id="countResultMsg"></div> <br>
 
+    <br><hr><br> <!-- ========================================================================= -->
+    <br><hr><br> <!-- ========================================================================= -->
+    <br><hr><br> <!-- ========================================================================= -->
+
+    <h2>Reset All Tables</h2>
+    <p>If you wish to reset the table press on the reset button. If this is the first time you're running this page, you MUST use reset</p>
+    <button id="resetTables"> Reset Tables </button> <br>
+    <!-- A placeholder to display messages related to the reset operation. -->
+    <div id="resetTablesResultMsg"></div>
+
+    <br><hr><br> <!-- ========================================================================= -->
+
+    <h2> Create new Recipe </h2>
+    <form id="insertRecipe">
+        ID: <input type="number" id="insertRecipeID" placeholder="Enter RecipeID" required> <br><br>
+        Recipe Name: <input type="text" id="insertRecipeName" placeholder="Enter Recipe Name" maxlength="50"> <br><br>
+        Privacy Level: 
+        <select id="insertPrivacyLevel">
+            <option value="Private">Private</option>
+            <option value="Public">Public</option>
+            <option value="Friends Only">Friends Only</option>
+        </select> <br><br>
+        Username: <input type="text" id="insertUsername" placeholder="Enter User's name" maxlength="50" required> <br><br>
+
+        <button type="submit"> Create </button> <br>
+    </form>
+    <div id="insertRecipeResultMsg"></div>
+
+    <br><hr><br> <!-- ========================================================================= -->
+
     <!-- ===================================================================================== -->
     <!-- External JavaScript file that contains the functionality/logic for the operations above. -->
     <script src="scripts.js"></script>
