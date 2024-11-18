@@ -164,7 +164,6 @@ async function fetchRecipeFromDb() {
 async function insertRecipe(RecipeID, RecipeName, PrivacyLevel, Username) {
     // validate username
     const isUsernameValid = await validateUsername(Username);
-    console.error('A')
 
     // If it doesnt return false
     if (!isUsernameValid) {
@@ -255,16 +254,21 @@ async function validateUsername(Username) {
 
 async function initiateTables() {
     return await withOracleDB(async (connection) => {
-        // Read the database setup sql file
-        const sql = fs.readFileSync('database_setup.sql', 'utf8');
+        const initializationQueries = fs.readFileSync('database_initialization.sql', 'utf8')
+            .split(';')
+            .map(query => query.trim())
+            .filter(query => query.length > 0);
 
-        try {
-            await connection.execute(sql);
-            console.log('Database Initialized Successfully')
-        } catch (err) {
-            console.log('An error occured initializing the database');
-            console.log(err);
+        for (const query of initializationQueries) {
+            try {
+                await connection.execute(query)
+            } catch (err) {
+                console.log(`An error executing query" ${query}`);
+                console.log(err);
+            }
         }
+
+        console.log('Tables Initialized Successfully')
 
         return true;
     }).catch(() => {
