@@ -162,6 +162,31 @@ async function countDemotable() {
 // ----------------------------------------------------------
 // Recipe Centric methods
 
+// Display all Recipes
+async function fetchAndDisplayRecipes() {
+    const tableElement = document.getElementById('recipe');
+    const tableBody = tableElement.querySelector('tbody');
+
+    const response = await fetch('/recipe', {
+        method: 'GET'
+    });
+
+    const responseData = await response.json();
+    const recipeContent = responseData.data;
+
+    if (tableBody) {
+        tableBody.innerHTML = '';
+    }
+
+    recipeContent.forEach(user => {
+        const row = tableBody.insertRow();
+        user.forEach((field, index) => {
+            const cell = row.insertCell(index);
+            cell.textContent = field;
+        });
+    });
+}
+
 // Inserts new records into the recipe table.
 async function insertRecipe(event) {
     event.preventDefault();
@@ -192,6 +217,37 @@ async function insertRecipe(event) {
         fetchTableData();
     } else {
         messageElement.textContent = "Error inserting Recipe data!";
+    }
+}
+
+// Updates recipe.
+async function updateRecipe(event) {
+    event.preventDefault();
+
+    const recipeIDValue = document.getElementById('updateRecipeID').value;
+    const newRecipeNameValue = document.getElementById('updateRecipeName').value;
+    const newPrivacyLevelValue = document.getElementById('updatePrivacyLevel').value;
+
+    const response = await fetch('/update-recipe', {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            RecipeID: recipeIDValue,
+            NewRecipeName: newRecipeNameValue,
+            NewPrivacyLevel: newPrivacyLevelValue
+        })
+    });
+
+    const responseData = await response.json();
+    const messageElement = document.getElementById('updateRecipeResultMsg');
+
+    if (responseData.success) {
+        messageElement.textContent = "Recipe updated successfully!";
+        fetchTableData();
+    } else {
+        messageElement.textContent = "Error updating recipe!";
     }
 }
 
@@ -236,7 +292,9 @@ window.onload = function () {
 
 
     // recipe centric
+
     document.getElementById("insertRecipe").addEventListener("submit", insertRecipe);
+    document.getElementById("updateRecipe").addEventListener("submit", updateRecipe);
 
     // ingredient centric
 
@@ -248,4 +306,5 @@ window.onload = function () {
 // You can invoke this after any table-modifying operation to keep consistency.
 function fetchTableData() {
     fetchAndDisplayUsers();
+    fetchAndDisplayRecipes();
 }

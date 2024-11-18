@@ -96,9 +96,23 @@
     <br><hr><br> <!-- ========================================================================= -->
     <h1> Recipe Centric </h1>
 
-    <h2> Create new Recipe </h2>
+    <h2>Show Recipes</h2>
+    <table id="recipe" border="1">
+        <thead>
+            <tr>
+                <th>Recipe ID</th>
+                <th>Recipe Name</th>
+                <th>Privacy Level</th>
+                <th>Username</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <h2> Create a new Recipe </h2>
     <form id="insertRecipe">
-        ID: <input type="number" id="insertRecipeID" placeholder="Enter RecipeID" required> <br><br>
+        Recipe ID: <input type="number" id="insertRecipeID" placeholder="Enter RecipeID" required> <br><br>
         Recipe Name: <input type="text" id="insertRecipeName" placeholder="Enter Recipe Name" maxlength="50"> <br><br>
         Privacy Level: 
         <select id="insertPrivacyLevel">
@@ -111,6 +125,23 @@
         <button type="submit"> Create </button> <br>
     </form>
     <div id="insertRecipeResultMsg"></div>
+
+    <h2>Update a Recipe's Name and/or PrivacyLevel</h2>
+    <p>The values are case sensitive and if you enter in the wrong case, the update statement will not do anything.</p>
+    <form id="updateRecipe">
+        Recipe ID: <input type="number" id="updateRecipeID" placeholder="Enter RecipeID" required> <br><br>
+        New Name: <input type="text" id="updateRecipeName" placeholder="Enter New Recipe Name" maxlength="50"> <br><br>
+        New Privacy Level: 
+        <select id="updatePrivacyLevel">
+            <option value="Do Not Change">Do Not Change</option>
+            <option value="Private">Private</option>
+            <option value="Public">Public</option>
+            <option value="Friends Only">Friends Only</option>
+        </select> <br><br>
+
+        <button type="submit"> Update </button> <br>
+    </form>
+    <div id="updateRecipeResultMsg"></div>
 
     <br><hr><br> <!-- ========================================================================= -->
     <h1> Ingredient Centric </h1>

@@ -152,9 +152,19 @@ async function countDemotable() {
 // ----------------------------------------------------------
 // Recipe Centric service
 
+async function fetchRecipeFromDb() {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute('SELECT * FROM Recipe');
+        return result.rows;
+    }).catch(() => {
+        return [];
+    });
+}
+
 async function insertRecipe(RecipeID, RecipeName, PrivacyLevel, Username) {
     // validate username
     const isUsernameValid = await validateUsername(Username);
+    console.error('A')
 
     // If it doesnt return false
     if (!isUsernameValid) {
@@ -170,8 +180,53 @@ async function insertRecipe(RecipeID, RecipeName, PrivacyLevel, Username) {
 
         return result.rowsAffected && result.rowsAffected > 0;
     }).catch(() => {
+        console.error('Database error:', error);
         return false;
     });
+}
+
+async function updateRecipe(RecipeID, NewRecipeName, NewPrivacyLevel) {
+    if (NewRecipeName == "" && NewPrivacyLevel != "Do Not Change") {
+        return await withOracleDB(async (connection) => {
+            const result = await connection.execute(
+                `UPDATE Recipe SET PrivacyLevel=:NewPrivacyLevel WHERE RecipeID=:RecipeID`,
+                [NewPrivacyLevel, RecipeID],
+                { autoCommit: true }
+            );
+
+            return result.rowsAffected && result.rowsAffected > 0;
+        }).catch(() => {
+            console.error('Database error:', error);
+            return false;
+        });
+    } else if (NewRecipeName != "" && NewPrivacyLevel == "Do Not Change") {
+        return await withOracleDB(async (connection) => {
+            const result = await connection.execute(
+                `UPDATE Recipe SET RecipeName=:NewRecipeName WHERE RecipeID=:RecipeID`,
+                [NewRecipeName, RecipeID],
+                { autoCommit: true }
+            );
+
+            return result.rowsAffected && result.rowsAffected > 0;
+        }).catch(() => {
+            console.error('Database error:', error);
+            return false;
+        });
+    } else {
+        return await withOracleDB(async (connection) => {
+            const result = await connection.execute(
+                `UPDATE Recipe SET RecipeName=:NewRecipeName, PrivacyLevel=:NewPrivacyLevel WHERE RecipeID=:RecipeID`,
+                [NewRecipeName, NewPrivacyLevel, RecipeID],
+                { autoCommit: true }
+            );
+
+            return result.rowsAffected && result.rowsAffected > 0;
+        }).catch(() => {
+            console.error('Database error:', error);
+            return false;
+        });
+    }
+
 }
 
 
@@ -186,11 +241,13 @@ async function insertRecipe(RecipeID, RecipeName, PrivacyLevel, Username) {
 async function validateUsername(Username) {
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
-            `SELECT COUNT(*) AS count FROM AppUser WHERE Username = :Username`,
+            `SELECT COUNT(*) AS count FROM AppUser WHERE Username=:Username`,
             [Username]
         )
 
-        return result.rows[0].COUNT > 0;
+        console.error(result)
+        console.error(result.rows[0].COUNT)
+        return result.rows[0][0] > 0;
     }).catch(() => {
         return false;
     });
@@ -206,6 +263,7 @@ async function initiateTables() {
             console.log('Database Initialized Successfully')
         } catch (err) {
             console.log('An error occured initializing the database');
+            console.log(err);
         }
 
         return true;
@@ -228,7 +286,9 @@ module.exports = {
 
 
     // Recipe Centric
+    fetchRecipeFromDb,
     insertRecipe,
+    updateRecipe,
 
     // Ingredient Centric
 

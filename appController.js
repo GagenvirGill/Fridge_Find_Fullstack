@@ -72,10 +72,25 @@ router.get('/count-demotable', async (req, res) => {
 // ----------------------------------------------------------
 // Recipe Centric endpoints
 
+router.get('/recipe', async (req, res) => {
+    const tableContent = await appService.fetchRecipeFromDb();
+    res.json({ data: tableContent });
+});
+
 router.post("/insert-recipe", async (req, res) => {
     const { RecipeID, RecipeName, PrivacyLevel, Username } = req.body;
-    const insertResult = await appService.insertDemotable(RecipeID, RecipeName, PrivacyLevel, Username);
+    const insertResult = await appService.insertRecipe(RecipeID, RecipeName, PrivacyLevel, Username);
     if (insertResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+router.patch("/update-recipe", async (req, res) => {
+    const { RecipeID, NewRecipeName, NewPrivacyLevel } = req.body;
+    const updateResult = await appService.updateRecipe(RecipeID, NewRecipeName, NewPrivacyLevel);
+    if (updateResult) {
         res.json({ success: true });
     } else {
         res.status(500).json({ success: false });
