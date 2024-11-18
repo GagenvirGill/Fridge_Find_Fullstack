@@ -177,6 +177,7 @@ async function insertRecipe(RecipeID, RecipeName, PrivacyLevel, Username) {
             { autoCommit: true }
         );
 
+        console.log('Inserted Recipe Successfully')
         return result.rowsAffected && result.rowsAffected > 0;
     }).catch(() => {
         console.error('Database error:', error);
@@ -185,47 +186,37 @@ async function insertRecipe(RecipeID, RecipeName, PrivacyLevel, Username) {
 }
 
 async function updateRecipe(RecipeID, NewRecipeName, NewPrivacyLevel) {
+    let query = `UPDATE Recipe SET `;
+    let queryParams = [];
+
     if (NewRecipeName == "" && NewPrivacyLevel != "Do Not Change") {
-        return await withOracleDB(async (connection) => {
-            const result = await connection.execute(
-                `UPDATE Recipe SET PrivacyLevel=:NewPrivacyLevel WHERE RecipeID=:RecipeID`,
-                [NewPrivacyLevel, RecipeID],
-                { autoCommit: true }
-            );
-
-            return result.rowsAffected && result.rowsAffected > 0;
-        }).catch(() => {
-            console.error('Database error:', error);
-            return false;
-        });
+        query += `PrivacyLevel=:NewPrivacyLevel`;
+        queryParams.push(NewPrivacyLevel);
     } else if (NewRecipeName != "" && NewPrivacyLevel == "Do Not Change") {
-        return await withOracleDB(async (connection) => {
-            const result = await connection.execute(
-                `UPDATE Recipe SET RecipeName=:NewRecipeName WHERE RecipeID=:RecipeID`,
-                [NewRecipeName, RecipeID],
-                { autoCommit: true }
-            );
-
-            return result.rowsAffected && result.rowsAffected > 0;
-        }).catch(() => {
-            console.error('Database error:', error);
-            return false;
-        });
+        query += `RecipeName=:NewRecipeName`;
+        queryParams.push(NewRecipeName);
     } else {
-        return await withOracleDB(async (connection) => {
-            const result = await connection.execute(
-                `UPDATE Recipe SET RecipeName=:NewRecipeName, PrivacyLevel=:NewPrivacyLevel WHERE RecipeID=:RecipeID`,
-                [NewRecipeName, NewPrivacyLevel, RecipeID],
-                { autoCommit: true }
-            );
-
-            return result.rowsAffected && result.rowsAffected > 0;
-        }).catch(() => {
-            console.error('Database error:', error);
-            return false;
-        });
+        query += `RecipeName =: NewRecipeName, PrivacyLevel=:NewPrivacyLevel`;
+        queryParams.push(NewRecipeName);
+        queryParams.push(NewPrivacyLevel);
     }
 
+    query += ` WHERE RecipeID=:RecipeID`;
+    queryParams.push(RecipeID);
+
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            query,
+            queryParams,
+            { autoCommit: true }
+        );
+
+        console.log('Updated Recipe Successfully')
+        return result.rowsAffected && result.rowsAffected > 0;
+    }).catch((error) => {
+        console.error('Database error:', error);
+        return false;
+    });
 }
 
 
