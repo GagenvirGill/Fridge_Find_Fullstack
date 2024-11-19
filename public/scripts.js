@@ -333,6 +333,67 @@ async function fetchAndDisplayARecipesIngredients(event) {
     });
 }
 
+async function insertRecipeIngredient(event) {
+    event.preventDefault();
+
+    const recipeIngredientIDValue = document.getElementById('insertRecipeIngredientID').value;
+    const recipeIngredientNameValue = document.getElementById('insertRecipeIngredientName').value;
+    const recipeIngredientsRecipeIDValue = document.getElementById('insertRecipeIngredientsRecipeID').value;
+    const recipeIngredientAmountValue = document.getElementById('insertRecipeIngredientAmount').value;
+    const recipeIngredientUnitValue = document.getElementById('insertRecipeIngredientUnit').value;
+
+    const response = await fetch('/insert-recipe-ingredient', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            RecipeIngredientID: recipeIngredientIDValue,
+            RecipeIngredientName: recipeIngredientNameValue,
+            RecipeID: recipeIngredientsRecipeIDValue,
+            Amount: recipeIngredientAmountValue,
+            UnitOfMeasurement: recipeIngredientUnitValue
+        })
+    });
+
+    const responseData = await response.json();
+    const messageElement = document.getElementById('insertRecipeIngredientResultMsg');
+
+    if (responseData.success) {
+        messageElement.textContent = "Recipe Ingredient Data inserted successfully!";
+    } else {
+        messageElement.textContent = "Error inserting Recipe Ingredient Data";
+    }
+}
+
+
+//      const recipeIDValue = document.getElementById('insertRecipeID').value;
+//     const recipeNameValue = document.getElementById('insertRecipeName').value;
+//     const privacyLevelValue = document.getElementById('insertPrivacyLevel').value;
+//     const usernameValue = document.getElementById('insertUsername').value;
+
+//     const response = await fetch('/insert-recipe', {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/json'
+//         },
+//         body: JSON.stringify({
+//             RecipeID: recipeIDValue,
+//             RecipeName: recipeNameValue,
+//             PrivacyLevel: privacyLevelValue,
+//             Username: usernameValue
+//         })
+//     });
+
+//     const responseData = await response.json();
+//     const messageElement = document.getElementById('insertRecipeResultMsg');
+
+//     if (responseData.success) {
+//         messageElement.textContent = "Recipe Data inserted successfully!";
+//         fetchTableData();
+//     } else {
+//         messageElement.textContent = "Error inserting Recipe data!";
+//     }
 
 // ----------------------------------------------------------
 // Ingredient Centric methods
@@ -379,6 +440,7 @@ window.onload = function () {
     document.getElementById("updateRecipe").addEventListener("submit", updateRecipe);
     document.getElementById("deleteRecipe").addEventListener("submit", deleteRecipe);
     document.getElementById("fetchARecipesIngredients").addEventListener("submit", fetchAndDisplayARecipesIngredients);
+    document.getElementById("insertRecipeIngredient").addEventListener("submit", insertRecipeIngredient);
 
     // ingredient centric
 

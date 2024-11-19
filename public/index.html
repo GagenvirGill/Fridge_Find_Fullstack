@@ -170,6 +170,30 @@
         </tbody>
     </table>
 
+    <h3>Add a Recipe Ingredient</h3>
+    <form id="insertRecipeIngredient">
+        Recipe Ingredient ID: <input type="number" id="insertRecipeIngredientID" placeholder="Enter Recipe Ingredient ID" required> <br><br>
+        Ingredient Name: <input type="text" id="insertRecipeIngredientName" placeholder="Enter New Recipe Ingredient Name" maxlength="50" required> <br><br>
+        Recipe ID: <input type="number" id="insertRecipeIngredientsRecipeID" placeholder="Enter Recipe ID" required> <br><br>
+        Amount: <input type="number" id="insertRecipeIngredientAmount" placeholder="Enter Recipe Ingredient Amount" required> <br><br>
+        Unit of Measurement: 
+        <select id="insertRecipeIngredientUnit">
+            <option value="piece">piece</option>
+            <option value="milliliters">milliliters</option>
+            <option value="liters">liters</option>
+            <option value="ounces">ounces</option>
+            <option value="cups">cups</option>
+            <option value="grams">grams</option>
+            <option value="pounds">pounds</option>
+            <option value="kilograms">kilograms</option>
+            <option value="tablespoons">tablespoons</option>
+            <option value="teaspoons">teaspoons</option>
+        </select> <br><br>
+
+        <button type="submit"> Create Recipe Ingredient </button> <br>
+    </form>
+    <div id="insertRecipeIngredientResultMsg"></div>
+
     <br><hr><br> <!-- ========================================================================= -->
     <h2> Ingredient Centric </h2>
 

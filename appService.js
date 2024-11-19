@@ -276,6 +276,30 @@ async function fetchRecipesName(RecipeID) {
     });
 }
 
+async function insertRecipeIngredient(RecipeIngredientID, RecipeIngredientName, RecipeID, Amount, UnitOfMeasurement) {
+    // validate recipe
+    const isRecipeValid = await validateRecipe(RecipeID);
+
+    // If it doesnt return false
+    if (!isRecipeValid) {
+        return false;
+    }
+
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            `INSERT INTO RecipeIngredient (IngredientID, IngredientName, RecipeID, Amount, UnitOfMeasurement) VALUES (:RecipeIngredientID, :RecipeIngredientName, :RecipeID, :Amount, :UnitOfMeasurement)`,
+            [RecipeIngredientID, RecipeIngredientName, RecipeID, Amount, UnitOfMeasurement],
+            { autoCommit: true }
+        );
+
+        console.log('Inserted Recipe Ingredient Successfully')
+        return result.rowsAffected && result.rowsAffected > 0;
+    }).catch((error) => {
+        console.error('Database error:', error);
+        return false;
+    });
+}
+
 
 // ----------------------------------------------------------
 // Ingredient Centric service
@@ -292,8 +316,19 @@ async function validateUsername(Username) {
             [Username]
         )
 
-        console.error(result)
-        console.error(result.rows[0].COUNT)
+        return result.rows[0][0] > 0;
+    }).catch(() => {
+        return false;
+    });
+}
+
+async function validateRecipe(RecipeID) {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            `SELECT COUNT(*) AS count FROM Recipe WHERE RecipeID=:RecipeID`,
+            [RecipeID]
+        )
+
         return result.rows[0][0] > 0;
     }).catch(() => {
         return false;
@@ -344,10 +379,12 @@ module.exports = {
     deleteRecipe,
     fetchRecipeIngredientsForRecipeFromDb,
     fetchRecipesName,
+    insertRecipeIngredient,
 
     // Ingredient Centric
 
     // General
     validateUsername,
+    validateRecipe,
     initiateTables,
 };

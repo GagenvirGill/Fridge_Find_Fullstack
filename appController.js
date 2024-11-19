@@ -119,6 +119,16 @@ router.get("/recipe-name", async (req, res) => {
     res.json({ RecipeName: recipeName })
 });
 
+router.post("/insert-recipe-ingredient", async (req, res) => {
+    const { RecipeIngredientID, RecipeIngredientName, RecipeID, Amount, UnitOfMeasurement } = req.body;
+    const insertResult = await appService.insertRecipeIngredient(RecipeIngredientID, RecipeIngredientName, RecipeID, Amount, UnitOfMeasurement);
+    if (insertResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
 
 // ----------------------------------------------------------
 // Ingredient Centric endpoints
