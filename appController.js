@@ -107,6 +107,18 @@ router.delete("/delete-recipe", async (req, res) => {
     }
 });
 
+router.get("/recipe-ingredient-for-recipe", async (req, res) => {
+    const { RecipeID } = req.query;
+    const tableContent = await appService.fetchRecipeIngredientsForRecipeFromDb(RecipeID);
+    res.json({ data: tableContent });
+});
+
+router.get("/recipe-name", async (req, res) => {
+    const { RecipeID } = req.query;
+    const recipeName = await appService.fetchRecipesName(RecipeID);
+    res.json({ RecipeName: recipeName })
+});
+
 
 // ----------------------------------------------------------
 // Ingredient Centric endpoints

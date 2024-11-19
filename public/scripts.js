@@ -277,6 +277,62 @@ async function deleteRecipe(event) {
     }
 }
 
+async function fetchAndDisplayARecipesIngredients(event) {
+    event.preventDefault();
+
+    const tableElement = document.getElementById('recipesIngredients');
+    const tableBody = tableElement.querySelector('tbody');
+    const recipeIDValue = document.getElementById('getRecipeIDForItsIngredients').value;
+
+    const tableResponse = await fetch(`/recipe-ingredient-for-recipe?RecipeID=${recipeIDValue}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+
+    const tableResponseData = await tableResponse.json();
+
+    const nameResponse = await fetch(`/recipe-name?RecipeID=${recipeIDValue}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+
+    const nameResponseData = await nameResponse.json();
+
+    const recipeIngredientsContent = tableResponseData.data;
+    const recipeName = nameResponseData.RecipeName;
+
+    const messageElement = document.getElementById('recipesIngredientsNameMsg');
+    if (recipeName.length > 0) {
+        messageElement.textContent = `${recipeName} Ingredients Successfully Retrieved`;
+    } else {
+        messageElement.textContent = "Error getting the ingredients";
+    }
+
+    if (tableBody) {
+        tableBody.innerHTML = '';
+    }
+
+    recipeIngredientsContent.forEach(user => {
+        const row = tableBody.insertRow();
+        user.forEach((field, index) => {
+            if (index == 2 || index == 4) {
+                return;
+            } else if (index == 3) {
+                const combinedFields = `${field} ${user[4]}`
+                const cell = row.insertCell(index - 1);
+                cell.textContent = combinedFields;
+            } else {
+                const cell = row.insertCell(index);
+                cell.textContent = field;
+            }
+        });
+    });
+}
+
 
 // ----------------------------------------------------------
 // Ingredient Centric methods
@@ -322,6 +378,7 @@ window.onload = function () {
     document.getElementById("insertRecipe").addEventListener("submit", insertRecipe);
     document.getElementById("updateRecipe").addEventListener("submit", updateRecipe);
     document.getElementById("deleteRecipe").addEventListener("submit", deleteRecipe);
+    document.getElementById("fetchARecipesIngredients").addEventListener("submit", fetchAndDisplayARecipesIngredients);
 
     // ingredient centric
 

@@ -234,6 +234,48 @@ async function deleteRecipe(RecipeID) {
     });
 }
 
+async function fetchRecipeIngredientsForRecipeFromDb(RecipeID) {
+    const intRecipeID = parseInt(RecipeID, 10);
+
+    if (isNaN(intRecipeID)) {
+        return false;
+    }
+
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(`
+            SELECT ri.* 
+            FROM RecipeIngredient ri 
+            JOIN Recipe r ON r.RecipeID = ri.RecipeID 
+            WHERE ri.RecipeID=:RecipeID`,
+            [intRecipeID]
+        );
+        return result.rows;
+    }).catch(() => {
+        return [];
+    });
+}
+
+async function fetchRecipesName(RecipeID) {
+    const intRecipeID = parseInt(RecipeID, 10);
+
+    if (isNaN(intRecipeID)) {
+        console.log('invalid Recipe ID')
+        return false;
+    }
+
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(`
+            SELECT RecipeName
+            FROM Recipe
+            WHERE RecipeID=:RecipeID`,
+            [intRecipeID]
+        );
+        return result.rows;
+    }).catch(() => {
+        return false;
+    });
+}
+
 
 // ----------------------------------------------------------
 // Ingredient Centric service
@@ -300,6 +342,8 @@ module.exports = {
     insertRecipe,
     updateRecipe,
     deleteRecipe,
+    fetchRecipeIngredientsForRecipeFromDb,
+    fetchRecipesName,
 
     // Ingredient Centric
 
