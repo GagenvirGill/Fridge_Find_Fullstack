@@ -24,60 +24,126 @@
 
     <br><hr><br> <!-- ========================================================================= -->
 
-    <!-- Show 'Demotable'. 
-        Data will be fetched and inserted here dynamically using JavaScript. -->
-    <h2>Show Demotable</h2>
-    <table id="demotable" border="1">
+    <h2>Reset All Tables</h2>
+    <p>If you wish to reset the table press on the reset button. If this is the first time you're running this page, you MUST use reset</p>
+    <button id="resetTables"> Reset Tables </button> <br>
+    <!-- A placeholder to display messages related to the reset operation. -->
+    <div id="resetTablesResultMsg"></div>
+
+    <br><hr><br> <!-- ========================================================================= -->
+    <h2> User Centric </h2>
+
+
+
+    <br><hr><br> <!-- ========================================================================= -->
+    <h2> Recipe Centric </h2>
+
+    <h3>Show Recipes</h3>
+    <table id="recipe" border="1">
         <thead>
             <tr>
-                <!--Table head, need to be adjusted accordingly to align with your own.-->
-                <th>ID</th>
-                <th>Name</th>
+                <th>Recipe ID</th>
+                <th>Recipe Name</th>
+                <th>Privacy Level</th>
+                <th>Username</th>
             </tr>
         </thead>
         <tbody>
         </tbody>
     </table>
 
-    <br><hr><br> <!-- ========================================================================= -->
+    <h3> Create a new Recipe </h3>
+    <form id="insertRecipe">
+        Recipe ID: <input type="number" id="insertRecipeID" placeholder="Enter RecipeID" required> <br><br>
+        Recipe Name: <input type="text" id="insertRecipeName" placeholder="Enter Recipe Name" maxlength="50"> <br><br>
+        Privacy Level: 
+        <select id="insertPrivacyLevel">
+            <option value="Private">Private</option>
+            <option value="Public">Public</option>
+            <option value="Friends Only">Friends Only</option>
+        </select> <br><br>
+        Username: <input type="text" id="insertUsername" placeholder="Enter User's name" maxlength="50" required> <br><br>
 
-    <h2>Reset Demotable</h2>
-    <p>If you wish to reset the table press on the reset button. If this is the first time you're running this page, you MUST use reset</p>
-    <button id="resetDemotable"> reset </button> <br>
-    <!-- A placeholder to display messages related to the reset operation. -->
-    <div id="resetResultMsg"></div>
-
-    <br><hr><br> <!-- ========================================================================= -->
-
-    <h2> Insert Values into DemoTable </h2>
-    <form id="insertDemotable">
-        ID: <input type="number" id="insertId" placeholder="Enter ID" required> <br><br>
-        Name: <input type="text" id="insertName" placeholder="Enter Name" maxlength="20"> <br><br>
-
-        <button type="submit"> insert </button> <br>
+        <button type="submit"> Create </button> <br>
     </form>
-    <div id="insertResultMsg"></div>
+    <div id="insertRecipeResultMsg"></div>
 
-    <br><hr><br> <!-- ========================================================================= -->
-
-    <h2>Update Name in DemoTable</h2>
+    <h3>Update a Recipe's Name and/or PrivacyLevel</h3>
     <p>The values are case sensitive and if you enter in the wrong case, the update statement will not do anything.</p>
-    <form id="updataNameDemotable">
-        Old Name: <input type="text" id="updateOldName" placeholder="Enter Old Name" required> <br><br>
-        New Name: <input type="text" id="updateNewName" placeholder="Enter New Name" maxlength="20"> <br><br>
+    <form id="updateRecipe">
+        Recipe ID: <input type="number" id="updateRecipeID" placeholder="Enter RecipeID" required> <br><br>
+        New Name: <input type="text" id="updateRecipeName" placeholder="Enter New Recipe Name" maxlength="50"> <br><br>
+        New Privacy Level: 
+        <select id="updatePrivacyLevel">
+            <option value="Do Not Change">Do Not Change</option>
+            <option value="Private">Private</option>
+            <option value="Public">Public</option>
+            <option value="Friends Only">Friends Only</option>
+        </select> <br><br>
 
-        <button type="submit"> update </button> <br>
+        <button type="submit"> Update </button> <br>
     </form>
-    <!-- A placeholder to display messages related to the update operation. -->
-    <div id="updateNameResultMsg"></div>
+    <div id="updateRecipeResultMsg"></div>
+
+    <h3>Delete a Recipe</h3>
+    <form id="deleteRecipe">
+        Recipe ID: <input type="number" id="deleteRecipeID" placeholder="Enter RecipeID" required> <br><br>
+
+        <button type="submit"> Delete </button> <br>
+    </form>
+    <div id="deleteRecipeResultMsg"></div>
+
+    <h3>Ingredients for a Recipe</h3>
+    <form id="fetchARecipesIngredients">
+        Recipe ID: <input type="number" id="getRecipeIDForItsIngredients" placeholder="Enter RecipeID" required> <br><br>
+
+        <button type="submit"> Get Ingredients </button> <br>
+    </form>
+    <div id="recipesIngredientsNameMsg"></div>
+    <table id="recipesIngredients" border="1">
+        <thead>
+            <tr>
+                <th>Ingredient ID</th>
+                <th>Ingredient Name</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <h3>Add a Recipe Ingredient</h3>
+    <form id="insertRecipeIngredient">
+        Recipe Ingredient ID: <input type="number" id="insertRecipeIngredientID" placeholder="Enter Recipe Ingredient ID" required> <br><br>
+        Ingredient Name: <input type="text" id="insertRecipeIngredientName" placeholder="Enter New Recipe Ingredient Name" maxlength="50" required> <br><br>
+        Recipe ID: <input type="number" id="insertRecipeIngredientsRecipeID" placeholder="Enter Recipe ID" required> <br><br>
+        Amount: <input type="number" id="insertRecipeIngredientAmount" placeholder="Enter Recipe Ingredient Amount" required> <br><br>
+        Unit of Measurement: 
+        <select id="insertRecipeIngredientUnit">
+            <option value="piece">piece</option>
+            <option value="milliliters">milliliters</option>
+            <option value="liters">liters</option>
+            <option value="ounces">ounces</option>
+            <option value="cups">cups</option>
+            <option value="grams">grams</option>
+            <option value="pounds">pounds</option>
+            <option value="kilograms">kilograms</option>
+            <option value="tablespoons">tablespoons</option>
+            <option value="teaspoons">teaspoons</option>
+        </select> <br><br>
+
+        <button type="submit"> Create Recipe Ingredient </button> <br>
+    </form>
+    <div id="insertRecipeIngredientResultMsg"></div>
 
     <br><hr><br> <!-- ========================================================================= -->
+    <h2> Ingredient Centric </h2>
 
-    <h2>Count the Tuples in DemoTable</h2>
-    <button id="countDemotable"> count </button> <br><br>
-    <!-- A placeholder to display the count result. -->
-    <div id="countResultMsg"></div> <br>
 
+
+
+    <br><hr><br> <!-- ========================================================================= -->
+    
     <!-- ===================================================================================== -->
     <!-- External JavaScript file that contains the functionality/logic for the operations above. -->
     <script src="scripts.js"></script>
