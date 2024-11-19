@@ -122,7 +122,7 @@ CREATE TABLE RecipeIngredient (
     Amount NUMBER NOT NULL CHECK (Amount > 0),
     UnitOfMeasurement VARCHAR2(20) NOT NULL CHECK (UnitOfMeasurement IN ('piece', 'milliliters', 'liters', 'ounces', 'cups', 'grams', 'pounds', 'kilograms', 'tablespoons',
 'teaspoons')),
-    FOREIGN KEY (RecipeID) REFERENCES Recipe(RecipeID)
+    FOREIGN KEY (RecipeID) REFERENCES Recipe(RecipeID) ON DELETE CASCADE
 );
 
 CREATE TABLE RecipeStep (
@@ -130,7 +130,7 @@ CREATE TABLE RecipeStep (
     StepNumber NUMBER,
     StepInformation VARCHAR2(250) NOT NULL,
     PRIMARY KEY (RecipeID, StepNumber),
-    FOREIGN KEY (RecipeID) REFERENCES Recipe(RecipeID)
+    FOREIGN KEY (RecipeID) REFERENCES Recipe(RecipeID) ON DELETE CASCADE
 );
 
 CREATE TABLE Category (
@@ -142,7 +142,7 @@ CREATE TABLE RecipeHasCategory (
     RecipeID NUMBER,
     CategoryName VARCHAR2(50),
     PRIMARY KEY (RecipeID, CategoryName),
-    FOREIGN KEY (RecipeID) REFERENCES Recipe(RecipeID),
+    FOREIGN KEY (RecipeID) REFERENCES Recipe(RecipeID) ON DELETE CASCADE,
     FOREIGN KEY (CategoryName) REFERENCES Category(CategoryName)
 );
 
@@ -158,7 +158,7 @@ CREATE TABLE RecipeListHasRecipe (
     RecipeListID NUMBER,
     RecipeID NUMBER,
     PRIMARY KEY (RecipeListID, RecipeID),
-    FOREIGN KEY (RecipeID) REFERENCES Recipe(RecipeID),
+    FOREIGN KEY (RecipeID) REFERENCES Recipe(RecipeID) ON DELETE CASCADE,
     FOREIGN KEY (RecipeListID) REFERENCES RecipeList(RecipeListID)
 );
 

@@ -97,6 +97,16 @@ router.patch("/update-recipe", async (req, res) => {
     }
 });
 
+router.delete("/delete-recipe", async (req, res) => {
+    const { RecipeID } = req.body;
+    const deleteResult = await appService.deleteRecipe(RecipeID);
+    if (deleteResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
 
 // ----------------------------------------------------------
 // Ingredient Centric endpoints

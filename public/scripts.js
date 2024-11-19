@@ -251,6 +251,32 @@ async function updateRecipe(event) {
     }
 }
 
+async function deleteRecipe(event) {
+    event.preventDefault();
+
+    const recipeIDValue = document.getElementById('deleteRecipeID').value;
+
+    const response = await fetch('/delete-recipe', {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            RecipeID: recipeIDValue
+        })
+    });
+
+    const responseData = await response.json();
+    const messageElement = document.getElementById('deleteRecipeResultMsg');
+
+    if (responseData.success) {
+        messageElement.textContent = "Recipe deleted successfully!";
+        fetchTableData();
+    } else {
+        messageElement.textContent = "Error deleting recipe!";
+    }
+}
+
 
 // ----------------------------------------------------------
 // Ingredient Centric methods
@@ -295,6 +321,7 @@ window.onload = function () {
 
     document.getElementById("insertRecipe").addEventListener("submit", insertRecipe);
     document.getElementById("updateRecipe").addEventListener("submit", updateRecipe);
+    document.getElementById("deleteRecipe").addEventListener("submit", deleteRecipe);
 
     // ingredient centric
 

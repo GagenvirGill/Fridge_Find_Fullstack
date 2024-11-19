@@ -179,7 +179,7 @@ async function insertRecipe(RecipeID, RecipeName, PrivacyLevel, Username) {
 
         console.log('Inserted Recipe Successfully')
         return result.rowsAffected && result.rowsAffected > 0;
-    }).catch(() => {
+    }).catch((error) => {
         console.error('Database error:', error);
         return false;
     });
@@ -213,6 +213,21 @@ async function updateRecipe(RecipeID, NewRecipeName, NewPrivacyLevel) {
 
         console.log('Updated Recipe Successfully')
         return result.rowsAffected && result.rowsAffected > 0;
+    }).catch((error) => {
+        console.error('Database error:', error);
+        return false;
+    });
+}
+
+async function deleteRecipe(RecipeID) {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            'DELETE FROM Recipe WHERE RecipeID=:RecipeID',
+            [RecipeID],
+            { autoCommit: true }
+        );
+        console.log('Deleted Recipe Successfully')
+        return result.rowsAffected && result.rowsAffected > 0;;
     }).catch((error) => {
         console.error('Database error:', error);
         return false;
@@ -284,6 +299,7 @@ module.exports = {
     fetchRecipeFromDb,
     insertRecipe,
     updateRecipe,
+    deleteRecipe,
 
     // Ingredient Centric
 
