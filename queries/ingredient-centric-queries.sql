@@ -24,8 +24,15 @@ FROM AllergyListHasAllergicIngredient alai
 JOIN AllergyList ai ON ai.IngredientListID = alai.IngredientListID 
 WHERE ai.Username = 'Billy';
 ---- Aggregation with GROUP BY
+SELECT PrivacyLevel, COUNT(*) AS AllergyPrivacyCount
+FROM AllergyList
+GROUP BY PrivacyLevel;
 ---- Aggregation with HAVING
----- Nested Aggregation with GROUP BY
+SELECT PrivacyLevel, MAX(LENGTH(Description)) as md
+FROM AllergyList
+GROUP BY PrivacyLevel
+HAVING MAX(LENGTH(Description)) > 50;
+---- Nested Aggregation with GROUP BY TODO
 ---- Division TODO
 
 -- AllergicIngredient Queries
@@ -52,8 +59,15 @@ FROM AllergicIngredient ai
 JOIN AllergyListHasAllergicIngredient alai ON alai.IngredientID = ai.IngredientID
 WHERE ai.Name = 'Peanut';
 ---- Aggregation with GROUP BY
+SELECT Name, COUNT(*) AS Occurrences
+FROM AllergicIngredient
+GROUP BY Name;
 ---- Aggregation with HAVING
----- Nested Aggregation with GROUP BY
+SELECT Name, MAX(LENGTH(Name)) AS mn
+FROM AllergicIngredient
+GROUP BY Name
+HAVING MAX(LENGTH(Name)) > 5;
+---- Nested Aggregation with GROUP BY TODO
 ---- Division TODO
 
 
@@ -74,8 +88,14 @@ FROM AllergicIngredient ai
 JOIN KitchenInventory ki ON ki.IngredientID = ai.IngredientID
 WHERE Severity = 5;
 ---- Aggregation with GROUP BY
+SELECT IngredientListID, AVG(Severity) As Aseverity
+FROM AllergyListHasAllergicIngredient
+GROUP BY IngredientListID;
 ---- Aggregation with HAVING
----- Nested Aggregation with GROUP BY
+SELECT IngredientID, Severity
+FROM AllergyListHasAllergicIngredient
+HAVING Severity > 5;
+---- Nested Aggregation with GROUP BY TODO
 ---- Division TODO
 
 -- KitchenInventory Queries
@@ -96,7 +116,10 @@ FROM AllergyListHasAllergicIngredient alai
 JOIN KitchenInventory ki ON ki.IngredientListID = alai.IngredientListID 
 WHERE PrivacyLevel = 'Public'
 ---- Aggregation with GROUP BY
----- Aggregation with HAVING
+SELECT PrivacyLevel, COUNT(IngredientListID) AS ListCount
+FROM KitchenInventory
+GROUP BY PrivacyLevel
+---- Aggregation with HAVING LEFTOFF
 ---- Nested Aggregation with GROUP BY
 ---- Division TODO
 
