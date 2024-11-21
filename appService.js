@@ -297,11 +297,6 @@ async function initiateTables() {
 
 module.exports = {
     testOracleConnection,
-    fetchDemotableFromDb,
-    initiateDemotable,
-    insertDemotable,
-    updateNameDemotable,
-    countDemotable,
     // User Centric
 
 
