@@ -1,8 +1,4 @@
 -- Delete Existing Tables
-SELECT 'drop table '||table_name||' cascade constraints;' FROM user_tables;
-
-COMMIT;
-
 DROP TABLE AppUser CASCADE CONSTRAINTS;
 DROP TABLE Friends CASCADE CONSTRAINTS;
 DROP TABLE NotificationMessage CASCADE CONSTRAINTS;
@@ -126,7 +122,7 @@ CREATE TABLE RecipeIngredient (
     Amount NUMBER NOT NULL CHECK (Amount > 0),
     UnitOfMeasurement VARCHAR2(20) NOT NULL CHECK (UnitOfMeasurement IN ('piece', 'milliliters', 'liters', 'ounces', 'cups', 'grams', 'pounds', 'kilograms', 'tablespoons',
 'teaspoons')),
-    FOREIGN KEY (RecipeID) REFERENCES Recipe(RecipeID)
+    FOREIGN KEY (RecipeID) REFERENCES Recipe(RecipeID) ON DELETE CASCADE
 );
 
 CREATE TABLE RecipeStep (
@@ -134,7 +130,7 @@ CREATE TABLE RecipeStep (
     StepNumber NUMBER,
     StepInformation VARCHAR2(250) NOT NULL,
     PRIMARY KEY (RecipeID, StepNumber),
-    FOREIGN KEY (RecipeID) REFERENCES Recipe(RecipeID)
+    FOREIGN KEY (RecipeID) REFERENCES Recipe(RecipeID) ON DELETE CASCADE
 );
 
 CREATE TABLE Category (
@@ -146,7 +142,7 @@ CREATE TABLE RecipeHasCategory (
     RecipeID NUMBER,
     CategoryName VARCHAR2(50),
     PRIMARY KEY (RecipeID, CategoryName),
-    FOREIGN KEY (RecipeID) REFERENCES Recipe(RecipeID),
+    FOREIGN KEY (RecipeID) REFERENCES Recipe(RecipeID) ON DELETE CASCADE,
     FOREIGN KEY (CategoryName) REFERENCES Category(CategoryName)
 );
 
@@ -162,9 +158,9 @@ CREATE TABLE RecipeListHasRecipe (
     RecipeListID NUMBER,
     RecipeID NUMBER,
     PRIMARY KEY (RecipeListID, RecipeID),
-    FOREIGN KEY (RecipeID) REFERENCES Recipe(RecipeID),
+    FOREIGN KEY (RecipeID) REFERENCES Recipe(RecipeID) ON DELETE CASCADE,
     FOREIGN KEY (RecipeListID) REFERENCES RecipeList(RecipeListID)
-)
+);
 
 
 
@@ -232,11 +228,11 @@ INSERT INTO KitchenIngredient (DatePurchased, ShelfLife, IngredientID, Ingredien
 INSERT INTO KitchenIngredient (DatePurchased, ShelfLife, IngredientID, IngredientName, IngredientListID, Amount, UnitOfMeasurement) VALUES (TIMESTAMP '2024-05-05 08:30:00', 15, 5, 'Milk', 9, 1, 'liters');
 
 INSERT INTO Recipe (RecipeID, RecipeName, PrivacyLevel, Username) VALUES (1, 'Apple Pie', 'Public', 'Charlie');
-INSERT INTO Recipe (RecipeID, RecipeName, PrivacyLevel, Username) VALUES (6, 'Apple Pie', 'Public', 'Charlie');
 INSERT INTO Recipe (RecipeID, RecipeName, PrivacyLevel, Username) VALUES (2, 'Banana Milkshake', 'Private', 'Charlie');
 INSERT INTO Recipe (RecipeID, RecipeName, PrivacyLevel, Username) VALUES (3, 'Salted Butter', 'Public', 'Jason');
 INSERT INTO Recipe (RecipeID, RecipeName, PrivacyLevel, Username) VALUES (4, 'Cooked Chicken', 'Public', 'Alice');
 INSERT INTO Recipe (RecipeID, RecipeName, PrivacyLevel, Username) VALUES (5, 'Orange Juice Concoction', 'Friends Only', 'Alice');
+INSERT INTO Recipe (RecipeID, RecipeName, PrivacyLevel, Username) VALUES (6, 'Apple Pie', 'Public', 'Charlie');
 
 INSERT INTO RecipeIngredient (IngredientID, IngredientName, RecipeID, Amount, UnitOfMeasurement) VALUES (1, 'Apple', 1, 2, 'pounds');
 INSERT INTO RecipeIngredient (IngredientID, IngredientName, RecipeID, Amount, UnitOfMeasurement) VALUES (2, 'Banana', 2, 10, 'grams');

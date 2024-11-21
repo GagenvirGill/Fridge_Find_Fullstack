@@ -1,4 +1,5 @@
 const oracledb = require('oracledb');
+const fs = require('fs');
 const loadEnvFile = require('./utils/envUtil');
 
 const envVariables = loadEnvFile('./.env');
@@ -76,77 +77,242 @@ async function testOracleConnection() {
     });
 }
 
-async function fetchDemotableFromDb() {
+// ----------------------------------------------------------
+// User Centric service
+
+
+
+// ----------------------------------------------------------
+// Recipe Centric service
+
+async function fetchRecipeFromDb() {
     return await withOracleDB(async (connection) => {
-        const result = await connection.execute('SELECT * FROM DEMOTABLE');
+        const result = await connection.execute('SELECT * FROM Recipe');
         return result.rows;
     }).catch(() => {
         return [];
     });
 }
 
-async function initiateDemotable() {
+async function insertRecipe(RecipeID, RecipeName, PrivacyLevel, Username) {
+    // validate username
+    const isUsernameValid = await validateUsername(Username);
+
+    // If it doesnt return false
+    if (!isUsernameValid) {
+        return false;
+    }
+
     return await withOracleDB(async (connection) => {
-        try {
-            await connection.execute(`DROP TABLE DEMOTABLE`);
-        } catch(err) {
-            console.log('Table might not exist, proceeding to create...');
+        const result = await connection.execute(
+            `INSERT INTO Recipe (RecipeID, RecipeName, PrivacyLevel, Username) VALUES (:RecipeID, :RecipeName, :PrivacyLevel, :Username)`,
+            [RecipeID, RecipeName, PrivacyLevel, Username],
+            { autoCommit: true }
+        );
+
+        console.log('Inserted Recipe Successfully')
+        return result.rowsAffected && result.rowsAffected > 0;
+    }).catch((error) => {
+        console.error('Database error:', error);
+        return false;
+    });
+}
+
+async function updateRecipe(RecipeID, NewRecipeName, NewPrivacyLevel) {
+    let query = `UPDATE Recipe SET `;
+    let queryParams = [];
+
+    if (NewRecipeName == "" && NewPrivacyLevel != "Do Not Change") {
+        query += `PrivacyLevel=:NewPrivacyLevel`;
+        queryParams.push(NewPrivacyLevel);
+    } else if (NewRecipeName != "" && NewPrivacyLevel == "Do Not Change") {
+        query += `RecipeName=:NewRecipeName`;
+        queryParams.push(NewRecipeName);
+    } else {
+        query += `RecipeName =: NewRecipeName, PrivacyLevel=:NewPrivacyLevel`;
+        queryParams.push(NewRecipeName);
+        queryParams.push(NewPrivacyLevel);
+    }
+
+    query += ` WHERE RecipeID=:RecipeID`;
+    queryParams.push(RecipeID);
+
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            query,
+            queryParams,
+            { autoCommit: true }
+        );
+
+        console.log('Updated Recipe Successfully')
+        return result.rowsAffected && result.rowsAffected > 0;
+    }).catch((error) => {
+        console.error('Database error:', error);
+        return false;
+    });
+}
+
+async function deleteRecipe(RecipeID) {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            'DELETE FROM Recipe WHERE RecipeID=:RecipeID',
+            [RecipeID],
+            { autoCommit: true }
+        );
+        console.log('Deleted Recipe Successfully')
+        return result.rowsAffected && result.rowsAffected > 0;;
+    }).catch((error) => {
+        console.error('Database error:', error);
+        return false;
+    });
+}
+
+async function fetchRecipeIngredientsForRecipeFromDb(RecipeID) {
+    const intRecipeID = parseInt(RecipeID, 10);
+
+    if (isNaN(intRecipeID)) {
+        return false;
+    }
+
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(`
+            SELECT ri.* 
+            FROM RecipeIngredient ri 
+            JOIN Recipe r ON r.RecipeID = ri.RecipeID 
+            WHERE ri.RecipeID=:RecipeID`,
+            [intRecipeID]
+        );
+        return result.rows;
+    }).catch(() => {
+        return [];
+    });
+}
+
+async function fetchRecipesName(RecipeID) {
+    const intRecipeID = parseInt(RecipeID, 10);
+
+    if (isNaN(intRecipeID)) {
+        console.log('invalid Recipe ID')
+        return false;
+    }
+
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(`
+            SELECT RecipeName
+            FROM Recipe
+            WHERE RecipeID=:RecipeID`,
+            [intRecipeID]
+        );
+        return result.rows;
+    }).catch(() => {
+        return false;
+    });
+}
+
+async function insertRecipeIngredient(RecipeIngredientID, RecipeIngredientName, RecipeID, Amount, UnitOfMeasurement) {
+    // validate recipe
+    const isRecipeValid = await validateRecipe(RecipeID);
+
+    // If it doesnt return false
+    if (!isRecipeValid) {
+        return false;
+    }
+
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            `INSERT INTO RecipeIngredient (IngredientID, IngredientName, RecipeID, Amount, UnitOfMeasurement) VALUES (:RecipeIngredientID, :RecipeIngredientName, :RecipeID, :Amount, :UnitOfMeasurement)`,
+            [RecipeIngredientID, RecipeIngredientName, RecipeID, Amount, UnitOfMeasurement],
+            { autoCommit: true }
+        );
+
+        console.log('Inserted Recipe Ingredient Successfully')
+        return result.rowsAffected && result.rowsAffected > 0;
+    }).catch((error) => {
+        console.error('Database error:', error);
+        return false;
+    });
+}
+
+
+// ----------------------------------------------------------
+// Ingredient Centric service
+
+
+
+// ----------------------------------------------------------
+// General service methods
+
+async function validateUsername(Username) {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            `SELECT COUNT(*) AS count FROM AppUser WHERE Username=:Username`,
+            [Username]
+        )
+
+        return result.rows[0][0] > 0;
+    }).catch(() => {
+        return false;
+    });
+}
+
+async function validateRecipe(RecipeID) {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            `SELECT COUNT(*) AS count FROM Recipe WHERE RecipeID=:RecipeID`,
+            [RecipeID]
+        )
+
+        return result.rows[0][0] > 0;
+    }).catch(() => {
+        return false;
+    });
+}
+
+async function initiateTables() {
+    return await withOracleDB(async (connection) => {
+        const initializationQueries = fs.readFileSync('database_initialization.sql', 'utf8')
+            .split(';')
+            .map(query => query.trim())
+            .filter(query => query.length > 0);
+
+        for (const query of initializationQueries) {
+            try {
+                await connection.execute(query)
+            } catch (err) {
+                console.log(`An error executing query" ${query}`);
+                console.log(err);
+            }
         }
 
-        const result = await connection.execute(`
-            CREATE TABLE DEMOTABLE (
-                id NUMBER PRIMARY KEY,
-                name VARCHAR2(20)
-            )
-        `);
+        console.log('Tables Initialized Successfully')
+
         return true;
     }).catch(() => {
         return false;
     });
 }
 
-async function insertDemotable(id, name) {
-    return await withOracleDB(async (connection) => {
-        const result = await connection.execute(
-            `INSERT INTO DEMOTABLE (id, name) VALUES (:id, :name)`,
-            [id, name],
-            { autoCommit: true }
-        );
 
-        return result.rowsAffected && result.rowsAffected > 0;
-    }).catch(() => {
-        return false;
-    });
-}
-
-async function updateNameDemotable(oldName, newName) {
-    return await withOracleDB(async (connection) => {
-        const result = await connection.execute(
-            `UPDATE DEMOTABLE SET name=:newName where name=:oldName`,
-            [newName, oldName],
-            { autoCommit: true }
-        );
-
-        return result.rowsAffected && result.rowsAffected > 0;
-    }).catch(() => {
-        return false;
-    });
-}
-
-async function countDemotable() {
-    return await withOracleDB(async (connection) => {
-        const result = await connection.execute('SELECT Count(*) FROM DEMOTABLE');
-        return result.rows[0][0];
-    }).catch(() => {
-        return -1;
-    });
-}
+// ----------------------------------------------------------
 
 module.exports = {
     testOracleConnection,
-    fetchDemotableFromDb,
-    initiateDemotable, 
-    insertDemotable, 
-    updateNameDemotable, 
-    countDemotable
+    // User Centric
+
+
+    // Recipe Centric
+    fetchRecipeFromDb,
+    insertRecipe,
+    updateRecipe,
+    deleteRecipe,
+    fetchRecipeIngredientsForRecipeFromDb,
+    fetchRecipesName,
+    insertRecipeIngredient,
+
+    // Ingredient Centric
+
+    // General
+    validateUsername,
+    validateRecipe,
+    initiateTables,
 };
