@@ -88,8 +88,11 @@ async function testOracleConnection() {
 async function fetchRecipeFromDb() {
     return await withOracleDB(async (connection) => {
         const result = await connection.execute('SELECT * FROM Recipe');
+
+        console.log('Fetched Recipes Successfully');
         return result.rows;
-    }).catch(() => {
+    }).catch((error) => {
+        console.error('Database error:', error);
         return [];
     });
 }
@@ -110,7 +113,7 @@ async function insertRecipe(RecipeID, RecipeName, PrivacyLevel, Username) {
             { autoCommit: true }
         );
 
-        console.log('Inserted Recipe Successfully')
+        console.log('Inserted Recipe Successfully');
         return result.rowsAffected && result.rowsAffected > 0;
     }).catch((error) => {
         console.error('Database error:', error);
@@ -144,7 +147,7 @@ async function updateRecipe(RecipeID, NewRecipeName, NewPrivacyLevel) {
             { autoCommit: true }
         );
 
-        console.log('Updated Recipe Successfully')
+        console.log('Updated Recipe Successfully');
         return result.rowsAffected && result.rowsAffected > 0;
     }).catch((error) => {
         console.error('Database error:', error);
@@ -159,7 +162,8 @@ async function deleteRecipe(RecipeID) {
             [RecipeID],
             { autoCommit: true }
         );
-        console.log('Deleted Recipe Successfully')
+
+        console.log('Deleted Recipe Successfully');
         return result.rowsAffected && result.rowsAffected > 0;;
     }).catch((error) => {
         console.error('Database error:', error);
@@ -171,6 +175,7 @@ async function fetchRecipeIngredientsForRecipeFromDb(RecipeID) {
     const intRecipeID = parseInt(RecipeID, 10);
 
     if (isNaN(intRecipeID)) {
+        console.log('invalid Recipe ID')
         return false;
     }
 
@@ -182,8 +187,11 @@ async function fetchRecipeIngredientsForRecipeFromDb(RecipeID) {
             WHERE ri.RecipeID=:RecipeID`,
             [intRecipeID]
         );
+
+        console.log('Fetched Recipe Ingredients for Recipe Successfully');
         return result.rows;
-    }).catch(() => {
+    }).catch((error) => {
+        console.error('Database error:', error);
         return [];
     });
 }
@@ -203,8 +211,11 @@ async function fetchRecipesName(RecipeID) {
             WHERE RecipeID=:RecipeID`,
             [intRecipeID]
         );
+
+        console.log('Fetched a Recipes Name Succesfully');
         return result.rows;
-    }).catch(() => {
+    }).catch((error) => {
+        console.error('Database error:', error);
         return false;
     });
 }
@@ -217,7 +228,7 @@ async function insertRecipeIngredient(RecipeIngredientID, RecipeIngredientName, 
             { autoCommit: true }
         );
 
-        console.log('Inserted Recipe Ingredient Successfully')
+        console.log('Inserted Recipe Ingredient Successfully');
         return result.rowsAffected && result.rowsAffected > 0;
     }).catch((error) => {
         console.error('Database error:', error);
@@ -255,7 +266,7 @@ async function updateRecipeIngredient(RecipeIngredientID, RecipeID, NewRecipeIng
             { autoCommit: true }
         );
 
-        console.log('Updated Recipe Ingredient Successfully')
+        console.log('Updated Recipe Ingredient Successfully');
         return result.rowsAffected && result.rowsAffected > 0;
     }).catch((error) => {
         console.error('Database error:', error);
@@ -270,7 +281,7 @@ async function deleteRecipeIngredient(RecipeIngredientID, RecipeID) {
             [RecipeIngredientID, RecipeID],
             { autoCommit: true }
         );
-        console.log('Deleted Recipe Ingredient Successfully')
+        console.log('Deleted Recipe Ingredient Successfully');
         return result.rowsAffected && result.rowsAffected > 0;;
     }).catch((error) => {
         console.error('Database error:', error);
@@ -293,8 +304,11 @@ async function fetchRecipeStepsForRecipe(RecipeID) {
             WHERE rs.RecipeID=:RecipeID`,
             [intRecipeID]
         );
+
+        console.log('Fetched Recipe Steps for Recipe Successfully');
         return result.rows;
-    }).catch(() => {
+    }).catch((error) => {
+        console.error('Database error:', error);
         return [];
     });
 }
@@ -307,7 +321,7 @@ async function insertRecipeStep(RecipeID, StepNumber, StepInformation) {
             { autoCommit: true }
         );
 
-        console.log('Inserted Recipe Step Successfully')
+        console.log('Inserted Recipe Step Successfully');
         return result.rowsAffected && result.rowsAffected > 0;
     }).catch((error) => {
         console.error('Database error:', error);
@@ -356,7 +370,88 @@ async function deleteRecipeStep(RecipeID, StepNumber) {
             [StepNumber, RecipeID],
             { autoCommit: true }
         );
-        console.log('Deleted Recipe Step Successfully')
+
+        console.log('Deleted Recipe Step Successfully');
+        return result.rowsAffected && result.rowsAffected > 0;;
+    }).catch((error) => {
+        console.error('Database error:', error);
+        return false;
+    });
+}
+
+async function insertCategory(CategoryName, CategoryDescription) {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            `INSERT INTO Category (CategoryName, CategoryDescription) VALUES (:CategoryName, :CategoryDescription)`,
+            [CategoryName, CategoryDescription],
+            { autoCommit: true }
+        );
+
+        console.log('Inserted Category Successfully');
+        return result.rowsAffected && result.rowsAffected > 0;
+    }).catch((error) => {
+        console.error('Database error:', error);
+        return false;
+    });
+}
+
+async function updateCategory(CategoryName, NewCategoryDescription) {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            `UPDATE Category SET CategoryDescription=:NewCategoryDescription WHERE CategoryName=:CategoryName`,
+            [NewCategoryDescription, CategoryName],
+            { autoCommit: true }
+        );
+
+        console.log('Updated Category Successfully');
+        return result.rowsAffected && result.rowsAffected > 0;
+    }).catch((error) => {
+        console.error('Database error:', error);
+        return false;
+    });
+}
+
+async function deleteCategory(CategoryName) {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            'DELETE FROM Category WHERE CategoryName=:CategoryName',
+            [CategoryName],
+            { autoCommit: true }
+        );
+
+        console.log('Deleted Category Successfully');
+        return result.rowsAffected && result.rowsAffected > 0;;
+    }).catch((error) => {
+        console.error('Database error:', error);
+        return false;
+    });
+}
+
+async function insertRecipeIntoCategory(RecipeID, CategoryName) {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            `INSERT INTO RecipeHasCategory (RecipeID, CategoryName) VALUES (:RecipeID, :CategoryName)`,
+            [RecipeID, CategoryName],
+            { autoCommit: true }
+        );
+
+        console.log('Inserted Recipe into Category Successfully');
+        return result.rowsAffected && result.rowsAffected > 0;
+    }).catch((error) => {
+        console.error('Database error:', error);
+        return false;
+    });
+}
+
+async function deleteRecipeFromCategory(RecipeID, CategoryName) {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            'DELETE FROM RecipeHasCategory WHERE RecipeID=:RecipeID AND CategoryName=:CategoryName',
+            [RecipeID, CategoryName],
+            { autoCommit: true }
+        );
+
+        console.log('Deleted Recipe from Category Successfully');
         return result.rowsAffected && result.rowsAffected > 0;;
     }).catch((error) => {
         console.error('Database error:', error);
@@ -382,8 +477,10 @@ async function validateUsername(Username) {
             [Username]
         )
 
+        console.log('Username Validated Successfully');
         return result.rows[0][0] > 0;
-    }).catch(() => {
+    }).catch((error) => {
+        console.error('Database error:', error);
         return false;
     });
 }
@@ -404,10 +501,10 @@ async function initiateTables() {
             }
         }
 
-        console.log('Tables Initialized Successfully')
-
+        console.log('Database Tables Initialized Successfully');
         return true;
-    }).catch(() => {
+    }).catch((error) => {
+        console.error('Database error:', error);
         return false;
     });
 }
@@ -434,6 +531,11 @@ module.exports = {
     insertRecipeStep,
     updateRecipeStep,
     deleteRecipeStep,
+    insertCategory,
+    updateCategory,
+    deleteCategory,
+    insertRecipeIntoCategory,
+    deleteRecipeFromCategory,
 
     // Ingredient Centric
 

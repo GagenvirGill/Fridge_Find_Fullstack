@@ -144,7 +144,7 @@ CREATE TABLE RecipeHasCategory (
     CategoryName VARCHAR2(50),
     PRIMARY KEY (RecipeID, CategoryName),
     FOREIGN KEY (RecipeID) REFERENCES Recipe(RecipeID) ON DELETE CASCADE,
-    FOREIGN KEY (CategoryName) REFERENCES Category(CategoryName)
+    FOREIGN KEY (CategoryName) REFERENCES Category(CategoryName) ON DELETE CASCADE
 );
 
 CREATE TABLE RecipeList (
@@ -160,7 +160,7 @@ CREATE TABLE RecipeListHasRecipe (
     RecipeID NUMBER,
     PRIMARY KEY (RecipeListID, RecipeID),
     FOREIGN KEY (RecipeID) REFERENCES Recipe(RecipeID) ON DELETE CASCADE,
-    FOREIGN KEY (RecipeListID) REFERENCES RecipeList(RecipeListID)
+    FOREIGN KEY (RecipeListID) REFERENCES RecipeList(RecipeListID) ON DELETE CASCADE
 );
 
 

@@ -68,7 +68,7 @@
     </form>
     <div id="insertRecipeResultMsg"></div>
 
-    <h3>Update a Recipe's Name and/or PrivacyLevel</h3>
+    <h3>Update a Recipe</h3>
     <p>The values are case sensitive and if you enter in the wrong case, the update statement will not do anything.</p>
     <form id="updateRecipe">
         Recipe ID: <input type="number" id="updateRecipeID" placeholder="Enter RecipeID" required> <br><br>
@@ -218,6 +218,50 @@
         <button type="submit"> Delete Recipe Step </button><br>
     </form>
     <div id="deleteRecipeStepResultMsg"></div>
+
+    <h3>Create a Category</h3>
+    <form id="insertCategory">
+        Category Name: <input type="text" id="insertCategoryName" placeholder="Enter Category Name" maxlength="50" required> <br><br>
+        Category Description: <input type="text" id="insertCategoryDescription" placeholder="Enter Category Description" maxlength="100"> <br><br>
+
+        <button type="submit"> Create Category </button><br>
+    </form>
+    <div id="insertCategoryResultMsg"></div>
+
+    <h3>Update a Category</h3>
+    <form id="updateCategory">
+        Category Name: <input type="text" id="updateCategoryName" placeholder="Enter Category Name" maxlength="50" required> <br><br>
+        New Category Description: <input type="text" id="updateCategoryDescription" placeholder="Enter Category Description" maxlength="100" required> <br><br>
+
+        <button type="submit"> Update Category </button><br>
+    </form>
+    <div id="updateCategoryResultMsg"></div>
+
+    <h3>Delete a Category</h3>
+    <form id="deleteCategory">
+        Category Name: <input type="text" id="deleteCategoryName" placeholder="Enter Category Name" maxlength="50" required> <br><br>
+
+        <button type="submit"> Delete Category </button><br>
+    </form>
+    <div id="deleteCategoryResultMsg"></div>
+
+    <h3>Add a Recipe to a Category</h3>
+    <form id="insertRecipeToCategory">
+        Recipe ID: <input type="number" id="insertRecipeToCategoryRecipeID" placeholder="Enter Recipe ID" required> <br><br>
+        Category Name: <input type="text" id="insertRecipeToCategoryName" placeholder="Enter Category Name" maxlength="50" required> <br><br>
+
+        <button type="submit"> Add Recipe to Category </button><br>
+    </form>
+    <div id="addARecipeToCategoryResultMsg"></div>
+
+    <h3>Remove a Recipe from a Category</h3>
+    <form id="deleteRecipeFromCategory">
+        Recipe ID: <input type="number" id="deleteRecipeFromCategoryRecipeID" placeholder="Enter Recipe ID" required> <br><br>
+        Category Name: <input type="text" id="deleteRecipeFromCategoryName" placeholder="Enter Category Name" maxlength="50" required> <br><br>
+
+        <button type="submit"> Remove Recipe from Category </button><br>
+    </form>
+    <div id="deleteARecipeFromCategoryResultMsg"></div>
 
     <br><hr><br> <!-- ========================================================================= -->
     <h2> Ingredient Centric </h2>

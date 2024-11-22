@@ -443,6 +443,139 @@ async function deleteRecipeStep(event) {
     }
 }
 
+async function insertCategory(event) {
+    event.preventDefault();
+
+    const categoryNameValue = document.getElementById('insertCategoryName').value;
+    const categoryDescriptionValue = document.getElementById('insertCategoryDescription').value;
+
+    const response = await fetch('/insert-category', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            CategoryName: categoryNameValue,
+            categoryDescription: categoryDescriptionValue
+        })
+    });
+
+    const responseData = await response.json();
+    const messageElement = document.getElementById('insertCategoryResultMsg');
+
+    if (responseData.success) {
+        messageElement.textContent = "Category Data inserted successfully!";
+    } else {
+        messageElement.textContent = "Error inserting Category Data";
+    }
+}
+
+async function updateCategory(event) {
+    event.preventDefault();
+
+    const categoryNameValue = document.getElementById('updateCategoryName').value;
+    const newCategoryDescriptionValue = document.getElementById('updateCategoryDescription').value;
+
+    const response = await fetch('/update-category', {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            CategoryName: categoryNameValue,
+            NewCategoryDescription: newCategoryDescriptionValue
+        })
+    });
+
+    const responseData = await response.json();
+    const messageElement = document.getElementById('updateCategoryResultMsg');
+
+    if (responseData.success) {
+        messageElement.textContent = "Category updated successfully!";
+    } else {
+        messageElement.textContent = "Error updating category!";
+    }
+}
+
+async function deleteCategory(event) {
+    event.preventDefault();
+
+    const categoryNameValue = document.getElementById('deleteCategoryName').value;
+
+    const response = await fetch('/delete-category', {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            CategoryName: categoryNameValue
+        })
+    });
+
+    const responseData = await response.json();
+    const messageElement = document.getElementById('deleteCategoryResultMsg');
+
+    if (responseData.success) {
+        messageElement.textContent = "Category deleted successfully!";
+    } else {
+        messageElement.textContent = "Error deleting category!";
+    }
+}
+
+async function insertRecipeIntoCategory(event) {
+    event.preventDefault();
+
+    const recipeIDValue = document.getElementById('insertRecipeToCategoryRecipeID').value;
+    const categoryNameValue = document.getElementById('insertRecipeToCategoryName').value;
+
+    const response = await fetch('/insert-recipe-into-category', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            RecipeID: recipeIDValue,
+            CategoryName: categoryNameValue
+        })
+    });
+
+    const responseData = await response.json();
+    const messageElement = document.getElementById('addARecipeToCategoryResultMsg');
+
+    if (responseData.success) {
+        messageElement.textContent = "Recipe added to Category successfully!";
+    } else {
+        messageElement.textContent = "Error adding Recipe data to Category";
+    }
+}
+
+async function deleteRecipeFromCategory(event) {
+    event.preventDefault();
+
+    const recipeIDValue = document.getElementById('deleteRecipeFromCategoryRecipeID').value;
+    const categoryNameValue = document.getElementById('deleteRecipeFromCategoryName').value;
+
+    const response = await fetch('/delete-recipe-from-category', {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            RecipeID: recipeIDValue,
+            CategoryName: categoryNameValue
+        })
+    });
+
+    const responseData = await response.json();
+    const messageElement = document.getElementById('deleteARecipeFromCategoryResultMsg');
+
+    if (responseData.success) {
+        messageElement.textContent = "Recipe deleted from Category successfully!";
+    } else {
+        messageElement.textContent = "Error deleting recipe from category!";
+    }
+}
+
 
 // ----------------------------------------------------------
 // Ingredient Centric methods
@@ -492,6 +625,11 @@ window.onload = function () {
     document.getElementById("insertRecipeStep").addEventListener("submit", insertRecipeStep);
     document.getElementById("updateRecipeStep").addEventListener("submit", updateRecipeStep);
     document.getElementById("deleteRecipeStep").addEventListener("submit", deleteRecipeStep);
+    document.getElementById("insertCategory").addEventListener("submit", insertCategory);
+    document.getElementById("updateCategory").addEventListener("submit", updateCategory);
+    document.getElementById("deleteCategory").addEventListener("submit", deleteCategory);
+    document.getElementById("insertRecipeToCategory").addEventListener("submit", insertRecipeIntoCategory);
+    document.getElementById("deleteRecipeFromCategory").addEventListener("submit", deleteRecipeFromCategory);
 
     // ingredient centric
 

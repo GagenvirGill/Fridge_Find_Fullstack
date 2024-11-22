@@ -136,6 +136,56 @@ router.delete("/delete-recipe-step", async (req, res) => {
     }
 });
 
+router.post("/insert-category", async (req, res) => {
+    const { CategoryName, CategoryDescription } = req.body;
+    const insertResult = await appService.insertCategory(CategoryName, CategoryDescription);
+    if (insertResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+router.patch("/update-category", async (req, res) => {
+    const { CategoryName, NewCategoryDescription } = req.body;
+    const updateResult = await appService.updateCategory(CategoryName, NewCategoryDescription);
+    if (updateResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+router.delete("/delete-category", async (req, res) => {
+    const { CategoryName } = req.body;
+    const deleteResult = await appService.deleteCategory(CategoryName);
+    if (deleteResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+router.post("/insert-recipe-into-category", async (req, res) => {
+    const { RecipeID, CategoryName } = req.body;
+    const insertResult = await appService.insertRecipeIntoCategory(RecipeID, CategoryName);
+    if (insertResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+router.delete("/delete-recipe-from-category", async (req, res) => {
+    const { RecipeID, CategoryName } = req.body;
+    const deleteResult = await appService.deleteRecipeFromCategory(RecipeID, CategoryName);
+    if (deleteResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
 
 // ----------------------------------------------------------
 // Ingredient Centric endpoints
