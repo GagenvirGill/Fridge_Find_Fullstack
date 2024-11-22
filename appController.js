@@ -80,6 +80,26 @@ router.post("/insert-recipe-ingredient", async (req, res) => {
     }
 });
 
+router.patch("/update-recipe-ingredient", async (req, res) => {
+    const { RecipeIngredientID, RecipeID, RecipeIngredientName, Amount, UnitOfMeasurement } = req.body;
+    const updateResult = await appService.updateRecipeIngredient(RecipeIngredientID, RecipeID, RecipeIngredientName, Amount, UnitOfMeasurement);
+    if (updateResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+router.delete("/delete-recipe-ingredient", async (req, res) => {
+    const { RecipeIngredientID, RecipeID } = req.body;
+    const deleteResult = await appService.deleteRecipeIngredient(RecipeIngredientID, RecipeID);
+    if (deleteResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
 
 // ----------------------------------------------------------
 // Ingredient Centric endpoints

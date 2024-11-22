@@ -233,6 +233,61 @@ async function insertRecipeIngredient(RecipeIngredientID, RecipeIngredientName, 
     });
 }
 
+async function updateRecipeIngredient(RecipeIngredientID, RecipeID, NewRecipeIngredientName, NewAmount, NewUnitOfMeasurement) {
+    let queryParams = [];
+    let querySetClauses = [];
+
+    if (NewRecipeIngredientName != "") {
+        querySetClauses.push(`IngredientName=:NewRecipeIngredientName`);
+        queryParams.push(NewRecipeIngredientName);
+    }
+    if (NewAmount != "") {
+        querySetClauses.push(`Amount=:NewAmount`);
+        queryParams.push(NewAmount);
+    }
+    if (NewUnitOfMeasurement != "Do Not Change") {
+        querySetClauses.push(`UnitOfMeasurement=:NewUnitOfMeasurement`);
+        queryParams.push(NewUnitOfMeasurement);
+    }
+
+    let query = `UPDATE RecipeIngredient SET `;
+    query += querySetClauses.join(`, `);
+    query += ` WHERE IngredientID=:RecipeIngredientID AND RecipeID=:RecipeID`;
+    queryParams.push(RecipeIngredientID);
+    queryParams.push(RecipeID);
+
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            query,
+            queryParams,
+            { autoCommit: true }
+        );
+
+        console.log('Updated Recipe Ingredient Successfully')
+        return result.rowsAffected && result.rowsAffected > 0;
+    }).catch((error) => {
+        console.error('Database error:', error);
+        return false;
+    });
+}
+
+async function deleteRecipeIngredient(RecipeIngredientID, RecipeID) {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            'DELETE FROM RecipeIngredient WHERE IngredientID=:RecipeIngredientID AND RecipeID=:RecipeID',
+            [RecipeIngredientID, RecipeID],
+            { autoCommit: true }
+        );
+        console.log('Deleted Recipe Ingredient Successfully')
+        return result.rowsAffected && result.rowsAffected > 0;;
+    }).catch((error) => {
+        console.error('Database error:', error);
+        return false;
+    });
+}
+
+
+
 
 // ----------------------------------------------------------
 // Ingredient Centric service
@@ -308,6 +363,8 @@ module.exports = {
     fetchRecipeIngredientsForRecipeFromDb,
     fetchRecipesName,
     insertRecipeIngredient,
+    updateRecipeIngredient,
+    deleteRecipeIngredient,
 
     // Ingredient Centric
 

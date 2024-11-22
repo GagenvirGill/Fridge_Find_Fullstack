@@ -136,6 +136,40 @@
     </form>
     <div id="insertRecipeIngredientResultMsg"></div>
 
+    <h3>Update a Recipe Ingredient</h3>
+    <form id="updateRecipeIngredient">
+        Recipe Ingredient ID: <input type="number" id="updateRecipeIngredientID" placeholder="Enter Recipe Ingredient ID" required> <br><br>
+        Recipe ID: <input type="number" id="updateRecipeIngredientRecipeID" placeholder="Enter Recipe ID" required> <br><br>
+        Ingredient Name: <input type="text" id="updateRecipeIngredientName" placeholder="Enter New Recipe Ingredient Name" maxlength="50"> <br><br>
+        Amount: <input type="number" id="updateRecipeIngredientAmount" placeholder="Enter Recipe Ingredient Amount"> <br><br>
+        Unit of Measurement: 
+        <select id="updateRecipeIngredientUnit">
+            <option value="Do Not Change">Do Not Change</option>
+            <option value="piece">piece</option>
+            <option value="milliliters">milliliters</option>
+            <option value="liters">liters</option>
+            <option value="ounces">ounces</option>
+            <option value="cups">cups</option>
+            <option value="grams">grams</option>
+            <option value="pounds">pounds</option>
+            <option value="kilograms">kilograms</option>
+            <option value="tablespoons">tablespoons</option>
+            <option value="teaspoons">teaspoons</option>
+        </select> <br><br>
+
+        <button type="submit"> Update </button> <br>
+    </form>
+    <div id="updateRecipeIngredientResultMsg"></div>
+
+    <h3>Delete a Recipe Ingredient</h3>
+    <form id="deleteRecipeIngredient">
+        Recipe Ingredient ID: <input type="number" id="deleteRecipeIngredientID" placeholder="Enter Recipe Ingredient ID" required> <br><br>
+        Recipe ID: <input type="number" id="deleteRecipeIngredientRecipeID" placeholder="Enter Recipe ID" required> <br><br>
+
+        <button type="submit"> Delete </button> <br>
+    </form>
+    <div id="deleteRecipeIngredientResultMsg"></div>
+
     <br><hr><br> <!-- ========================================================================= -->
     <h2> Ingredient Centric </h2>
 

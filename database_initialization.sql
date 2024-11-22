@@ -116,12 +116,13 @@ CREATE TABLE Recipe (
 );
 
 CREATE TABLE RecipeIngredient (
-    IngredientID NUMBER PRIMARY KEY,
+    IngredientID NUMBER,
     IngredientName VARCHAR2(50) NOT NULL,
     RecipeID NUMBER NOT NULL,
     Amount NUMBER NOT NULL CHECK (Amount > 0),
     UnitOfMeasurement VARCHAR2(20) NOT NULL CHECK (UnitOfMeasurement IN ('piece', 'milliliters', 'liters', 'ounces', 'cups', 'grams', 'pounds', 'kilograms', 'tablespoons',
 'teaspoons')),
+    PRIMARY KEY (IngredientID, RecipeID),
     FOREIGN KEY (RecipeID) REFERENCES Recipe(RecipeID) ON DELETE CASCADE
 );
 

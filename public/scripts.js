@@ -248,6 +248,66 @@ async function insertRecipeIngredient(event) {
     }
 }
 
+async function updateRecipeIngredient(event) {
+    event.preventDefault();
+
+    const recipeIngredientIDValue = document.getElementById('updateRecipeIngredientID').value;
+    const recipeIDValue = document.getElementById('updateRecipeIngredientRecipeID').value;
+    const newRecipeIngredientNameValue = document.getElementById('updateRecipeIngredientName').value;
+    const newRecipeIngredientAmountValue = document.getElementById('updateRecipeIngredientAmount').value;
+    const newRecipeIngredientUnitValue = document.getElementById('updateRecipeIngredientUnit').value;
+
+    const response = await fetch('/update-recipe-ingredient', {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            RecipeIngredientID: recipeIngredientIDValue,
+            RecipeID: recipeIDValue,
+            RecipeIngredientName: newRecipeIngredientNameValue,
+            Amount: newRecipeIngredientAmountValue,
+            UnitOfMeasurement: newRecipeIngredientUnitValue
+        })
+    });
+
+    const responseData = await response.json();
+    const messageElement = document.getElementById('updateRecipeIngredientResultMsg');
+
+    if (responseData.success) {
+        messageElement.textContent = "Recipe Ingredient updated successfully!";
+    } else {
+        messageElement.textContent = "Error updating recipe ingredient!";
+    }
+}
+
+async function deleteRecipeIngredient(event) {
+    event.preventDefault();
+
+    const recipeIngredientIDValue = document.getElementById('deleteRecipeIngredientID').value;
+    const recipeIDValue = document.getElementById('deleteRecipeIngredientRecipeID').value;
+
+    const response = await fetch('/delete-recipe-ingredient', {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            RecipeIngredientID: recipeIngredientIDValue,
+            RecipeID: recipeIDValue
+        })
+    });
+
+    const responseData = await response.json();
+    const messageElement = document.getElementById('deleteRecipeIngredientResultMsg');
+
+    if (responseData.success) {
+        messageElement.textContent = "Recipe Ingredient deleted successfully!";
+    } else {
+        messageElement.textContent = "Error deleting recipe ingredient!";
+    }
+}
+
 
 // ----------------------------------------------------------
 // Ingredient Centric methods
@@ -280,10 +340,6 @@ async function resetTables() {
 window.onload = function () {
     checkDbConnection();
     fetchTableData();
-    document.getElementById("resetDemotable").addEventListener("click", resetDemotable);
-    document.getElementById("insertDemotable").addEventListener("submit", insertDemotable);
-    document.getElementById("updataNameDemotable").addEventListener("submit", updateNameDemotable);
-    document.getElementById("countDemotable").addEventListener("click", countDemotable);
 
     // user centric
 
@@ -295,6 +351,8 @@ window.onload = function () {
     document.getElementById("deleteRecipe").addEventListener("submit", deleteRecipe);
     document.getElementById("fetchARecipesIngredients").addEventListener("submit", fetchAndDisplayARecipesIngredients);
     document.getElementById("insertRecipeIngredient").addEventListener("submit", insertRecipeIngredient);
+    document.getElementById("updateRecipeIngredient").addEventListener("submit", updateRecipeIngredient);
+    document.getElementById("deleteRecipeIngredient").addEventListener("submit", deleteRecipeIngredient);
 
     // ingredient centric
 
@@ -305,6 +363,5 @@ window.onload = function () {
 // General function to refresh the displayed table data. 
 // You can invoke this after any table-modifying operation to keep consistency.
 function fetchTableData() {
-    fetchAndDisplayUsers();
     fetchAndDisplayRecipes();
 }
