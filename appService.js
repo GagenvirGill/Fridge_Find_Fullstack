@@ -210,14 +210,6 @@ async function fetchRecipesName(RecipeID) {
 }
 
 async function insertRecipeIngredient(RecipeIngredientID, RecipeIngredientName, RecipeID, Amount, UnitOfMeasurement) {
-    // validate recipe
-    const isRecipeValid = await validateRecipe(RecipeID);
-
-    // If it doesnt return false
-    if (!isRecipeValid) {
-        return false;
-    }
-
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
             `INSERT INTO RecipeIngredient (IngredientID, IngredientName, RecipeID, Amount, UnitOfMeasurement) VALUES (:RecipeIngredientID, :RecipeIngredientName, :RecipeID, :Amount, :UnitOfMeasurement)`,
@@ -286,6 +278,92 @@ async function deleteRecipeIngredient(RecipeIngredientID, RecipeID) {
     });
 }
 
+async function fetchRecipeStepsForRecipe(RecipeID) {
+    const intRecipeID = parseInt(RecipeID, 10);
+
+    if (isNaN(intRecipeID)) {
+        return false;
+    }
+
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(`
+            SELECT rs.* 
+            FROM RecipeStep rs 
+            JOIN Recipe r ON r.RecipeID = rs.RecipeID 
+            WHERE rs.RecipeID=:RecipeID`,
+            [intRecipeID]
+        );
+        return result.rows;
+    }).catch(() => {
+        return [];
+    });
+}
+
+async function insertRecipeStep(RecipeID, StepNumber, StepInformation) {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            `INSERT INTO RecipeStep (RecipeID, StepNumber, StepInformation) VALUES (:RecipeID, :StepNumber, :StepInformation)`,
+            [RecipeID, StepNumber, StepInformation],
+            { autoCommit: true }
+        );
+
+        console.log('Inserted Recipe Step Successfully')
+        return result.rowsAffected && result.rowsAffected > 0;
+    }).catch((error) => {
+        console.error('Database error:', error);
+        return false;
+    });
+}
+
+async function updateRecipeStep(RecipeID, OldStepNumber, NewStepNumber, NewStepInformation) {
+    let queryParams = [];
+    let querySetClauses = [];
+
+    if (NewStepNumber != "") {
+        querySetClauses.push(`StepNumber=:NewStepNumber`);
+        queryParams.push(NewStepNumber);
+    }
+    if (NewStepInformation != "") {
+        querySetClauses.push(`StepInformation=:NewStepInformation`);
+        queryParams.push(NewStepInformation);
+    }
+
+    let query = `UPDATE RecipeStep SET `;
+    query += querySetClauses.join(`, `);
+    query += ` WHERE StepNumber=:OldStepNumber AND RecipeID=:RecipeID`;
+    queryParams.push(OldStepNumber);
+    queryParams.push(RecipeID);
+
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            query,
+            queryParams,
+            { autoCommit: true }
+        );
+
+        console.log('Updated Recipe Step Successfully')
+        return result.rowsAffected && result.rowsAffected > 0;
+    }).catch((error) => {
+        console.error('Database error:', error);
+        return false;
+    });
+}
+
+async function deleteRecipeStep(RecipeID, StepNumber) {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            'DELETE FROM RecipeStep WHERE StepNumber=:StepNumber AND RecipeID=:RecipeID',
+            [StepNumber, RecipeID],
+            { autoCommit: true }
+        );
+        console.log('Deleted Recipe Step Successfully')
+        return result.rowsAffected && result.rowsAffected > 0;;
+    }).catch((error) => {
+        console.error('Database error:', error);
+        return false;
+    });
+}
+
 
 
 
@@ -302,19 +380,6 @@ async function validateUsername(Username) {
         const result = await connection.execute(
             `SELECT COUNT(*) AS count FROM AppUser WHERE Username=:Username`,
             [Username]
-        )
-
-        return result.rows[0][0] > 0;
-    }).catch(() => {
-        return false;
-    });
-}
-
-async function validateRecipe(RecipeID) {
-    return await withOracleDB(async (connection) => {
-        const result = await connection.execute(
-            `SELECT COUNT(*) AS count FROM Recipe WHERE RecipeID=:RecipeID`,
-            [RecipeID]
         )
 
         return result.rows[0][0] > 0;
@@ -365,11 +430,14 @@ module.exports = {
     insertRecipeIngredient,
     updateRecipeIngredient,
     deleteRecipeIngredient,
+    fetchRecipeStepsForRecipe,
+    insertRecipeStep,
+    updateRecipeStep,
+    deleteRecipeStep,
 
     // Ingredient Centric
 
     // General
     validateUsername,
-    validateRecipe,
     initiateTables,
 };

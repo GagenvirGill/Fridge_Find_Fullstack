@@ -170,6 +170,55 @@
     </form>
     <div id="deleteRecipeIngredientResultMsg"></div>
 
+    <h3>Steps for a Recipe</h3>
+    <form id="fetchARecipesStep">
+        Recipe ID: <input type="number" id="getRecipeIDForItsSteps" placeholder="Enter RecipeID" required> <br><br>
+
+        <button type="submit"> Get Steps </button> <br>
+    </form>
+    <div id="recipesStepsNameMsg"></div>
+    <table id="recipesSteps" border="1">
+        <thead>
+            <tr>
+                <th>Recipe ID</th>
+                <th>Step Number</th>
+                <th>Step Information</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <h3>Add a Recipe Step</h3>
+    <form id="insertRecipeStep">
+        Recipe ID: <input type="number" id="insertRecipeStepsRecipeID" placeholder="Enter Recipe ID" required> <br><br>
+        Step Number: <input type="number" id="insertRecipeStepNumber" placeholder="Enter Step Number" required> <br><br>
+        Step Information: <input type="text" id="insertRecipeStepInformation" placeholder="Enter Step Information" maxlength="250" required> <br><br>
+
+        <button type="submit"> Create Recipe Step </button> <br>
+    </form>
+    <div id="insertRecipeStepResultMsg"></div>
+
+    <h3>Update a Recipe Step</h3>
+    <form id="updateRecipeStep">
+        Recipe ID: <input type="number" id="updateRecipeStepsRecipeID" placeholder="Enter Recipe ID" required> <br><br>
+        Old Step Number: <input type="number" id="updateOldRecipeStepNumber" placeholder="Enter Old Step Number" required> <br><br>
+        New Step Number: <input type="number" id="updateNewRecipeStepNumber" placeholder="Enter New Step Number"> <br><br>
+        Step Information: <input type="text" id="updateRecipeStepInformation" placeholder="Enter Step Information" maxlength="250"> <br><br>
+
+        <button type="submit"> Update Recipe Step </button> <br>
+    </form>
+    <div id="updateRecipeStepResultMsg"></div>
+
+    <h3>Delete a Recipe Step</h3>
+    <form id="deleteRecipeStep">
+        Recipe ID: <input type="number" id="deleteRecipeStepsRecipeID" placeholder="Enter Recipe ID" required> <br><br>
+        Step Number: <input type="number" id="deleteRecipeStepNumber" placeholder="Enter Step Number" required> <br><br>
+
+        <button type="submit"> Delete Recipe Step </button><br>
+    </form>
+    <div id="deleteRecipeStepResultMsg"></div>
+
     <br><hr><br> <!-- ========================================================================= -->
     <h2> Ingredient Centric </h2>
 

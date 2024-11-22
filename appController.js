@@ -100,6 +100,42 @@ router.delete("/delete-recipe-ingredient", async (req, res) => {
     }
 });
 
+router.get("/recipe-step-for-recipe", async (req, res) => {
+    const { RecipeID } = req.query;
+    const tableContent = await appService.fetchRecipeStepsForRecipe(RecipeID);
+    res.json({ data: tableContent });
+});
+
+router.post("/insert-recipe-step", async (req, res) => {
+    const { RecipeID, StepNumber, StepInformation } = req.body;
+    const insertResult = await appService.insertRecipeStep(RecipeID, StepNumber, StepInformation);
+    if (insertResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+router.patch("/update-recipe-step", async (req, res) => {
+    const { RecipeID, OldStepNumber, NewStepNumber, NewStepInformation } = req.body;
+    const updateResult = await appService.updateRecipeStep(RecipeID, OldStepNumber, NewStepNumber, NewStepInformation);
+    if (updateResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+router.delete("/delete-recipe-step", async (req, res) => {
+    const { RecipeID, StepNumber } = req.body;
+    const deleteResult = await appService.deleteRecipeStep(RecipeID, StepNumber);
+    if (deleteResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
 
 // ----------------------------------------------------------
 // Ingredient Centric endpoints

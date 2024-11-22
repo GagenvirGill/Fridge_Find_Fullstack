@@ -308,6 +308,141 @@ async function deleteRecipeIngredient(event) {
     }
 }
 
+async function fetchAndDisplayARecipesSteps(event) {
+    event.preventDefault();
+
+    const tableElement = document.getElementById('recipesSteps');
+    const tableBody = tableElement.querySelector('tbody');
+    const recipeIDValue = document.getElementById('getRecipeIDForItsSteps').value;
+
+    const tableResponse = await fetch(`/recipe-step-for-recipe?RecipeID=${recipeIDValue}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+
+    const tableResponseData = await tableResponse.json();
+
+    const nameResponse = await fetch(`/recipe-name?RecipeID=${recipeIDValue}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+
+    const nameResponseData = await nameResponse.json();
+
+    const recipeStepContent = tableResponseData.data;
+    const recipeName = nameResponseData.RecipeName;
+
+    const messageElement = document.getElementById('recipesStepsNameMsg');
+    if (recipeName.length > 0) {
+        messageElement.textContent = `${recipeName} Steps Successfully Retrieved`;
+    } else {
+        messageElement.textContent = "Error getting the steps";
+    }
+
+    if (tableBody) {
+        tableBody.innerHTML = '';
+    }
+
+    recipeStepContent.forEach(user => {
+        const row = tableBody.insertRow();
+        user.forEach((field, index) => {
+            const cell = row.insertCell(index);
+            cell.textContent = field;
+        });
+    });
+}
+
+async function insertRecipeStep(event) {
+    event.preventDefault();
+
+    const recipeIDValue = document.getElementById('insertRecipeStepsRecipeID').value;
+    const recipeStepNumberValue = document.getElementById('insertRecipeStepNumber').value;
+    const recipeStepInformation = document.getElementById('insertRecipeStepInformation').value;
+
+    const response = await fetch('/insert-recipe-step', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            RecipeID: recipeIDValue,
+            StepNumber: recipeStepNumberValue,
+            StepInformation: recipeStepInformation
+        })
+    });
+
+    const responseData = await response.json();
+    const messageElement = document.getElementById('insertRecipeStepResultMsg');
+
+    if (responseData.success) {
+        messageElement.textContent = "Recipe Step Data inserted successfully!";
+    } else {
+        messageElement.textContent = "Error inserting Recipe Step Data";
+    }
+}
+
+async function updateRecipeStep(event) {
+    event.preventDefault();
+
+    const recipeIDValue = document.getElementById('updateRecipeStepsRecipeID').value;
+    const oldRecipeStepNumberValue = document.getElementById('updateOldRecipeStepNumber').value;
+    const newRecipeStepNumberValue = document.getElementById('updateNewRecipeStepNumber').value;
+    const newRecipeStepInformation = document.getElementById('updateRecipeStepInformation').value;
+
+    const response = await fetch('/update-recipe-step', {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            RecipeID: recipeIDValue,
+            OldStepNumber: oldRecipeStepNumberValue,
+            NewStepNumber: newRecipeStepNumberValue,
+            NewStepInformation: newRecipeStepInformation
+        })
+    });
+
+    const responseData = await response.json();
+    const messageElement = document.getElementById('updateRecipeStepResultMsg');
+
+    if (responseData.success) {
+        messageElement.textContent = "Recipe Step updated successfully!";
+    } else {
+        messageElement.textContent = "Error updating recipe step!";
+    }
+}
+
+async function deleteRecipeStep(event) {
+    event.preventDefault();
+
+    const recipeStepNumberValue = document.getElementById('deleteRecipeStepNumber').value;
+    const recipeIDValue = document.getElementById('deleteRecipeStepsRecipeID').value;
+
+    const response = await fetch('/delete-recipe-step', {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            RecipeID: recipeIDValue,
+            StepNumber: recipeStepNumberValue
+        })
+    });
+
+    const responseData = await response.json();
+    const messageElement = document.getElementById('deleteRecipeStepResultMsg');
+
+    if (responseData.success) {
+        messageElement.textContent = "Recipe Step deleted successfully!";
+    } else {
+        messageElement.textContent = "Error deleting recipe step!";
+    }
+}
+
 
 // ----------------------------------------------------------
 // Ingredient Centric methods
@@ -353,6 +488,10 @@ window.onload = function () {
     document.getElementById("insertRecipeIngredient").addEventListener("submit", insertRecipeIngredient);
     document.getElementById("updateRecipeIngredient").addEventListener("submit", updateRecipeIngredient);
     document.getElementById("deleteRecipeIngredient").addEventListener("submit", deleteRecipeIngredient);
+    document.getElementById("fetchARecipesStep").addEventListener("submit", fetchAndDisplayARecipesSteps);
+    document.getElementById("insertRecipeStep").addEventListener("submit", insertRecipeStep);
+    document.getElementById("updateRecipeStep").addEventListener("submit", updateRecipeStep);
+    document.getElementById("deleteRecipeStep").addEventListener("submit", deleteRecipeStep);
 
     // ingredient centric
 
