@@ -160,7 +160,175 @@ async function updateUser(username, newProfilePicture, newEmail, newFullName, ne
     });
 }
 
+async function viewUser(username) {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            'SELECT * FROM AppUser WHERE Username = :username',
+            [username]
+        );
 
+        return result.rows.length > 0 ? result.rows[0] : null;
+    }).catch((error) => {
+        console.error('Error fetching user:', error);
+        return null;
+    });
+}
+
+async function fetchFriends(username) {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            `SELECT * FROM Friends WHERE Username1 = :username OR Username2 = :username`,
+            [username]
+        );
+
+        return result.rows;
+    }).catch((error) => {
+        console.error('Error fetching friends:', error);
+        return [];
+    });
+}
+
+async function insertFriend(username1, username2) {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            `INSERT INTO Friends (Username1, Username2, DateAndTimeCreated)
+             VALUES (:username1, :username2, SYSTIMESTAMP)`,
+            [username1, username2],
+            { autoCommit: true }
+        );
+
+        return result.rowsAffected && result.rowsAffected > 0;
+    }).catch((error) => {
+        console.error('Error inserting friend:', error);
+        return false;
+    });
+}
+
+async function deleteFriend(username1, username2) {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            `DELETE FROM Friends
+             WHERE (Username1 = :username1 AND Username2 = :username2)
+                OR (Username1 = :username2 AND Username2 = :username1)`,
+            [username1, username2],
+            { autoCommit: true }
+        );
+
+        return result.rowsAffected && result.rowsAffected > 0;
+    }).catch((error) => {
+        console.error('Error deleting friend:', error);
+        return false;
+    });
+}
+
+async function areTheyFriends(username1, username2) {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            `SELECT * FROM Friends
+             WHERE (Username1 = :username1 AND Username2 = :username2)
+                OR (Username1 = :username2 AND Username2 = :username1)`,
+            [username1, username2]
+        );
+
+        return result.rows.length > 0;
+    }).catch((error) => {
+        console.error('Error checking friend relationship:', error);
+        return false;
+    });
+}
+
+async function fetchNotificationMessages(username) {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            `SELECT * FROM NotificationMessage WHERE Username = :username`,
+            [username]
+        );
+
+        return result.rows;
+    }).catch((error) => {
+        console.error('Error fetching notification messages:', error);
+        return [];
+    });
+}
+
+async function insertNotificationMessage(username, messageText) {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            `INSERT INTO NotificationMessage (Username, DateAndTimeSent, MessageText)
+             VALUES (:username, SYSTIMESTAMP, :messageText)`,
+            [username, messageText],
+            { autoCommit: true }
+        );
+
+        return result.rowsAffected && result.rowsAffected > 0;
+    }).catch((error) => {
+        console.error('Error inserting notification message:', error);
+        return false;
+    });
+}
+
+async function deleteNotificationMessage(username, dateAndTimeSent) {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            `DELETE FROM NotificationMessage WHERE Username = :username AND DateAndTimeSent = :dateAndTimeSent`,
+            [username, dateAndTimeSent],
+            { autoCommit: true }
+        );
+
+        return result.rowsAffected && result.rowsAffected > 0;
+    }).catch((error) => {
+        console.error('Error deleting notification message:', error);
+        return false;
+    });
+}
+
+async function fetchNotifications(username) {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            `SELECT * FROM Notifications WHERE Username = :username`,
+            [username]
+        );
+
+        return result.rows;
+    }).catch((error) => {
+        console.error('Error fetching notifications:', error);
+        return [];
+    });
+}
+
+async function insertNotification(notificationID, username) {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            `INSERT INTO Notifications (NotificationID, DateAndTimeSent, Username)
+             SELECT :notificationID, DateAndTimeSent, :username
+             FROM NotificationMessage
+             WHERE Username = :username
+             ORDER BY DateAndTimeSent DESC FETCH FIRST 1 ROWS ONLY`,
+            [notificationID, username, username],
+            { autoCommit: true }
+        );
+
+        return result.rowsAffected && result.rowsAffected > 0;
+    }).catch((error) => {
+        console.error('Error inserting notification:', error);
+        return false;
+    });
+}
+
+async function deleteNotification(notificationID) {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            `DELETE FROM Notifications WHERE NotificationID = :notificationID`,
+            [notificationID],
+            { autoCommit: true }
+        );
+
+        return result.rowsAffected && result.rowsAffected > 0;
+    }).catch((error) => {
+        console.error('Error deleting notification:', error);
+        return false;
+    });
+}
 
 // ----------------------------------------------------------
 // Recipe Centric service
