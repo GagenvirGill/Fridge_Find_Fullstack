@@ -33,6 +33,7 @@ FROM AllergyList
 GROUP BY PrivacyLevel
 HAVING MAX(LENGTH(Description)) > 50;
 ---- Nested Aggregation with GROUP BY TODO
+SELECT PrivacyLevel
 ---- Division TODO
 
 -- AllergicIngredient Queries
@@ -158,5 +159,9 @@ SELECT UnitOfMeasurement, Amount
 FROM KitchenIngredient 
 WHERE UnitOfMeasurement = 'piece' AND Name = 'Apple'
 ---- Join 
--- Select IngredientListID, IngredientI
+
+---- Aggregation with GROUP BY
+---- Aggregation with HAVING
+---- Nested Aggregation with GROUP BY
+---- Division TODO
 
