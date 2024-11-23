@@ -46,9 +46,6 @@ async function checkDbConnection() {
 
 // Display all Recipes
 async function fetchAndDisplayRecipes() {
-    const tableElement = document.getElementById('recipe');
-    const tableBody = tableElement.querySelector('tbody');
-
     const response = await fetch('/recipe', {
         method: 'GET'
     });
@@ -56,13 +53,68 @@ async function fetchAndDisplayRecipes() {
     const responseData = await response.json();
     const recipeContent = responseData.data;
 
+    const tableElement = document.getElementById('recipe');
+    const tableBody = tableElement.querySelector('tbody');
+
     if (tableBody) {
         tableBody.innerHTML = '';
     }
 
-    recipeContent.forEach(user => {
+    recipeContent.forEach(recipe => {
         const row = tableBody.insertRow();
-        user.forEach((field, index) => {
+        recipe.forEach((field, index) => {
+            const cell = row.insertCell(index);
+            cell.textContent = field;
+        });
+    });
+}
+
+async function fetchAndDisplayCategories() {
+    const response = await fetch('/category', {
+        method: 'GET'
+    });
+
+    const responseData = await response.json();
+    const categoryContent = responseData.data;
+
+    const categoriesSelectBar = document.getElementById('filterRecipesCategories');
+    categoriesSelectBar.innerHTML = '';
+
+    categoryContent.forEach(category => {
+        const option = document.createElement('option');
+        option.value = category;
+        option.textContent = category;
+        categoriesSelectBar.appendChild(option);
+    });
+}
+
+async function fetchAndDisplayFilteredRecipes(event) {
+    event.preventDefault();
+
+    const categoriesSelectBar = document.getElementById('filterRecipesCategories');
+    const tableElement = document.getElementById('filteredRecipeTable');
+    const tableBody = tableElement.querySelector('tbody');
+
+    const selectedCategories = Array.from(categoriesSelectBar.selectedOptions).map(option => option.value);
+
+    const response = await fetch('/filtered-recipes', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            Categories: selectedCategories
+        })
+    });
+
+    const responseData = await response.json();
+    const filteredRecipes = responseData.data;
+
+    tableBody.innerHTML = '';
+
+    filteredRecipes.forEach(recipe => {
+        const row = tableBody.insertRow();
+        recipe.forEach((field, index) => {
             const cell = row.insertCell(index);
             cell.textContent = field;
         });
@@ -190,6 +242,7 @@ async function fetchAndDisplayARecipesIngredients(event) {
     const messageElement = document.getElementById('recipesIngredientsNameMsg');
     if (recipeName.length > 0) {
         messageElement.textContent = `${recipeName} Ingredients Successfully Retrieved`;
+        fetchTableData();
     } else {
         messageElement.textContent = "Error getting the ingredients";
     }
@@ -243,6 +296,7 @@ async function insertRecipeIngredient(event) {
 
     if (responseData.success) {
         messageElement.textContent = "Recipe Ingredient Data inserted successfully!";
+        fetchTableData();
     } else {
         messageElement.textContent = "Error inserting Recipe Ingredient Data";
     }
@@ -276,6 +330,7 @@ async function updateRecipeIngredient(event) {
 
     if (responseData.success) {
         messageElement.textContent = "Recipe Ingredient updated successfully!";
+        fetchTableData();
     } else {
         messageElement.textContent = "Error updating recipe ingredient!";
     }
@@ -303,6 +358,7 @@ async function deleteRecipeIngredient(event) {
 
     if (responseData.success) {
         messageElement.textContent = "Recipe Ingredient deleted successfully!";
+        fetchTableData();
     } else {
         messageElement.textContent = "Error deleting recipe ingredient!";
     }
@@ -339,6 +395,7 @@ async function fetchAndDisplayARecipesSteps(event) {
     const messageElement = document.getElementById('recipesStepsNameMsg');
     if (recipeName.length > 0) {
         messageElement.textContent = `${recipeName} Steps Successfully Retrieved`;
+        fetchTableData();
     } else {
         messageElement.textContent = "Error getting the steps";
     }
@@ -380,6 +437,7 @@ async function insertRecipeStep(event) {
 
     if (responseData.success) {
         messageElement.textContent = "Recipe Step Data inserted successfully!";
+        fetchTableData();
     } else {
         messageElement.textContent = "Error inserting Recipe Step Data";
     }
@@ -411,6 +469,7 @@ async function updateRecipeStep(event) {
 
     if (responseData.success) {
         messageElement.textContent = "Recipe Step updated successfully!";
+        fetchTableData();
     } else {
         messageElement.textContent = "Error updating recipe step!";
     }
@@ -438,6 +497,7 @@ async function deleteRecipeStep(event) {
 
     if (responseData.success) {
         messageElement.textContent = "Recipe Step deleted successfully!";
+        fetchTableData();
     } else {
         messageElement.textContent = "Error deleting recipe step!";
     }
@@ -465,6 +525,7 @@ async function insertCategory(event) {
 
     if (responseData.success) {
         messageElement.textContent = "Category Data inserted successfully!";
+        fetchTableData();
     } else {
         messageElement.textContent = "Error inserting Category Data";
     }
@@ -492,6 +553,7 @@ async function updateCategory(event) {
 
     if (responseData.success) {
         messageElement.textContent = "Category updated successfully!";
+        fetchTableData();
     } else {
         messageElement.textContent = "Error updating category!";
     }
@@ -517,6 +579,7 @@ async function deleteCategory(event) {
 
     if (responseData.success) {
         messageElement.textContent = "Category deleted successfully!";
+        fetchTableData();
     } else {
         messageElement.textContent = "Error deleting category!";
     }
@@ -544,6 +607,7 @@ async function insertRecipeIntoCategory(event) {
 
     if (responseData.success) {
         messageElement.textContent = "Recipe added to Category successfully!";
+        fetchTableData();
     } else {
         messageElement.textContent = "Error adding Recipe data to Category";
     }
@@ -571,6 +635,7 @@ async function deleteRecipeFromCategory(event) {
 
     if (responseData.success) {
         messageElement.textContent = "Recipe deleted from Category successfully!";
+        fetchTableData();
     } else {
         messageElement.textContent = "Error deleting recipe from category!";
     }
@@ -613,7 +678,6 @@ window.onload = function () {
 
 
     // recipe centric
-
     document.getElementById("insertRecipe").addEventListener("submit", insertRecipe);
     document.getElementById("updateRecipe").addEventListener("submit", updateRecipe);
     document.getElementById("deleteRecipe").addEventListener("submit", deleteRecipe);
@@ -630,6 +694,7 @@ window.onload = function () {
     document.getElementById("deleteCategory").addEventListener("submit", deleteCategory);
     document.getElementById("insertRecipeToCategory").addEventListener("submit", insertRecipeIntoCategory);
     document.getElementById("deleteRecipeFromCategory").addEventListener("submit", deleteRecipeFromCategory);
+    document.getElementById("filterRecipesForm").addEventListener("submit", fetchAndDisplayFilteredRecipes);
 
     // ingredient centric
 
@@ -640,5 +705,7 @@ window.onload = function () {
 // General function to refresh the displayed table data. 
 // You can invoke this after any table-modifying operation to keep consistency.
 function fetchTableData() {
+    fetchAndDisplayCategories();
     fetchAndDisplayRecipes();
+    fetchAndDisplayFilteredRecipes();
 }

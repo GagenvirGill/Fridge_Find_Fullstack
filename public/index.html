@@ -38,10 +38,33 @@
     <br><hr><br> <!-- ========================================================================= -->
     <h2> Recipe Centric </h2>
 
-    <h3>Show Recipes</h3>
+    <h3>Show all Recipes</h3>
     <table id="recipe" border="1">
         <thead>
             <tr>
+                <th>Recipe ID</th>
+                <th>Recipe Name</th>
+                <th>Privacy Level</th>
+                <th>Username</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <h3>Show and Filter Recipes</h3>
+    <form id="filterRecipesForm">
+        <label for="filterRecipes"> Filter the Recipes by the following Categories (Use shift to select multiple):</label> <br><br>
+        <select name="filterRecipesCategories" id="filterRecipesCategories" multiple> 
+            <!-- Options are displayed dynamically and are not statically known -->
+        </select> <br><br>
+
+        <button type="submit"> Filter </button> <br>
+    </form>
+    <table id="filteredRecipeTable" border="1">
+        <thead>
+            <tr>
+                <th>Category</th>
                 <th>Recipe ID</th>
                 <th>Recipe Name</th>
                 <th>Privacy Level</th>

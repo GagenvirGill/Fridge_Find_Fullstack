@@ -97,6 +97,45 @@ async function fetchRecipeFromDb() {
     });
 }
 
+async function fetchCategoryFromDb() {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute('SELECT CategoryName FROM Category');
+
+        console.log('Fetched Categories Successfully');
+        return result.rows;
+    }).catch((error) => {
+        console.error('Database error:', error);
+        return [];
+    });
+}
+
+async function fetchFilteredRecipesFromDb(Categories) {
+    return await withOracleDB(async (connection) => {
+        const bindVariables = {};
+
+        let formattedValues = Categories.map((category, index) => `:Category${index}`).join(', ');
+
+        Categories.forEach((category, index) => {
+            bindVariables[`Category${index}`] = category;
+        });
+
+        const query = `
+            SELECT rhc.CategoryName, r.*
+            FROM Recipe r
+            JOIN RecipeHasCategory rhc ON r.RecipeID = rhc.RecipeID
+            WHERE rhc.CategoryName IN (${formattedValues})
+        `;
+
+        const result = await connection.execute(query, bindVariables);
+
+        console.log('Fetched Filtered Recipes Successfully');
+        return result.rows;
+    }).catch((error) => {
+        console.error('Database error:', error);
+        return [];
+    });
+}
+
 async function insertRecipe(RecipeID, RecipeName, PrivacyLevel, Username) {
     // validate username
     const isUsernameValid = await validateUsername(Username);
@@ -108,7 +147,7 @@ async function insertRecipe(RecipeID, RecipeName, PrivacyLevel, Username) {
 
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
-            `INSERT INTO Recipe (RecipeID, RecipeName, PrivacyLevel, Username) VALUES (:RecipeID, :RecipeName, :PrivacyLevel, :Username)`,
+            `INSERT INTO Recipe(RecipeID, RecipeName, PrivacyLevel, Username) VALUES(: RecipeID, : RecipeName, : PrivacyLevel, : Username)`,
             [RecipeID, RecipeName, PrivacyLevel, Username],
             { autoCommit: true }
         );
@@ -122,22 +161,22 @@ async function insertRecipe(RecipeID, RecipeName, PrivacyLevel, Username) {
 }
 
 async function updateRecipe(RecipeID, NewRecipeName, NewPrivacyLevel) {
-    let query = `UPDATE Recipe SET `;
+    let query = `UPDATE Recipe SET`;
     let queryParams = [];
 
     if (NewRecipeName == "" && NewPrivacyLevel != "Do Not Change") {
-        query += `PrivacyLevel=:NewPrivacyLevel`;
+        query += `PrivacyLevel =: NewPrivacyLevel`;
         queryParams.push(NewPrivacyLevel);
     } else if (NewRecipeName != "" && NewPrivacyLevel == "Do Not Change") {
-        query += `RecipeName=:NewRecipeName`;
+        query += `RecipeName =: NewRecipeName`;
         queryParams.push(NewRecipeName);
     } else {
-        query += `RecipeName =: NewRecipeName, PrivacyLevel=:NewPrivacyLevel`;
+        query += `RecipeName =: NewRecipeName, PrivacyLevel =: NewPrivacyLevel`;
         queryParams.push(NewRecipeName);
         queryParams.push(NewPrivacyLevel);
     }
 
-    query += ` WHERE RecipeID=:RecipeID`;
+    query += ` WHERE RecipeID =: RecipeID`;
     queryParams.push(RecipeID);
 
     return await withOracleDB(async (connection) => {
@@ -181,10 +220,10 @@ async function fetchRecipeIngredientsForRecipeFromDb(RecipeID) {
 
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(`
-            SELECT ri.* 
-            FROM RecipeIngredient ri 
+            SELECT ri.*
+        FROM RecipeIngredient ri 
             JOIN Recipe r ON r.RecipeID = ri.RecipeID 
-            WHERE ri.RecipeID=:RecipeID`,
+            WHERE ri.RecipeID =: RecipeID`,
             [intRecipeID]
         );
 
@@ -208,7 +247,7 @@ async function fetchRecipesName(RecipeID) {
         const result = await connection.execute(`
             SELECT RecipeName
             FROM Recipe
-            WHERE RecipeID=:RecipeID`,
+            WHERE RecipeID =: RecipeID`,
             [intRecipeID]
         );
 
@@ -223,7 +262,7 @@ async function fetchRecipesName(RecipeID) {
 async function insertRecipeIngredient(RecipeIngredientID, RecipeIngredientName, RecipeID, Amount, UnitOfMeasurement) {
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
-            `INSERT INTO RecipeIngredient (IngredientID, IngredientName, RecipeID, Amount, UnitOfMeasurement) VALUES (:RecipeIngredientID, :RecipeIngredientName, :RecipeID, :Amount, :UnitOfMeasurement)`,
+            `INSERT INTO RecipeIngredient(IngredientID, IngredientName, RecipeID, Amount, UnitOfMeasurement) VALUES(: RecipeIngredientID, : RecipeIngredientName, : RecipeID, : Amount, : UnitOfMeasurement)`,
             [RecipeIngredientID, RecipeIngredientName, RecipeID, Amount, UnitOfMeasurement],
             { autoCommit: true }
         );
@@ -241,21 +280,21 @@ async function updateRecipeIngredient(RecipeIngredientID, RecipeID, NewRecipeIng
     let querySetClauses = [];
 
     if (NewRecipeIngredientName != "") {
-        querySetClauses.push(`IngredientName=:NewRecipeIngredientName`);
+        querySetClauses.push(`IngredientName =: NewRecipeIngredientName`);
         queryParams.push(NewRecipeIngredientName);
     }
     if (NewAmount != "") {
-        querySetClauses.push(`Amount=:NewAmount`);
+        querySetClauses.push(`Amount =: NewAmount`);
         queryParams.push(NewAmount);
     }
     if (NewUnitOfMeasurement != "Do Not Change") {
-        querySetClauses.push(`UnitOfMeasurement=:NewUnitOfMeasurement`);
+        querySetClauses.push(`UnitOfMeasurement =: NewUnitOfMeasurement`);
         queryParams.push(NewUnitOfMeasurement);
     }
 
-    let query = `UPDATE RecipeIngredient SET `;
+    let query = `UPDATE RecipeIngredient SET`;
     query += querySetClauses.join(`, `);
-    query += ` WHERE IngredientID=:RecipeIngredientID AND RecipeID=:RecipeID`;
+    query += ` WHERE IngredientID =: RecipeIngredientID AND RecipeID =: RecipeID`;
     queryParams.push(RecipeIngredientID);
     queryParams.push(RecipeID);
 
@@ -298,10 +337,10 @@ async function fetchRecipeStepsForRecipe(RecipeID) {
 
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(`
-            SELECT rs.* 
-            FROM RecipeStep rs 
+            SELECT rs.*
+        FROM RecipeStep rs 
             JOIN Recipe r ON r.RecipeID = rs.RecipeID 
-            WHERE rs.RecipeID=:RecipeID`,
+            WHERE rs.RecipeID =: RecipeID`,
             [intRecipeID]
         );
 
@@ -316,7 +355,7 @@ async function fetchRecipeStepsForRecipe(RecipeID) {
 async function insertRecipeStep(RecipeID, StepNumber, StepInformation) {
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
-            `INSERT INTO RecipeStep (RecipeID, StepNumber, StepInformation) VALUES (:RecipeID, :StepNumber, :StepInformation)`,
+            `INSERT INTO RecipeStep(RecipeID, StepNumber, StepInformation) VALUES(: RecipeID, : StepNumber, : StepInformation)`,
             [RecipeID, StepNumber, StepInformation],
             { autoCommit: true }
         );
@@ -334,17 +373,17 @@ async function updateRecipeStep(RecipeID, OldStepNumber, NewStepNumber, NewStepI
     let querySetClauses = [];
 
     if (NewStepNumber != "") {
-        querySetClauses.push(`StepNumber=:NewStepNumber`);
+        querySetClauses.push(`StepNumber =: NewStepNumber`);
         queryParams.push(NewStepNumber);
     }
     if (NewStepInformation != "") {
-        querySetClauses.push(`StepInformation=:NewStepInformation`);
+        querySetClauses.push(`StepInformation =: NewStepInformation`);
         queryParams.push(NewStepInformation);
     }
 
-    let query = `UPDATE RecipeStep SET `;
+    let query = `UPDATE RecipeStep SET`;
     query += querySetClauses.join(`, `);
-    query += ` WHERE StepNumber=:OldStepNumber AND RecipeID=:RecipeID`;
+    query += ` WHERE StepNumber =: OldStepNumber AND RecipeID =: RecipeID`;
     queryParams.push(OldStepNumber);
     queryParams.push(RecipeID);
 
@@ -382,7 +421,7 @@ async function deleteRecipeStep(RecipeID, StepNumber) {
 async function insertCategory(CategoryName, CategoryDescription) {
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
-            `INSERT INTO Category (CategoryName, CategoryDescription) VALUES (:CategoryName, :CategoryDescription)`,
+            `INSERT INTO Category(CategoryName, CategoryDescription) VALUES(: CategoryName, : CategoryDescription)`,
             [CategoryName, CategoryDescription],
             { autoCommit: true }
         );
@@ -398,7 +437,7 @@ async function insertCategory(CategoryName, CategoryDescription) {
 async function updateCategory(CategoryName, NewCategoryDescription) {
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
-            `UPDATE Category SET CategoryDescription=:NewCategoryDescription WHERE CategoryName=:CategoryName`,
+            `UPDATE Category SET CategoryDescription =: NewCategoryDescription WHERE CategoryName =: CategoryName`,
             [NewCategoryDescription, CategoryName],
             { autoCommit: true }
         );
@@ -430,7 +469,7 @@ async function deleteCategory(CategoryName) {
 async function insertRecipeIntoCategory(RecipeID, CategoryName) {
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
-            `INSERT INTO RecipeHasCategory (RecipeID, CategoryName) VALUES (:RecipeID, :CategoryName)`,
+            `INSERT INTO RecipeHasCategory(RecipeID, CategoryName) VALUES(: RecipeID, : CategoryName)`,
             [RecipeID, CategoryName],
             { autoCommit: true }
         );
@@ -473,7 +512,7 @@ async function deleteRecipeFromCategory(RecipeID, CategoryName) {
 async function validateUsername(Username) {
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
-            `SELECT COUNT(*) AS count FROM AppUser WHERE Username=:Username`,
+            `SELECT COUNT(*) AS count FROM AppUser WHERE Username =: Username`,
             [Username]
         )
 
@@ -519,6 +558,8 @@ module.exports = {
 
     // Recipe Centric
     fetchRecipeFromDb,
+    fetchCategoryFromDb,
+    fetchFilteredRecipesFromDb,
     insertRecipe,
     updateRecipe,
     deleteRecipe,

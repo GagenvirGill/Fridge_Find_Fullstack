@@ -28,6 +28,17 @@ router.get('/recipe', async (req, res) => {
     res.json({ data: tableContent });
 });
 
+router.get('/category', async (req, res) => {
+    const categoryContent = await appService.fetchCategoryFromDb();
+    res.json({ data: categoryContent });
+});
+
+router.post('/filtered-recipes', async (req, res) => {
+    const { Categories } = req.body;
+    const fetchResult = await appService.fetchFilteredRecipesFromDb(Categories);
+    res.json({ data: fetchResult });
+});
+
 router.post("/insert-recipe", async (req, res) => {
     const { RecipeID, RecipeName, PrivacyLevel, Username } = req.body;
     const insertResult = await appService.insertRecipe(RecipeID, RecipeName, PrivacyLevel, Username);
