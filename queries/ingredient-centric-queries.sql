@@ -33,7 +33,6 @@ FROM AllergyList
 GROUP BY PrivacyLevel
 HAVING MAX(LENGTH(Description)) > 50;
 ---- Nested Aggregation with GROUP BY TODO
-SELECT PrivacyLevel
 ---- Division TODO
 
 -- AllergicIngredient Queries
@@ -120,9 +119,13 @@ WHERE PrivacyLevel = 'Public'
 SELECT PrivacyLevel, COUNT(IngredientListID) AS ListCount
 FROM KitchenInventory
 GROUP BY PrivacyLevel
----- Aggregation with HAVING LEFTOFF
----- Nested Aggregation with GROUP BY
----- Division TODO
+---- Aggregation with HAVING 
+SELECT Username, COUNT(*) AS InventoryCount
+FROM KitchenInventory
+GROUP BY Username
+HAVING COUNT(*) > 3;
+---- Nested Aggregation with GROUP BY TODO
+---- Division TODO TODO
 
 -- KitchenIngredientPerishableDate Queries
 INSERT INTO KitchenIngredientPerishableDate (DatePurchased, ShelfLife, ExpiryDate)
@@ -142,8 +145,15 @@ WHERE kipd.ShelfLife = 4
 GROUP BY ki.DatePurchased, kipd.ShelfLife
 ORDER BY ki.DatePurchased DESC;
 ---- Aggregation with GROUP BY
+SELECT ShelfLife, COUNT(*) AS IngredientCount
+FROM KitchenIngredientPerishableDate
+GROUP BY ShelfLife;
 ---- Aggregation with HAVING
----- Nested Aggregation with GROUP BY
+SELECT DatePurchased, COUNT(*) AS IngredientCount, MAX(ExpiryDate) As MaxExpiryDate
+FROM KitchenIngredientPerishableDate
+GROUP BY DatePurchased
+HAVING COUNT(*) > 1;
+---- Nested Aggregation with GROUP BY TODO
 ---- Division TODO
 
 -- KitchenIngredient Queries
@@ -159,9 +169,19 @@ SELECT UnitOfMeasurement, Amount
 FROM KitchenIngredient 
 WHERE UnitOfMeasurement = 'piece' AND Name = 'Apple'
 ---- Join 
-
+SELECT ki.IngredientListID, ki.Name AS IngredientName, kinv.PrivacyLevel
+FROM KitchenIngredient ki
+JOIN KitchenInventory kinv
+ON ki.IngredientListID = kinv.IngredientListID;
 ---- Aggregation with GROUP BY
+SELECT UnitOfMeasurement, SUM(Amount) AS UnitCount
+FROM KitchenIngredient
+GROUP BY UnitOfMeasurement;
 ---- Aggregation with HAVING
----- Nested Aggregation with GROUP BY
+SELECT IngredientListID, UnitOfMeasurement, COUNT(*) AS IngredientCount
+FROM KitchenIngredient
+GROUP BY IngredientListID, UnitOfMeasurement
+HAVING COUNT(*) > 3;
+---- Nested Aggregation with GROUP BY TODO
 ---- Division TODO
 
