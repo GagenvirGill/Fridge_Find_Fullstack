@@ -79,6 +79,86 @@ async function testOracleConnection() {
 
 // ----------------------------------------------------------
 // User Centric service
+async function fetchUserFromDb() {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute('SELECT * FROM AppUser');
+        return result.rows;
+    }).catch((error) => {
+        console.error('Error fetching users:', error);
+        return [];
+    });
+}
+
+async function insertUser(Username, ProfilePicture, Email, FullName, DefaultPrivacyLevel) {
+    if (!Username || !Email || !FullName) {
+        throw new Error('Required fields (Username, Email, FullName) are missing');
+    }
+
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            `INSERT INTO AppUser(Username, ProfilePicture, Email, FullName, DefaultPrivacyLevel) VALUES (:Username, :ProfilePicture, :Email, :FullName, :DefaultPrivacyLevel)`,
+            [Username, ProfilePicture || null, Email, FullName, DefaultPrivacyLevel || 'Private'],
+            { autoCommit: true }
+        );
+
+        return result.rowsAffected && result.rowsAffected > 0;
+    }).catch((error) => {
+        console.error('Error inserting user:', error);
+        return false;
+    });
+}
+
+async function deleteUser(Username) {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            'DELETE FROM AppUser WHERE Username=:Username',
+            [Username],
+            { autoCommit: true }
+        );
+        console.log('Deleted AppUser Successfully')
+        return result.rowsAffected && result.rowsAffected > 0;;
+    }).catch((error) => {
+        console.error('Database error:', error);
+        return false;
+    });
+}
+
+async function updateUser(username, newProfilePicture, newEmail, newFullName, newDefaultPrivacyLevel) {
+    return await withOracleDB(async (connection) => {
+        let query = 'UPDATE AppUser SET ';
+        const params = [];
+        const updates = [];
+
+        if (newProfilePicture !== undefined) {
+            updates.push('ProfilePicture = :newProfilePicture');
+            params.push(newProfilePicture);
+        }
+        if (newEmail !== undefined) {
+            updates.push('Email = :newEmail');
+            params.push(newEmail);
+        }
+        if (newFullName !== undefined) {
+            updates.push('FullName = :newFullName');
+            params.push(newFullName);
+        }
+        if (newDefaultPrivacyLevel !== undefined) {
+            updates.push('DefaultPrivacyLevel = :newDefaultPrivacyLevel');
+            params.push(newDefaultPrivacyLevel);
+        }
+        if (updates.length === 0) {
+            throw new Error('No fields provided for update');
+        }
+
+        query += updates.join(', ') + ' WHERE Username = :username';
+        params.push(username);
+
+        const result = await connection.execute(query, params, { autoCommit: true });
+
+        return result.rowsAffected && result.rowsAffected > 0;
+    }).catch(() => {
+        return false;
+    });
+}
 
 
 
