@@ -546,6 +546,21 @@ async function initiateTables() {
 module.exports = {
     testOracleConnection,
     // User Centric
+    fetchUserFromDb,
+    insertUser,
+    deleteUser,
+    updateUser,
+    viewUser,
+    fetchFriends,
+    insertFriend,
+    deleteFriend,
+    areTheyFriends,
+    fetchNotificationMessages,
+    insertNotificationMessage,
+    deleteNotificationMessage,
+    fetchNotifications,
+    insertNotification,
+    deleteNotification,
 
 
     // Recipe Centric
