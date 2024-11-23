@@ -18,7 +18,149 @@ router.get('/check-db-connection', async (req, res) => {
 // ----------------------------------------------------------
 // User Centric endpoints
 
+// AppUser
+router.get('/users', async (req, res) => {
+    const users = await appService.fetchUserFromDb();
+    res.json({ data: users });
+});
 
+router.post('/insert-user', async (req, res) => {
+    const { Username, ProfilePicture, Email, FullName, DefaultPrivacyLevel } = req.body;
+    const insertResult = await appService.insertUser(Username, ProfilePicture, Email, FullName, DefaultPrivacyLevel);
+    if (insertResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+router.delete('/delete-user', async (req, res) => {
+    const { Username } = req.body;
+    const deleteResult = await appService.deleteUser(Username);
+    if (deleteResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+router.patch('/update-user', async (req, res) => {
+    const { Username, newProfilePicture, newEmail, newFullName, newDefaultPrivacyLevel } = req.body;
+    const updateResult = await appService.updateUser(Username, newProfilePicture, newEmail, newFullName, newDefaultPrivacyLevel);
+    if (updateResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+router.get('/view-user', async (req, res) => {
+    const { Username } = req.query;
+    const user = await appService.viewUser(Username);
+    if (user) {
+        res.json(user);
+    } else {
+        res.status(404).json({ success: false, message: "User not found" });
+    }
+});
+
+router.get('/friends-with-everyone', async (req, res) => {
+    const socialButterflies = await appService.viewUsersWhoAreFriendsWithEveryone();
+    res.json({ data: socialButterflies });
+});
+
+// ----------------------------------------------------------
+// Friends
+
+router.get('/friends', async (req, res) => {
+    const { username } = req.query;
+    const friends = await appService.fetchFriends(username);
+    res.json({ data: friends });
+});
+
+router.post('/insert-friend', async (req, res) => {
+    const { username1, username2 } = req.body;
+    const insertResult = await appService.insertFriend(username1, username2);
+    if (insertResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+router.delete('/delete-friend', async (req, res) => {
+    const { username1, username2 } = req.body;
+    const deleteResult = await appService.deleteFriend(username1, username2);
+    if (deleteResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+router.get('/are-they-friends', async (req, res) => {
+    const { username1, username2 } = req.query;
+    const areFriends = await appService.areTheyFriends(username1, username2);
+    res.json({ areFriends });
+});
+
+// ----------------------------------------------------------
+// NotificationMessage
+
+router.get('/notification-messages', async (req, res) => {
+    const { username } = req.query;
+    const messages = await appService.fetchNotificationMessages(username);
+    res.json({ data: messages });
+});
+
+router.post('/insert-notification-message', async (req, res) => {
+    const { username, messageText } = req.body;
+    const insertResult = await appService.insertNotificationMessage(username, messageText);
+    if (insertResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+router.delete('/delete-notification-message', async (req, res) => {
+    const { username, dateAndTimeSent } = req.body;
+    const deleteResult = await appService.deleteNotificationMessage(username, dateAndTimeSent);
+    if (deleteResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+// ----------------------------------------------------------
+// Notifications
+
+router.get('/notifications', async (req, res) => {
+    const { username } = req.query;
+    const notifications = await appService.fetchNotifications(username);
+    res.json({ data: notifications });
+});
+
+router.post('/insert-notification', async (req, res) => {
+    const { notificationID, username } = req.body;
+    const insertResult = await appService.insertNotification(notificationID, username);
+    if (insertResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+router.delete('/delete-notification', async (req, res) => {
+    const { notificationID } = req.body;
+    const deleteResult = await appService.deleteNotification(notificationID);
+    if (deleteResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
 
 // ----------------------------------------------------------
 // Recipe Centric endpoints
@@ -79,7 +221,6 @@ router.post("/insert-recipe-ingredient", async (req, res) => {
         res.status(500).json({ success: false });
     }
 });
-
 
 // ----------------------------------------------------------
 // Ingredient Centric endpoints

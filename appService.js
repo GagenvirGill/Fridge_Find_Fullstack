@@ -257,7 +257,7 @@ async function viewUsersWhoAreFriendsWithEveryone() {
              )`
         );
 
-        return result.rows.map(row => row[0]); // Return array of usernames
+        return result.rows.map(row => row[0]);
     }).catch((error) => {
         console.error('Error fetching users who are friends with everyone:', error);
         return [];
