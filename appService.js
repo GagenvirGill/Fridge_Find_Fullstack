@@ -160,19 +160,21 @@ async function updateUser(username, newProfilePicture, newEmail, newFullName, ne
     });
 }
 
-async function viewUser(username) {
+async function viewUsersWithPublicPrivacy() {
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
-            'SELECT * FROM AppUser WHERE Username = :username',
-            [username]
+            `SELECT Username, Email, FullName
+             FROM AppUser
+             WHERE DefaultPrivacyLevel = 'Public'`
         );
 
-        return result.rows.length > 0 ? result.rows[0] : null;
+        return result.rows;
     }).catch((error) => {
-        console.error('Error fetching user:', error);
-        return null;
+        console.error('Error fetching users with public privacy level:', error);
+        return [];
     });
 }
+
 
 async function fetchFriends(username) {
     return await withOracleDB(async (connection) => {
@@ -234,6 +236,31 @@ async function areTheyFriends(username1, username2) {
     }).catch((error) => {
         console.error('Error checking friend relationship:', error);
         return false;
+    });
+}
+
+async function viewUsersWhoAreFriendsWithEveryone() {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            `SELECT u.Username
+             FROM AppUser u
+             WHERE NOT EXISTS (
+                 SELECT a.Username
+                 FROM AppUser a
+                 WHERE a.Username != u.Username
+                   AND NOT EXISTS (
+                       SELECT 1
+                       FROM Friends f
+                       WHERE (f.Username1 = u.Username AND f.Username2 = a.Username)
+                          OR (f.Username1 = a.Username AND f.Username2 = u.Username)
+                   )
+             )`
+        );
+
+        return result.rows.map(row => row[0]); // Return array of usernames
+    }).catch((error) => {
+        console.error('Error fetching users who are friends with everyone:', error);
+        return [];
     });
 }
 
