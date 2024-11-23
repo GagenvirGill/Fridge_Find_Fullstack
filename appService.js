@@ -176,6 +176,31 @@ async function viewUsersWithPublicPrivacy() {
 }
 
 
+async function viewUsersWhoAreFriendsWithEveryone() {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            `SELECT u.Username
+             FROM AppUser u
+             WHERE NOT EXISTS (
+                 SELECT a.Username
+                 FROM AppUser a
+                 WHERE a.Username != u.Username
+                   AND NOT EXISTS (
+                       SELECT 1
+                       FROM Friends f
+                       WHERE (f.Username1 = u.Username AND f.Username2 = a.Username)
+                          OR (f.Username1 = a.Username AND f.Username2 = u.Username)
+                   )
+             )`
+        );
+
+        return result.rows.map(row => row[0]);
+    }).catch((error) => {
+        console.error('Error fetching users who are friends with everyone:', error);
+        return [];
+    });
+}
+
 async function fetchFriends(username) {
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
@@ -191,6 +216,13 @@ async function fetchFriends(username) {
 }
 
 async function insertFriend(username1, username2) {
+    if (!username1 || !username2) {
+        throw new Error("Both 'username1' and 'username2' are required.");
+    }
+    if (username1 === username2) {
+        throw new Error("'username1' and 'username2' cannot be the same.");
+    }
+
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
             `INSERT INTO Friends (Username1, Username2, DateAndTimeCreated)
@@ -239,31 +271,6 @@ async function areTheyFriends(username1, username2) {
     });
 }
 
-async function viewUsersWhoAreFriendsWithEveryone() {
-    return await withOracleDB(async (connection) => {
-        const result = await connection.execute(
-            `SELECT u.Username
-             FROM AppUser u
-             WHERE NOT EXISTS (
-                 SELECT a.Username
-                 FROM AppUser a
-                 WHERE a.Username != u.Username
-                   AND NOT EXISTS (
-                       SELECT 1
-                       FROM Friends f
-                       WHERE (f.Username1 = u.Username AND f.Username2 = a.Username)
-                          OR (f.Username1 = a.Username AND f.Username2 = u.Username)
-                   )
-             )`
-        );
-
-        return result.rows.map(row => row[0]);
-    }).catch((error) => {
-        console.error('Error fetching users who are friends with everyone:', error);
-        return [];
-    });
-}
-
 async function fetchNotificationMessages(username) {
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
@@ -279,6 +286,10 @@ async function fetchNotificationMessages(username) {
 }
 
 async function insertNotificationMessage(username, messageText) {
+    if (!username || !messageText) {
+        throw new Error('Both username and messageText are required');
+    }
+
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
             `INSERT INTO NotificationMessage (Username, DateAndTimeSent, MessageText)
@@ -324,6 +335,9 @@ async function fetchNotifications(username) {
 }
 
 async function insertNotification(notificationID, username) {
+    if (!notificationID || !username) {
+        throw new Error("Both 'notificationID' and 'username' are required.");
+    }
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
             `INSERT INTO Notifications (NotificationID, DateAndTimeSent, Username)
@@ -577,7 +591,8 @@ module.exports = {
     insertUser,
     deleteUser,
     updateUser,
-    viewUser,
+    viewUsersWithPublicPrivacy,
+    viewUsersWhoAreFriendsWithEveryone,
     fetchFriends,
     insertFriend,
     deleteFriend,

@@ -38,8 +38,394 @@ async function checkDbConnection() {
 
 // ----------------------------------------------------------
 // User Centric methods
+async function fetchAndDisplayUsers() {
+    const tableElement = document.getElementById('userTable');
+    const tableBody = tableElement.querySelector('tbody');
 
+    try {
+        const response = await fetch('/users', { method: 'GET' });
+        const responseData = await response.json();
+        const users = responseData.data;
 
+        if (tableBody) {
+            tableBody.innerHTML = '';
+        }
+
+        users.forEach(user => {
+            const row = tableBody.insertRow();
+            user.forEach((field, index) => {
+                const cell = row.insertCell(index);
+                cell.textContent = field;
+            });
+        });
+    } catch (error) {
+        console.error('Error fetching users:', error);
+        alert('Error fetching users.');
+    }
+}
+
+async function insertUser(event) {
+    event.preventDefault();
+
+    const username = document.getElementById('insertUsername').value;
+    const email = document.getElementById('insertEmail').value;
+    const fullName = document.getElementById('insertFullName').value;
+    const privacyLevel = document.getElementById('insertPrivacyLevel').value;
+
+    if (!username || !email || !fullName || !privacyLevel) {
+        alert('All fields are required!');
+        return;
+    }
+
+    try {
+        const response = await fetch('/insert-user', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                Username: username,
+                Email: email,
+                FullName: fullName,
+                DefaultPrivacyLevel: privacyLevel,
+            }),
+        });
+
+        const responseData = await response.json();
+        const messageElement = document.getElementById('insertUserResultMsg');
+
+        if (responseData.success) {
+            messageElement.textContent = 'User inserted successfully!';
+            fetchAndDisplayUsers();
+        } else {
+            messageElement.textContent = 'Error inserting user.';
+        }
+    } catch (error) {
+        console.error('Error inserting user:', error);
+        alert('Error inserting user.');
+    }
+}
+
+async function updateUser(event) {
+    event.preventDefault();
+
+    const username = document.getElementById('updateUsername').value;
+    const newEmail = document.getElementById('updateEmail').value;
+    const newFullName = document.getElementById('updateFullName').value;
+    const newPrivacyLevel = document.getElementById('updatePrivacyLevel').value;
+
+    if (!username) {
+        alert('Username is required for updating.');
+        return;
+    }
+
+    try {
+        const response = await fetch('/update-user', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                Username: username,
+                newEmail: newEmail || undefined,
+                newFullName: newFullName || undefined,
+                newDefaultPrivacyLevel: newPrivacyLevel || undefined,
+            }),
+        });
+
+        const responseData = await response.json();
+        const messageElement = document.getElementById('updateUserResultMsg');
+
+        if (responseData.success) {
+            messageElement.textContent = 'User updated successfully!';
+            fetchAndDisplayUsers();
+        } else {
+            messageElement.textContent = 'Error updating user.';
+        }
+    } catch (error) {
+        console.error('Error updating user:', error);
+        alert('Error updating user.');
+    }
+}
+
+async function deleteUser(event) {
+    event.preventDefault();
+
+    const username = document.getElementById('deleteUsername').value;
+
+    if (!username) {
+        alert('Username is required for deletion.');
+        return;
+    }
+
+    try {
+        const response = await fetch('/delete-user', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ Username: username }),
+        });
+
+        const responseData = await response.json();
+        const messageElement = document.getElementById('deleteUserResultMsg');
+
+        if (responseData.success) {
+            messageElement.textContent = 'User deleted successfully!';
+            fetchAndDisplayUsers();
+        } else {
+            messageElement.textContent = 'Error deleting user.';
+        }
+    } catch (error) {
+        console.error('Error deleting user:', error);
+        alert('Error deleting user.');
+    }
+}
+
+async function fetchAndDisplayPublicUsers() {
+    const tableElement = document.getElementById('publicUserTable');
+    const tableBody = tableElement.querySelector('tbody');
+
+    try {
+        const response = await fetch('/public-users', { method: 'GET' });
+        const responseData = await response.json();
+        const users = responseData.data;
+
+        if (tableBody) {
+            tableBody.innerHTML = '';
+        }
+
+        users.forEach(user => {
+            const row = tableBody.insertRow();
+            user.forEach((field, index) => {
+                const cell = row.insertCell(index);
+                cell.textContent = field;
+            });
+        });
+    } catch (error) {
+        console.error('Error fetching public users:', error);
+        alert('Error fetching public users.');
+    }
+}
+
+async function fetchAndDisplayUsersWhoAreFriendsWithEveryone() {
+    const tableElement = document.getElementById('socialButterfliesTable');
+    const tableBody = tableElement.querySelector('tbody');
+
+    try {
+        const response = await fetch('/friends-with-everyone', { method: 'GET' });
+        const responseData = await response.json();
+        const users = responseData.data;
+
+        if (tableBody) {
+            tableBody.innerHTML = '';
+        }
+
+        users.forEach(user => {
+            const row = tableBody.insertRow();
+            const cell = row.insertCell(0);
+            cell.textContent = user;
+        });
+    } catch (error) {
+        console.error('Error fetching users who are friends with everyone:', error);
+        alert('Error fetching users who are friends with everyone.');
+    }
+}
+
+async function fetchAndDisplayNotificationMessages() {
+    const tableElement = document.getElementById('notificationMessagesTable');
+    const tableBody = tableElement.querySelector('tbody');
+    const username = document.getElementById('fetchNotificationMessagesUsername').value;
+
+    if (!username) {
+        alert('Username is required to fetch notification messages!');
+        return;
+    }
+
+    try {
+        const response = await fetch(`/notification-messages?username=${username}`, {
+            method: 'GET',
+        });
+
+        const responseData = await response.json();
+        const messages = responseData.data;
+
+        if (tableBody) {
+            tableBody.innerHTML = '';
+        }
+
+        messages.forEach(message => {
+            const row = tableBody.insertRow();
+            message.forEach((field, index) => {
+                const cell = row.insertCell(index);
+                cell.textContent = field;
+            });
+        });
+    } catch (error) {
+        console.error('Error fetching notification messages:', error);
+        alert('Error fetching notification messages.');
+    }
+}
+
+async function insertNotificationMessage(event) {
+    event.preventDefault();
+
+    const username = document.getElementById('insertNotificationUsername').value;
+    const messageText = document.getElementById('insertNotificationMessageText').value;
+
+    if (!username || !messageText) {
+        alert('Both username and message text are required!');
+        return;
+    }
+
+    try {
+        const response = await fetch('/insert-notification-message', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, messageText }),
+        });
+
+        const responseData = await response.json();
+        const messageElement = document.getElementById('insertNotificationMessageResultMsg');
+
+        if (responseData.success) {
+            messageElement.textContent = 'Notification message inserted successfully!';
+            fetchAndDisplayNotificationMessages();
+        } else {
+            messageElement.textContent = 'Error inserting notification message.';
+        }
+    } catch (error) {
+        console.error('Error inserting notification message:', error);
+        alert('Error inserting notification message.');
+    }
+}
+
+async function deleteNotificationMessage(event) {
+    event.preventDefault();
+
+    const username = document.getElementById('deleteNotificationUsername').value;
+    const dateAndTimeSent = document.getElementById('deleteNotificationDateAndTimeSent').value;
+
+    if (!username || !dateAndTimeSent) {
+        alert('Username and Date/Time are required to delete the notification message!');
+        return;
+    }
+
+    try {
+        const response = await fetch('/delete-notification-message', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, dateAndTimeSent }),
+        });
+
+        const responseData = await response.json();
+        const messageElement = document.getElementById('deleteNotificationMessageResultMsg');
+
+        if (responseData.success) {
+            messageElement.textContent = 'Notification message deleted successfully!';
+            fetchAndDisplayNotificationMessages();
+        } else {
+            messageElement.textContent = 'Error deleting notification message.';
+        }
+    } catch (error) {
+        console.error('Error deleting notification message:', error);
+        alert('Error deleting notification message.');
+    }
+}
+
+async function fetchAndDisplayNotifications() {
+    const tableElement = document.getElementById('notificationsTable');
+    const tableBody = tableElement.querySelector('tbody');
+    const username = document.getElementById('fetchNotificationsUsername').value;
+
+    if (!username) {
+        alert('Username is required to fetch notifications!');
+        return;
+    }
+
+    try {
+        const response = await fetch(`/notifications?username=${username}`, {
+            method: 'GET',
+        });
+
+        const responseData = await response.json();
+        const notifications = responseData.data;
+
+        if (tableBody) {
+            tableBody.innerHTML = '';
+        }
+
+        notifications.forEach(notification => {
+            const row = tableBody.insertRow();
+            notification.forEach((field, index) => {
+                const cell = row.insertCell(index);
+                cell.textContent = field;
+            });
+        });
+    } catch (error) {
+        console.error('Error fetching notifications:', error);
+        alert('Error fetching notifications.');
+    }
+}
+
+async function insertNotification(event) {
+    event.preventDefault();
+
+    const notificationID = document.getElementById('insertNotificationID').value;
+    const username = document.getElementById('insertNotificationUsernameForNotif').value;
+
+    if (!notificationID || !username) {
+        alert('Notification ID and Username are required!');
+        return;
+    }
+
+    try {
+        const response = await fetch('/insert-notification', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ notificationID, username }),
+        });
+
+        const responseData = await response.json();
+        const messageElement = document.getElementById('insertNotificationResultMsg');
+
+        if (responseData.success) {
+            messageElement.textContent = 'Notification inserted successfully!';
+            fetchAndDisplayNotifications();
+        } else {
+            messageElement.textContent = 'Error inserting notification.';
+        }
+    } catch (error) {
+        console.error('Error inserting notification:', error);
+        alert('Error inserting notification.');
+    }
+}
+
+async function deleteNotification(event) {
+    event.preventDefault();
+
+    const notificationID = document.getElementById('deleteNotificationID').value;
+
+    if (!notificationID) {
+        alert('Notification ID is required to delete a notification!');
+        return;
+    }
+
+    try {
+        const response = await fetch('/delete-notification', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ notificationID }),
+        });
+
+        const responseData = await response.json();
+        const messageElement = document.getElementById('deleteNotificationResultMsg');
+
+        if (responseData.success) {
+            messageElement.textContent = 'Notification deleted successfully!';
+            fetchAndDisplayNotifications();
+        } else {
+            messageElement.textContent = 'Error deleting notification.';
+        }
+    } catch (error) {
+        console.error('Error deleting notification:', error);
+        alert('Error deleting notification.');
+    }
+}
 
 // ----------------------------------------------------------
 // Recipe Centric methods
@@ -286,6 +672,20 @@ window.onload = function () {
     document.getElementById("countDemotable").addEventListener("click", countDemotable);
 
     // user centric
+    document.getElementById('insertUserForm').addEventListener('submit', insertUser);
+    document.getElementById('updateUserForm').addEventListener('submit', updateUser);
+    document.getElementById('deleteUserForm').addEventListener('submit', deleteUser);
+    document.getElementById('fetchPublicUsersBtn').addEventListener('click', fetchAndDisplayPublicUsers);
+    document.getElementById('fetchFriendsWithEveryoneBtn').addEventListener('click', fetchAndDisplayUsersWhoAreFriendsWithEveryone);
+
+    document.getElementById('fetchNotificationMessagesBtn').addEventListener('click', fetchAndDisplayNotificationMessages);
+    document.getElementById('insertNotificationMessageForm').addEventListener('submit', insertNotificationMessage);
+    document.getElementById('deleteNotificationMessageForm').addEventListener('submit', deleteNotificationMessage);
+
+    document.getElementById('fetchNotificationsBtn').addEventListener('click', fetchAndDisplayNotifications);
+    document.getElementById('insertNotificationForm').addEventListener('submit', insertNotification);
+    document.getElementById('deleteNotificationForm').addEventListener('submit', deleteNotification);
+};
 
 
     // recipe centric
