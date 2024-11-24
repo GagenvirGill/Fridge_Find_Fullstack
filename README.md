@@ -7,7 +7,7 @@ FridgeFind is a kitchen management application that allows users to organize the
 
 ### Contributors
 - Gagenvir Gill
-- Preston Lai (test)
+- Preston Lai 
 - Mave Hur
 
 ### Note for TA
