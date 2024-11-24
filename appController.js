@@ -84,7 +84,20 @@ router.post("/insert-recipe-ingredient", async (req, res) => {
 // ----------------------------------------------------------
 // Ingredient Centric endpoints
 
+router.get('/ingredient', async (req, res) => {
+    const tableContent = await appService.fetchIngredientFromDb();
+    res.json({ data: tableContent });
+});
 
+//router.post("/insert-ingredient", async (req, res) => {
+//    const { RecipeID, RecipeName, PrivacyLevel, Username } = req.body;
+//    const insertResult = await appService.insertRecipe(RecipeID, RecipeName, PrivacyLevel, Username);
+//    if (insertResult) {
+//        res.json({ success: true });
+//    } else {
+//        res.status(500).json({ success: false });
+//    }
+//});
 
 // ----------------------------------------------------------
 // General endpoints
