@@ -84,20 +84,59 @@ router.post("/insert-recipe-ingredient", async (req, res) => {
 // ----------------------------------------------------------
 // Ingredient Centric endpoints
 
-router.get('/ingredient', async (req, res) => {
-    const tableContent = await appService.fetchIngredientFromDb();
+// AllergicIngredient 
+router.get('/allergic-ingredient', async (req, res) => {
+    const tableContent = await appService.fetchAllergicIngredientFromDb();
     res.json({ data: tableContent });
 });
 
-//router.post("/insert-ingredient", async (req, res) => {
-//    const { RecipeID, RecipeName, PrivacyLevel, Username } = req.body;
-//    const insertResult = await appService.insertRecipe(RecipeID, RecipeName, PrivacyLevel, Username);
+router.post("/insert-allergic-ingredient", async (req, res) => {
+   const { IngredientID, Name } = req.body;
+   const insertResult = await appService.insertAllergicIngredient(IngredientID, Name);
+   if (insertResult) {
+       res.json({ success: true });
+   } else {
+       res.status(500).json({ success: false });
+   }
+});
+
+router.patch("/update-allergic-ingredient", async (req, res) => {
+    const { IngredientID, Name } = req.body;
+    const updateResult = await appService.updateAllergicIngredient(IngredientID, Name);
+    if (updateResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+router.delete("/delete-allergic-ingredient", async (req, res) => {
+    const { RecipeID } = req.body;
+    const deleteResult = await appService.deleteAllergyIngredient(RecipeID);
+    if (deleteResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+
+
+// AllergyList - TODO
+// router.get('/allergy-list', async (req, res) => {
+//     const tableContent = await appService.fetchAllergyListFromDb();
+//     res.json({ data: tableContent });
+// });
+
+// router.post("/insert-allergy-list", async (req, res) => {
+//    const { IngredientListID, PrivacyLevel, Description, Username, Name } = req.body;
+//    const insertResult = await appService.insertAllergyList(IngredientListID, PrivacyLevel, Description, Username, Name);
 //    if (insertResult) {
 //        res.json({ success: true });
 //    } else {
 //        res.status(500).json({ success: false });
 //    }
-//});
+// });
 
 // ----------------------------------------------------------
 // General endpoints

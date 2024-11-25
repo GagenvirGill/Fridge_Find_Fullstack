@@ -237,6 +237,88 @@ async function insertRecipeIngredient(RecipeIngredientID, RecipeIngredientName, 
 // ----------------------------------------------------------
 // Ingredient Centric service
 
+async function fetchAllergicIngredientFromDb() {
+    try {
+        return await withOracleDB(async (connection) => {
+            const result = await connection.execute('SELECT * FROM AllergicIngredient');
+            return result.rows;
+        });
+    } catch(error) {
+        console.error('Database error:', error);
+        return [];
+    }
+}
+
+async function insertAllergicIngredient(IngredientID, Name) {
+    try {
+        // validate username
+        const isUsernameValid = await validateUsername(Username);
+
+        // If it doesnt return false
+        if (!isUsernameValid) {
+            return false;
+        }
+
+        return await withOracleDB(async (connection) => {
+            const result = await connection.execute(
+                `INSERT INTO Recipe (IngredientID, Name) VALUES (:IngredientID, :Name)`,
+                [IngredientID, Name],
+                { autoCommit: true }
+            );
+
+            console.log('Inserted AllergicIngredient Successfully')
+            return result.rowsAffected && result.rowsAffected > 0;
+        });
+    } catch(error) {
+        console.error('Database error:', error);
+        return false;
+    }
+}
+
+async function updateAllergicIngredient(IngredientID, newName) {
+    let query = `UPDATE AllergicIngredient SET 
+                 SET Name = :newName
+                 WHERE IngredientID = :IngredientID`;
+    let queryParams = {
+        newName: newName,
+        IngredientID: IngredientID,
+    };
+
+    try {
+        return await withOracleDB(async (connection) => {
+            const result = await connection.execute(
+                query,
+                queryParams,
+                { autoCommit: true }
+            );
+    
+            console.log('Updated Allergic Ingredient Successfully')
+            return result.rowsAffected && result.rowsAffected > 0;
+        });
+    } catch(error) {
+        console.error('Database error:', error);
+        return false;
+    };
+}
+
+async function deleteAllergicIngredient(IngredientID) {
+    try {
+        return await withOracleDB(async (connection) => {
+            const result = await connection.execute(
+                'DELETE FROM IngredientID WHERE IngredientID=:IngredientID',
+                [RecipeID],
+                { autoCommit: true }
+            );
+            console.log('Deleted AllergicIngredient Successfully')
+            return result.rowsAffected && result.rowsAffected > 0;;
+        });
+    } catch(error) {
+        console.error('Database error:', error);
+        return false;
+    }
+}
+
+
 
 
 // ----------------------------------------------------------
