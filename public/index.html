@@ -139,6 +139,28 @@
     <br><hr><br> <!-- ========================================================================= -->
     <h2> Ingredient Centric </h2>
 
+    <h3>Show AllergicIngredient</h3>
+    <table id="AllergicIngredient" border="1">
+        <thead>
+            <tr>
+                <th>IngredientID</th>
+                <th>Name</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <h3> Create a new AllergicIngredient </h3>
+    <form id="insertAllergicIngredient">
+        Recipe ID: <input type="number" id="insertAllergicIngredientID" placeholder="Enter Allergic Ingredient ID" required> <br><br>
+        Recipe Name: <input type="text" id="insertAllergicIngredientName" placeholder="Enter Allergic Ingredient Name" maxlength="50"> <br><br>
+        </select> <br><br>
+
+        <button type="submit"> Create </button> <br>
+    </form>
+    <div id="insertRecipeResultMsg"></div>
+
 
 
 
