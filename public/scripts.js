@@ -133,7 +133,7 @@ async function fetchAndDisplayRecipeLists() {
     recipeListSelectBar.innerHTML = '';
 
     recipeListContent.forEach(recipeList => {
-        const recipeListFormatted = `\'${recipeList[1]}\' by ${recipeList[2]}`
+        const recipeListFormatted = `ID: ${recipeList[0]} - \'${recipeList[1]}\' by ${recipeList[3]} - ${recipeList[2]}`
 
         const option = document.createElement('option');
         option.value = recipeList[0];
@@ -712,6 +712,150 @@ async function deleteRecipeFromCategory(event) {
     }
 }
 
+async function insertRecipeList(event) {
+    event.preventDefault();
+
+    const recipeListIDValue = document.getElementById('insertRecipeListID').value;
+    const recipeListNameValue = document.getElementById('insertRecipeListName').value;
+    const recipeListPrivacyLevelValue = document.getElementById('insertRecipeListPrivacyLevel').value;
+    const recipeListUsernameValue = document.getElementById('insertRecipeListUsername').value;
+
+    const response = await fetch('/insert-recipe-list', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            RecipeListID: recipeListIDValue,
+            RecipeListName: recipeListNameValue,
+            PrivacyLevel: recipeListPrivacyLevelValue,
+            Username: recipeListUsernameValue
+        })
+    });
+
+    const responseData = await response.json();
+    const messageElement = document.getElementById('insertRecipeListResultMsg');
+
+    if (responseData.success) {
+        messageElement.textContent = "Recipe List Data inserted successfully!";
+        fetchTableData();
+    } else {
+        messageElement.textContent = "Error inserting recipe list data";
+    }
+}
+
+async function updateRecipeList(event) {
+    event.preventDefault();
+
+    const recipeListIDValue = document.getElementById('updateRecipeListID').value;
+    const recipeListNameValue = document.getElementById('updateRecipeListName').value;
+    const recipeListPrivacyLevelValue = document.getElementById('updateRecipeListPrivacyLevel').value;
+
+    const response = await fetch('/update-recipe-list', {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            RecipeListID: recipeListIDValue,
+            RecipeListName: recipeListNameValue,
+            PrivacyLevel: recipeListPrivacyLevelValue
+        })
+    });
+
+    const responseData = await response.json();
+    const messageElement = document.getElementById('updateRecipeListResultMsg');
+
+    if (responseData.success) {
+        messageElement.textContent = "Recipe List updated successfully!";
+        fetchTableData();
+    } else {
+        messageElement.textContent = "Error updating recipe list!";
+    }
+}
+
+async function deleteRecipeList(event) {
+    event.preventDefault();
+
+    const recipeListIDValue = document.getElementById('deleteRecipeListID').value;
+
+    const response = await fetch('/delete-recipe-list', {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            RecipeListID: recipeListIDValue
+        })
+    });
+
+    const responseData = await response.json();
+    const messageElement = document.getElementById('deleteRecipeListUpdateMsg');
+
+    if (responseData.success) {
+        messageElement.textContent = "Recipe List deleted successfully!";
+        fetchTableData();
+    } else {
+        messageElement.textContent = "Error deleting recipe list!";
+    }
+}
+
+async function insertRecipeToRecipeList(event) {
+    event.preventDefault();
+
+    const recipeIDValue = document.getElementById('insertRecipeToRecipeListRecipeID').value;
+    const recipeListIDValue = document.getElementById('insertRecipeToRecipeListID').value;
+
+    const response = await fetch('/insert-recipe-into-recipe-list', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            RecipeID: recipeIDValue,
+            RecipeListID: recipeListIDValue
+        })
+    });
+
+    const responseData = await response.json();
+    const messageElement = document.getElementById('insertRecipeToRecipeListResultMsg');
+
+    if (responseData.success) {
+        messageElement.textContent = "Recipe added to Recipe List successfully!";
+        fetchTableData();
+    } else {
+        messageElement.textContent = "Error adding Recipe data to Recipe List";
+    }
+}
+
+async function deleteRecipeFromRecipeList(event) {
+    event.preventDefault();
+
+    const recipeIDValue = document.getElementById('deleteRecipeFromRecipeListRecipeID').value;
+    const recipeListIDValue = document.getElementById('deleteRecipeFromRecipeListID').value;
+
+    const response = await fetch('/delete-recipe-from-recipe-list', {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            RecipeID: recipeIDValue,
+            RecipeListID: recipeListIDValue
+        })
+    });
+
+    const responseData = await response.json();
+    const messageElement = document.getElementById('deleteRecipeFromRecipeListResultMsg');
+
+    if (responseData.success) {
+        messageElement.textContent = "Recipe deleted from Recipe List successfully!";
+        fetchTableData();
+    } else {
+        messageElement.textContent = "Error deleting recipe from recipe list!";
+    }
+}
+
 
 // ----------------------------------------------------------
 // Ingredient Centric methods
@@ -767,6 +911,11 @@ window.onload = function () {
     document.getElementById("deleteRecipeFromCategory").addEventListener("submit", deleteRecipeFromCategory);
     document.getElementById("filterRecipesForm").addEventListener("submit", fetchAndDisplayFilteredRecipes);
     document.getElementById("filterByRecipeListForm").addEventListener("submit", fetchAndDisplayRecipesByRecipeList);
+    document.getElementById("insertRecipeList").addEventListener("submit", insertRecipeList);
+    document.getElementById("updateRecipeList").addEventListener("submit", updateRecipeList);
+    document.getElementById("deleteRecipeList").addEventListener("submit", deleteRecipeList);
+    document.getElementById("insertRecipeToRecipeList").addEventListener("submit", insertRecipeToRecipeList);
+    document.getElementById("deleteRecipeFromRecipeList").addEventListener("submit", deleteRecipeFromRecipeList);
 
     // ingredient centric
 

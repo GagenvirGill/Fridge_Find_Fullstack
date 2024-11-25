@@ -138,7 +138,7 @@ async function fetchFilteredRecipesFromDb(Categories) {
 
 async function fetchRecipeListFromDb() {
     return await withOracleDB(async (connection) => {
-        const result = await connection.execute('SELECT RecipeListID, RecipeListName, Username FROM RecipeList');
+        const result = await connection.execute('SELECT * FROM RecipeList');
 
         console.log('Fetched Recipe Lists Successfully');
         return result.rows;
@@ -554,6 +554,103 @@ async function fetchRecipeList(RecipeListID) {
     });
 }
 
+async function insertRecipeList(RecipeListID, RecipeListName, PrivacyLevel, Username) {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            `INSERT INTO RecipeList(RecipeListID, RecipeListName, PrivacyLevel, Username) VALUES(:RecipeListID, :RecipeListName, :PrivacyLevel, :Username)`,
+            [RecipeListID, RecipeListName, PrivacyLevel, Username],
+            { autoCommit: true }
+        );
+
+        console.log('Inserted Recipe List Successfully');
+        return result.rowsAffected && result.rowsAffected > 0;
+    }).catch((error) => {
+        console.error('Database error:', error);
+        return false;
+    });
+}
+
+async function updateRecipeList(RecipeListID, RecipeListName, PrivacyLevel) {
+    return await withOracleDB(async (connection) => {
+        let queryParams = [];
+        let querySetClauses = [];
+
+        if (RecipeListName != "") {
+            querySetClauses.push(`RecipeListName =: RecipeListName`);
+            queryParams.push(RecipeListName);
+        }
+        if (PrivacyLevel != "Do Not Change") {
+            querySetClauses.push(`PrivacyLevel =: PrivacyLevel`);
+            queryParams.push(PrivacyLevel);
+        }
+
+        let query = `UPDATE RecipeList SET `;
+        query += querySetClauses.join(`, `);
+        query += ` WHERE RecipeListID =: RecipeListID`;
+        queryParams.push(RecipeListID);
+
+        const result = await connection.execute(
+            query,
+            queryParams,
+            { autoCommit: true }
+        );
+
+        console.log('Updated Recipe List Successfully');
+        return result.rowsAffected && result.rowsAffected > 0;
+    }).catch((error) => {
+        console.error('Database error:', error);
+        return false;
+    });
+}
+
+async function deleteRecipeList(RecipeListID) {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            'DELETE FROM RecipeList WHERE RecipeListID=:RecipeListID',
+            [RecipeListID],
+            { autoCommit: true }
+        );
+
+        console.log('Deleted Recipe List Successfully');
+        return result.rowsAffected && result.rowsAffected > 0;;
+    }).catch((error) => {
+        console.error('Database error:', error);
+        return false;
+    });
+}
+
+async function insertRecipeIntoRecipeList(RecipeID, RecipeListID) {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            `INSERT INTO RecipeListHasRecipe(RecipeListID, RecipeID) VALUES(: RecipeListID, : RecipeID)`,
+            [RecipeListID, RecipeID],
+            { autoCommit: true }
+        );
+
+        console.log('Inserted Recipe into Recipe List Successfully');
+        return result.rowsAffected && result.rowsAffected > 0;
+    }).catch((error) => {
+        console.error('Database error:', error);
+        return false;
+    });
+}
+
+async function deleteRecipeFromRecipeList(RecipeID, RecipeListID) {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            'DELETE FROM RecipeListHasRecipe WHERE RecipeID=:RecipeID AND RecipeListID=:RecipeListID',
+            [RecipeID, RecipeListID],
+            { autoCommit: true }
+        );
+
+        console.log('Deleted Recipe from Recipe List Successfully');
+        return result.rowsAffected && result.rowsAffected > 0;;
+    }).catch((error) => {
+        console.error('Database error:', error);
+        return false;
+    });
+}
+
 
 // ----------------------------------------------------------
 // Ingredient Centric service
@@ -634,6 +731,11 @@ module.exports = {
     insertRecipeIntoCategory,
     deleteRecipeFromCategory,
     fetchRecipeList,
+    insertRecipeList,
+    updateRecipeList,
+    deleteRecipeList,
+    insertRecipeIntoRecipeList,
+    deleteRecipeFromRecipeList,
 
     // Ingredient Centric
 

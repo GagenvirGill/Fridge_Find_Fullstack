@@ -214,6 +214,55 @@ router.get("/recipe-list-value", async (req, res) => {
     res.json({ data: recipeListValues })
 });
 
+router.post("/insert-recipe-list", async (req, res) => {
+    const { RecipeListID, RecipeListName, PrivacyLevel, Username } = req.body;
+    const insertResult = await appService.insertRecipeList(RecipeListID, RecipeListName, PrivacyLevel, Username);
+    if (insertResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+router.patch("/update-recipe-list", async (req, res) => {
+    const { RecipeListID, RecipeListName, PrivacyLevel } = req.body;
+    const updateResult = await appService.updateRecipeList(RecipeListID, RecipeListName, PrivacyLevel);
+    if (updateResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+router.delete("/delete-recipe-list", async (req, res) => {
+    const { RecipeListID } = req.body;
+    const deleteResult = await appService.deleteRecipeList(RecipeListID);
+    if (deleteResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+router.post("/insert-recipe-into-recipe-list", async (req, res) => {
+    const { RecipeID, RecipeListID } = req.body;
+    const insertResult = await appService.insertRecipeIntoRecipeList(RecipeID, RecipeListID);
+    if (insertResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+router.delete("/delete-recipe-from-recipe-list", async (req, res) => {
+    const { RecipeID, RecipeListID } = req.body;
+    const deleteResult = await appService.deleteRecipeFromRecipeList(RecipeID, RecipeListID);
+    if (deleteResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
 
 // ----------------------------------------------------------
 // Ingredient Centric endpoints

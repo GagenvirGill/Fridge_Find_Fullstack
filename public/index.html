@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Link to the external CSS stylesheet. Uncomment if you wish to customize or add styling. -->
-    <!-- <link rel="stylesheet" href="styles.css">   -->
+    <link rel="stylesheet" href="styles.css"> 
 
     <title>Database Application</title>
 </head>
@@ -308,6 +308,65 @@
         <button type="submit"> Remove Recipe from Category </button><br>
     </form>
     <div id="deleteARecipeFromCategoryResultMsg"></div>
+
+    <h3>Create a Recipe List</h3>
+    <form id="insertRecipeList">
+        Recipe List ID: <input type="number" id="insertRecipeListID" placeholder="Enter Recipe List ID" required> <br><br>
+        Recipe List Name: <input type="text" id="insertRecipeListName" placeholder="Enter Recipe List Name" maxlength="50"> <br><br>
+        Privacy Level: 
+        <select id="insertRecipeListPrivacyLevel">
+            <option value="Private">Private</option>
+            <option value="Public">Public</option>
+            <option value="Friends Only">Friends Only</option>
+        </select> <br><br>
+        Username: <input type="text" id="insertRecipeListUsername" placeholder="Enter Username" maxlength="50" required> <br><br>
+
+        <button type="submit"> Create Recipe List </button><br>
+    </form>
+    <div id="insertRecipeListResultMsg"></div>
+
+    <h3>Update a Recipe List</h3>
+    <form id="updateRecipeList">
+        Recipe List ID: <input type="number" id="updateRecipeListID" placeholder="Enter Recipe List ID" required> <br><br>
+        Recipe List Name: <input type="text" id="updateRecipeListName" placeholder="Enter Recipe List Name" maxlength="50"> <br><br>
+        Privacy Level: 
+        <select id="updateRecipeListPrivacyLevel">
+            <option value="Do Not Change">Do Not Change</option>
+            <option value="Private">Private</option>
+            <option value="Public">Public</option>
+            <option value="Friends Only">Friends Only</option>
+        </select> <br><br>
+
+        <button type="submit"> Update Recipe List </button><br>
+    </form>
+    <div id="updateRecipeListResultMsg"></div>
+
+    <h3>Delete a Recipe List</h3>
+    <form id="deleteRecipeList">
+        Recipe List ID: <input type="number" id="deleteRecipeListID" placeholder="Enter Recipe List ID" required> <br><br>
+
+        <button type="submit"> Delete Recipe List </button><br>
+    </form>
+    <div id="deleteRecipeListUpdateMsg"></div>
+
+    <h3>Add a Recipe to a Recipe List</h3>
+    <form id="insertRecipeToRecipeList">
+        Recipe ID: <input type="number" id="insertRecipeToRecipeListRecipeID" placeholder="Enter Recipe ID" required> <br><br>
+        Recipe List ID: <input type="number" id="insertRecipeToRecipeListID" placeholder="Enter Recipe List ID" required> <br><br>
+        
+        <button type="submit"> Add Recipe to Recipe List </button><br>
+    </form>
+    <div id="insertRecipeToRecipeListResultMsg"></div>
+
+    <h3>Remove a Recipe from a Recipe List</h3>
+    <form id="deleteRecipeFromRecipeList">
+        Recipe ID: <input type="number" id="deleteRecipeFromRecipeListRecipeID" placeholder="Enter Recipe ID" required> <br><br>
+        Recipe List ID: <input type="number" id="deleteRecipeFromRecipeListID" placeholder="Enter Recipe List ID" required> <br><br>
+        
+        <button type="submit"> Remove Recipe from Recipe List </button><br>
+    </form>
+    <div id="deleteRecipeFromRecipeListResultMsg"></div>
+
 
     <br><hr><br> <!-- ========================================================================= -->
     <h2> Ingredient Centric </h2>
