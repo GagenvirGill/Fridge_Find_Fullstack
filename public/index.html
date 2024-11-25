@@ -52,9 +52,9 @@
         </tbody>
     </table>
 
-    <h3>Show and Filter Recipes</h3>
+    <h3>Show and Filter Recipes by Category</h3>
     <form id="filterRecipesForm">
-        <label for="filterRecipes"> Filter the Recipes by the following Categories (Use shift to select multiple):</label> <br><br>
+        <label for="filterRecipes"> Filter the Recipes by the following Categories (Hold shift to select multiple):</label> <br><br>
         <select name="filterRecipesCategories" id="filterRecipesCategories" multiple> 
             <!-- Options are displayed dynamically and are not statically known -->
         </select> <br><br>
@@ -65,6 +65,29 @@
         <thead>
             <tr>
                 <th>Category</th>
+                <th>Recipe ID</th>
+                <th>Recipe Name</th>
+                <th>Privacy Level</th>
+                <th>Username</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <h3>Show and Filter Recipes by Recipe List</h3>
+    <form id="filterByRecipeListForm">
+        <label for="filterByRecipeList">Filter the Recipes by the following Recipe Lists: </label>
+        <select name="filterRecipesRecipeLists" id="filterRecipesRecipeLists">
+            <!-- Options are displayed dynamically and are not statically known -->
+        </select> <br><br>
+
+        <button type="submit"> Filter </button> <br>
+    </form>
+    <div id="recipesByRecipeListMsg"></div>
+    <table id="filteredByRecipeListTable" border="1">
+        <thead>
+            <tr>
                 <th>Recipe ID</th>
                 <th>Recipe Name</th>
                 <th>Privacy Level</th>

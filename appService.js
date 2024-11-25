@@ -136,6 +136,38 @@ async function fetchFilteredRecipesFromDb(Categories) {
     });
 }
 
+async function fetchRecipeListFromDb() {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute('SELECT RecipeListID, RecipeListName, Username FROM RecipeList');
+
+        console.log('Fetched Recipe Lists Successfully');
+        return result.rows;
+    }).catch((error) => {
+        console.error('Database error:', error);
+        return [];
+    });
+}
+
+async function fetchRecipesByRecipeListFromDb(RecipeListID) {
+    return await withOracleDB(async (connection) => {
+        console.log(RecipeListID);
+        const query = `
+            SELECT r.*
+            FROM Recipe r
+            JOIN RecipeListHasRecipe rlhr ON r.RecipeID = rlhr.RecipeID
+            WHERE rlhr.RecipeListID=:RecipeListID
+        `;
+
+        const result = await connection.execute(query, [RecipeListID]);
+
+        console.log('Fetched Recipes by Recipe List Successfully');
+        return result.rows;
+    }).catch((error) => {
+        console.error('Database error:', error);
+        return [];
+    });
+}
+
 async function insertRecipe(RecipeID, RecipeName, PrivacyLevel, Username) {
     // validate username
     const isUsernameValid = await validateUsername(Username);
@@ -498,7 +530,29 @@ async function deleteRecipeFromCategory(RecipeID, CategoryName) {
     });
 }
 
+async function fetchRecipeList(RecipeListID) {
+    const intRecipeListID = parseInt(RecipeListID, 10);
 
+    if (isNaN(intRecipeListID)) {
+        console.log('invalid Recipe List ID')
+        return false;
+    }
+
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(`
+            SELECT RecipeListID, RecipeListName, Username
+            FROM RecipeList
+            WHERE RecipeListID =: RecipeListID`,
+            [intRecipeListID]
+        );
+
+        console.log('Fetched a Recipe Lists Values Succesfully');
+        return result.rows;
+    }).catch((error) => {
+        console.error('Database error:', error);
+        return false;
+    });
+}
 
 
 // ----------------------------------------------------------
@@ -560,6 +614,8 @@ module.exports = {
     fetchRecipeFromDb,
     fetchCategoryFromDb,
     fetchFilteredRecipesFromDb,
+    fetchRecipeListFromDb,
+    fetchRecipesByRecipeListFromDb,
     insertRecipe,
     updateRecipe,
     deleteRecipe,
@@ -577,6 +633,7 @@ module.exports = {
     deleteCategory,
     insertRecipeIntoCategory,
     deleteRecipeFromCategory,
+    fetchRecipeList,
 
     // Ingredient Centric
 

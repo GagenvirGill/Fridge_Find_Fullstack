@@ -24,8 +24,8 @@ router.get('/check-db-connection', async (req, res) => {
 // Recipe Centric endpoints
 
 router.get('/recipe', async (req, res) => {
-    const tableContent = await appService.fetchRecipeFromDb();
-    res.json({ data: tableContent });
+    const recipeContent = await appService.fetchRecipeFromDb();
+    res.json({ data: recipeContent });
 });
 
 router.get('/category', async (req, res) => {
@@ -36,6 +36,17 @@ router.get('/category', async (req, res) => {
 router.post('/filtered-recipes', async (req, res) => {
     const { Categories } = req.body;
     const fetchResult = await appService.fetchFilteredRecipesFromDb(Categories);
+    res.json({ data: fetchResult });
+});
+
+router.get('/recipe-list', async (req, res) => {
+    const recipeListContent = await appService.fetchRecipeListFromDb();
+    res.json({ data: recipeListContent });
+});
+
+router.get('/filter-by-recipe-list', async (req, res) => {
+    const { RecipeListID } = req.query;
+    const fetchResult = await appService.fetchRecipesByRecipeListFromDb(RecipeListID);
     res.json({ data: fetchResult });
 });
 
@@ -195,6 +206,12 @@ router.delete("/delete-recipe-from-category", async (req, res) => {
     } else {
         res.status(500).json({ success: false });
     }
+});
+
+router.get("/recipe-list-value", async (req, res) => {
+    const { RecipeListID } = req.query;
+    const recipeListValues = await appService.fetchRecipeList(RecipeListID);
+    res.json({ data: recipeListValues })
 });
 
 

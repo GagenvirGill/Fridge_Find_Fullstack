@@ -121,6 +121,77 @@ async function fetchAndDisplayFilteredRecipes(event) {
     });
 }
 
+async function fetchAndDisplayRecipeLists() {
+    const response = await fetch('/recipe-list', {
+        method: 'GET'
+    });
+
+    const responseData = await response.json();
+    const recipeListContent = responseData.data;
+
+    const recipeListSelectBar = document.getElementById('filterRecipesRecipeLists');
+    recipeListSelectBar.innerHTML = '';
+
+    recipeListContent.forEach(recipeList => {
+        const recipeListFormatted = `\'${recipeList[1]}\' by ${recipeList[2]}`
+
+        const option = document.createElement('option');
+        option.value = recipeList[0];
+        option.textContent = recipeListFormatted;
+        recipeListSelectBar.appendChild(option);
+    });
+}
+
+async function fetchAndDisplayRecipesByRecipeList(event) {
+    event.preventDefault();
+
+    const recipeListSelectBar = document.getElementById('filterRecipesRecipeLists');
+    const tableElement = document.getElementById('filteredByRecipeListTable');
+    const tableBody = tableElement.querySelector('tbody');
+    const selectedRecipeList = recipeListSelectBar.value;
+
+    const tableResponse = await fetch(`/filter-by-recipe-list?RecipeListID=${selectedRecipeList}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+
+    const tableResponseData = await tableResponse.json();
+    const recipesContent = tableResponseData.data;
+
+    const listValuesResponse = await fetch(`/recipe-list-value?RecipeListID=${selectedRecipeList}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+
+    const listValuesResponseData = await listValuesResponse.json();
+    const recipeListValues = listValuesResponseData.data;
+    const formattedRecipeListValues = `List ID:${recipeListValues[0][0]} - \'${recipeListValues[0][1]}\' Recipes by ${recipeListValues[0][2]} Successfully Retreived`
+
+    const messageElement = document.getElementById('recipesByRecipeListMsg');
+    if (formattedRecipeListValues.length > 0) {
+        messageElement.textContent = formattedRecipeListValues;
+        fetchTableData();
+    } else {
+        messageElement.textContent = "Error getting the Recipes for the List";
+    }
+
+    if (tableBody) {
+        tableBody.innerHTML = '';
+    }
+
+    recipesContent.forEach(recipe => {
+        const row = tableBody.insertRow();
+        recipe.forEach((field, index) => {
+            const cell = row.insertCell(index);
+            cell.textContent = field;
+        });
+    });
+}
+
 // Inserts new records into the recipe table.
 async function insertRecipe(event) {
     event.preventDefault();
@@ -695,6 +766,7 @@ window.onload = function () {
     document.getElementById("insertRecipeToCategory").addEventListener("submit", insertRecipeIntoCategory);
     document.getElementById("deleteRecipeFromCategory").addEventListener("submit", deleteRecipeFromCategory);
     document.getElementById("filterRecipesForm").addEventListener("submit", fetchAndDisplayFilteredRecipes);
+    document.getElementById("filterByRecipeListForm").addEventListener("submit", fetchAndDisplayRecipesByRecipeList);
 
     // ingredient centric
 
@@ -706,6 +778,7 @@ window.onload = function () {
 // You can invoke this after any table-modifying operation to keep consistency.
 function fetchTableData() {
     fetchAndDisplayCategories();
+    fetchAndDisplayRecipeLists();
     fetchAndDisplayRecipes();
     fetchAndDisplayFilteredRecipes();
 }
