@@ -69,6 +69,43 @@ async function fetchAndDisplayRecipes() {
     });
 }
 
+async function fetchAndDisplaySimpleOrComplicatedRecipes(event) {
+    event.preventDefault();
+
+    const difficultySelection = document.getElementById('difficulty');
+    const difficultyValue = difficultySelection.value;
+    const tableElement = document.getElementById('simpleOrComplicatedRecipesTable');
+    const tableBody = tableElement.querySelector('tbody');
+
+    const response = await fetch('/simple-or-complicated-recipes', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            Difficulty: difficultyValue
+        })
+    });
+
+    simpleOrComplicatedRecipesResultMsg
+
+    const responseData = await response.json();
+    const filteredRecipes = responseData.data;
+
+    const messageElement = document.getElementById('simpleOrComplicatedRecipesResultMsg');
+    messageElement.textContent = `Got all ${difficultyValue} Recipes`;
+
+    tableBody.innerHTML = '';
+
+    filteredRecipes.forEach(recipe => {
+        const row = tableBody.insertRow();
+        recipe.forEach((field, index) => {
+            const cell = row.insertCell(index);
+            cell.textContent = field;
+        });
+    });
+}
+
 async function fetchAndDisplayCategories() {
     const response = await fetch('/category', {
         method: 'GET'
@@ -169,7 +206,7 @@ async function fetchAndDisplayRecipesByRecipeList(event) {
 
     const listValuesResponseData = await listValuesResponse.json();
     const recipeListValues = listValuesResponseData.data;
-    const formattedRecipeListValues = `List ID:${recipeListValues[0][0]} - \'${recipeListValues[0][1]}\' Recipes by ${recipeListValues[0][2]} Successfully Retreived`
+    const formattedRecipeListValues = `\'${recipeListValues[0][1]}\' Recipes by ${recipeListValues[0][2]} Successfully Retreived`
 
     const messageElement = document.getElementById('recipesByRecipeListMsg');
     if (formattedRecipeListValues.length > 0) {
@@ -916,6 +953,8 @@ window.onload = function () {
     document.getElementById("deleteRecipeList").addEventListener("submit", deleteRecipeList);
     document.getElementById("insertRecipeToRecipeList").addEventListener("submit", insertRecipeToRecipeList);
     document.getElementById("deleteRecipeFromRecipeList").addEventListener("submit", deleteRecipeFromRecipeList);
+    document.getElementById("simpleOrComplicatedRecipes").addEventListener("submit", fetchAndDisplaySimpleOrComplicatedRecipes);
+
 
     // ingredient centric
 

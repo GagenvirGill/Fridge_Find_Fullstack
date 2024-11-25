@@ -97,6 +97,36 @@ async function fetchRecipeFromDb() {
     });
 }
 
+async function fetchSimpleOrComplicatedRecipesFromDb(Difficulty) {
+    return await withOracleDB(async (connection) => {
+        let query = `SELECT r.*, (SELECT COUNT(*) FROM RecipeIngredient ri WHERE ri.RecipeID = r.RecipeID), (SELECT COUNT(*) FROM RecipeStep rs WHERE rs.RecipeID = r.RecipeID) FROM Recipe r WHERE (SELECT COUNT(*) FROM RecipeIngredient ri WHERE ri.RecipeID = r.RecipeID) `;
+
+        if (Difficulty === 'Simple') {
+            query += `< `;
+        } else if (Difficulty === 'Complicated') {
+            query += `> `;
+        }
+
+        query += `(SELECT AVG(IngredientCount) FROM (SELECT COUNT(*) AS IngredientCount FROM RecipeIngredient GROUP BY RecipeID)) AND (SELECT COUNT(*) FROM RecipeStep rs WHERE rs.RecipeID = r.RecipeID) `;
+
+        if (Difficulty === 'Simple') {
+            query += `< `;
+        } else if (Difficulty === 'Complicated') {
+            query += `> `;
+        }
+
+        query += `(SELECT AVG(StepCount) FROM (SELECT COUNT(*) AS StepCount FROM RecipeStep GROUP BY RecipeID))`;
+
+        const result = await connection.execute(query);
+
+        console.log(`Fetched ${Difficulty} Recipes Successfully`);
+        return result.rows;
+    }).catch((error) => {
+        console.error('Database error:', error);
+        return [];
+    });
+}
+
 async function fetchCategoryFromDb() {
     return await withOracleDB(async (connection) => {
         const result = await connection.execute('SELECT CategoryName FROM Category');
@@ -709,6 +739,7 @@ module.exports = {
 
     // Recipe Centric
     fetchRecipeFromDb,
+    fetchSimpleOrComplicatedRecipesFromDb,
     fetchCategoryFromDb,
     fetchFilteredRecipesFromDb,
     fetchRecipeListFromDb,

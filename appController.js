@@ -28,6 +28,12 @@ router.get('/recipe', async (req, res) => {
     res.json({ data: recipeContent });
 });
 
+router.post('/simple-or-complicated-recipes', async (req, res) => {
+    const { Difficulty } = req.body;
+    const easyRecipesContent = await appService.fetchSimpleOrComplicatedRecipesFromDb(Difficulty);
+    res.json({ data: easyRecipesContent });
+});
+
 router.get('/category', async (req, res) => {
     const categoryContent = await appService.fetchCategoryFromDb();
     res.json({ data: categoryContent });

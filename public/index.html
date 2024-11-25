@@ -52,6 +52,31 @@
         </tbody>
     </table>
 
+    <h3>Show all Simple or Complicted Recipes</h3>
+    <form id="simpleOrComplicatedRecipes">
+        <select name="difficulty" id="difficulty">
+            <option value="Simple">Simple</option>
+            <option value="Complicated">Complicated</option>
+        </select>
+
+        <button type="submit"> Get Simple/Complicated Recipes </button> <br>
+    </form>
+    <div id="simpleOrComplicatedRecipesResultMsg"></div>
+    <table id="simpleOrComplicatedRecipesTable" border="1">
+        <thead>
+            <tr>
+                <th>Recipe ID</th>
+                <th>Recipe Name</th>
+                <th>Privacy Level</th>
+                <th>Username</th>
+                <th>Number of Ingredients</th>
+                <th>Number of Steps</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
     <h3>Show and Filter Recipes by Category</h3>
     <form id="filterRecipesForm">
         <label for="filterRecipes"> Filter the Recipes by the following Categories (Hold shift to select multiple):</label> <br><br>
