@@ -954,6 +954,11 @@ async function insertAllergicIngredient(event) {
     }
 }
 
+async function updateAllergicIngredient(event) {
+    event.preventDefault();
+
+}
+
 
 
 // ----------------------------------------------------------
