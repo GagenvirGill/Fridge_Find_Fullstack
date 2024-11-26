@@ -288,8 +288,7 @@ router.post("/insert-allergic-ingredient", async (req, res) => {
         } else {
             res.status(500).json({ success: false });
         }
-    } catch (error) {
-        console.error('Insertion Error:', error);  // Log the actual error
+    } catch (error) { // testing
         res.status(500).json({ success: false, error: error.message });
     }
 });
