@@ -159,7 +159,7 @@ CREATE TABLE RecipeListHasRecipe (
     RecipeID NUMBER,
     PRIMARY KEY (RecipeListID, RecipeID),
     FOREIGN KEY (RecipeID) REFERENCES Recipe(RecipeID) ON DELETE CASCADE,
-    FOREIGN KEY (RecipeListID) REFERENCES RecipeList(RecipeListID)
+    FOREIGN KEY (RecipeListID) REFERENCES RecipeList(RecipeListID) ON DELETE CASCADE
 );
 
 
@@ -172,7 +172,10 @@ INSERT INTO AppUser (Username, ProfilePicture, Email, FullName, DefaultPrivacyLe
 INSERT INTO AppUser (Username, ProfilePicture, Email, FullName, DefaultPrivacyLevel) VALUES ('Jason', HEXTORAW('48656C6C6F'), 'jason@gmail.com', 'Jason Person', 'Friends Only');
 
 INSERT INTO Friends (Username1, Username2, DateAndTimeCreated) VALUES ('Alice', 'Charlie', TIMESTAMP '2024-01-15 10:00:00');
-INSERT INTO Friends (Username1, Username2, DateAndTimeCreated) VALUES ('Charlie', 'Bob', TIMESTAMP '2022-01-16 11:30:00');
+INSERT INTO Friends (Username1, Username2, DateAndTimeCreated) VALUES ('Alice', 'Bob', TIMESTAMP '2024-01-15 11:00:00');
+INSERT INTO Friends (Username1, Username2, DateAndTimeCreated) VALUES ('Alice', 'Kevin', TIMESTAMP '2024-01-15 13:00:00');
+INSERT INTO Friends (Username1, Username2, DateAndTimeCreated) VALUES ('Alice', 'Jason', TIMESTAMP '2024-01-15 14:00:00');
+INSERT INTO Friends (Username1, Username2, DateAndTimeCreated) VALUES ('Charlie', 'Jason', TIMESTAMP '2022-01-16 11:30:00');
 INSERT INTO Friends (Username1, Username2, DateAndTimeCreated) VALUES ('Bob', 'Kevin', TIMESTAMP '2023-01-17 12:15:00');
 INSERT INTO Friends (Username1, Username2, DateAndTimeCreated) VALUES ('Kevin', 'Jason', TIMESTAMP '2020-01-18 13:45:00');
 INSERT INTO Friends (Username1, Username2, DateAndTimeCreated) VALUES ('Jason', 'Charlie', TIMESTAMP '2021-01-19 14:00:00');

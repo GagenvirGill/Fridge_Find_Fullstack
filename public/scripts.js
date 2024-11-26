@@ -878,6 +878,6 @@ function fetchTableData() {
     fetchAndDisplayUsers();
     fetchAndDisplayPublicUsers();
     fetchAndDisplayUsersWhoAreFriendsWithEveryone();
-    fetchAndDisplayNotificationForExpiringIngredient();
+    fetchAndDisplayNotifications();
     fetchAndDisplayRecipes();
 }
