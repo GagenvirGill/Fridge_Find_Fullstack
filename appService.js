@@ -275,15 +275,7 @@ async function insertAllergicIngredient(IngredientID, Name) {
     }
 }
 
-async function updateAllergicIngredient(IngredientID, newName) {
-    let query = `UPDATE AllergicIngredient SET 
-                 SET Name = :newName
-                 WHERE IngredientID = :IngredientID`;
-    let queryParams = {
-        newName: newName,
-        IngredientID: IngredientID,
-    };
-
+async function updateAllergicIngredient(IngredientID, newIngredientName) {
     try {
         return await withOracleDB(async (connection) => {
             const result = await connection.execute(
@@ -317,7 +309,6 @@ async function deleteAllergicIngredient(IngredientID) {
         return false;
     }
 }
-
 
 
 
