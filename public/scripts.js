@@ -947,7 +947,7 @@ async function insertAllergicIngredient(event) {
 
     if (responseData.success) {
         messageElement.textContent = "Allergic Ingredient data inserted successfully!";
-        fetchTableData();
+        fetchTableData(); // here
         //fetchAndDisplayAllergicIngredient();
     } else {
         messageElement.textContent = "Error inserting Allergic Ingredient data!";
