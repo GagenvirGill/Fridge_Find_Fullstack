@@ -957,7 +957,58 @@ async function insertAllergicIngredient(event) {
 async function updateAllergicIngredient(event) {
     event.preventDefault();
 
+    const allergicIngredientIDValue = Number(document.getElementById('updateAllergicIngredientID').value);
+    const allergicIngredientNameValue = document.getElementById('updateAllergicIngredientName').value;
+
+    const response = await fetch('/update-allergic-ingredient', {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            IngredientID: allergicIngredientIDValue,
+            IngredientName: allergicIngredientNameValue,
+        })
+    });
+
+    const responseData = await response.json();
+    const messageElement = document.getElementById('updateAllergicIngredientResultMsg');
+
+    if (responseData.success) {
+        messageElement.textContent = "Allergic Ingredient updated successfully!";
+        fetchTableData();
+    } else {
+        messageElement.textContent = "Error updating Allergic Ingredient!";
+    }
 }
+
+async function deleteAllergicIngredient(event) {
+    event.preventDefault();
+
+    const allergicIngredientIDDelete = Number(document.getElementById('deleteAllergicIngredientID').value);
+
+    const response = await fetch('/delete-allergic-ingredient', {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            IngredientID: allergicIngredientIDDelete,
+        })
+    });
+
+    const responseData = await response.json();
+    const messageElement = document.getElementById('deleteAllergicIngredientResultMsg');
+
+    if (responseData.success) {
+        messageElement.textContent = "Allergic Ingredient deleted successfully!";
+        fetchTableData();
+    } else {
+        messageElement.textContent = "Error deleting Allergic Ingredient!";
+    }
+}
+
+
 
 
 
@@ -1020,6 +1071,8 @@ window.onload = function () {
 
     // ingredient centric
     document.getElementById("insertAllergicIngredient").addEventListener("submit", insertAllergicIngredient);
+    document.getElementById("updateAllergicIngredient").addEventListener("submit", updateAllergicIngredient);
+    document.getElementById("deleteAllergicIngredient").addEventListener("submit", deleteAllergicIngredient);
 
     // general
     document.getElementById("resetTables").addEventListener("click", resetTables);

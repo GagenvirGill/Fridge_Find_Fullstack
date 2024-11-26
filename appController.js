@@ -288,20 +288,40 @@ router.post("/insert-allergic-ingredient", async (req, res) => {
         } else {
             res.status(500).json({ success: false });
         }
-    } catch (error) { // testing
+    } catch (error) { 
         res.status(500).json({ success: false, error: error.message });
     }
 });
 
 router.patch("/update-allergic-ingredient", async (req, res) => {
     const { IngredientID, IngredientName } = req.body;
-    const updateResult = await appService.updateAllergicIngredient(IngredientID, IngredientName);
-    if (updateResult) {
-        res.json({ success: true });
-    } else {
-        res.status(500).json({ success: false });
+    try {
+        const updateResult = await appService.updateAllergicIngredient(IngredientID, IngredientName);
+        if (updateResult) {
+            res.json({ success: true });
+        } else {
+            res.status(500).json({ success: false });
+        }
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
     }
 });
+
+router.delete("/delete-allergic-ingredient", async (req, res) => {
+    const { IngredientID } = req.body;
+    try {
+        const deleteResult = await appService.deleteAllergicIngredient(IngredientID);
+        if (deleteResult) {
+            res.json({ success: true });
+        } else {
+            res.status(500).json({ success: false });
+        }
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+
 
 
 
