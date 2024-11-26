@@ -897,6 +897,96 @@ async function deleteRecipeFromRecipeList(event) {
 // ----------------------------------------------------------
 // Ingredient Centric methods
 
+// Display all Allergic Ingredients
+async function fetchAndDisplayAllergicIngredient() {
+    const response = await fetch('/allergic-ingredient', {
+        method: 'GET'
+    });
+
+    const responseData = await response.json();
+    const allergicIngredientContent = responseData.data;
+
+    const tableElement = document.getElementById('allergicingredient'); // from index.html tag
+    const tableBody = tableElement.querySelector('tbody');
+
+    if (tableBody) {
+        tableBody.innerHTML = '';
+    }
+
+    allergicIngredientContent.forEach(allergicingredient => {
+        const row = tableBody.insertRow();
+        allergicingredient.forEach((field, index) => {
+            const cell = row.insertCell(index);
+            cell.textContent = field;
+        });
+    });
+}
+
+
+
+// Inserts new records into the recipe table.
+async function insertAllergicIngredient(event) {
+    event.preventDefault();
+
+    const allergicIngredientID = Number(document.getElementById('insertAllergicIngredientID').value);
+    const allergicIngredientName = document.getElementById('insertAllergicIngredientName').value;
+
+    const response = await fetch('/insert-allergic-ingredient', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            IngredientID: allergicIngredientID, // Here
+            IngredientName: allergicIngredientName,
+        })
+    });
+
+    const responseData = await response.json();
+    const messageElement = document.getElementById('insertAllergicIngredientResultMsg');
+
+    if (responseData.success) {
+        messageElement.textContent = "Allergic Ingredient data inserted successfully!";
+        fetchTableData();
+        //fetchAndDisplayAllergicIngredient();
+    } else {
+        messageElement.textContent = "Error inserting Allergic Ingredient data!";
+    }
+}
+
+// // Inserts new records into the recipe table.
+// async function insertRecipe(event) {
+//     event.preventDefault();
+
+//     const recipeIDValue = document.getElementById('insertRecipeID').value;
+//     const recipeNameValue = document.getElementById('insertRecipeName').value;
+//     const privacyLevelValue = document.getElementById('insertPrivacyLevel').value;
+//     const usernameValue = document.getElementById('insertUsername').value;
+
+//     const response = await fetch('/insert-recipe', {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/json'
+//         },
+//         body: JSON.stringify({
+//             RecipeID: recipeIDValue,
+//             RecipeName: recipeNameValue,
+//             PrivacyLevel: privacyLevelValue,
+//             Username: usernameValue
+//         })
+//     });
+
+//     const responseData = await response.json();
+//     const messageElement = document.getElementById('insertRecipeResultMsg');
+
+//     if (responseData.success) {
+//         messageElement.textContent = "Recipe Data inserted successfully!";
+//         fetchTableData();
+//     } else {
+//         messageElement.textContent = "Error inserting Recipe data!";
+//     }
+// }
+
 
 
 // ----------------------------------------------------------
@@ -959,14 +1049,19 @@ window.onload = function () {
     // ingredient centric
 
     // general
+    document.getElementById("insertAllergicIngredient").addEventListener("submit", insertAllergicIngredient);
+    document.getElementById("updateAllergicIngredient").addEventListener("submit", updateAllergicIngredient);
     document.getElementById("resetTables").addEventListener("click", resetTables)
 };
 
 // General function to refresh the displayed table data. 
 // You can invoke this after any table-modifying operation to keep consistency.
 function fetchTableData() {
+    // Recipe Centric
     fetchAndDisplayCategories();
     fetchAndDisplayRecipeLists();
     fetchAndDisplayRecipes();
     fetchAndDisplayFilteredRecipes();
+    // Ingredient Centric
+    fetchAndDisplayAllergicIngredient();
 }

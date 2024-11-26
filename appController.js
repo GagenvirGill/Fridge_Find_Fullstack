@@ -273,6 +273,38 @@ router.delete("/delete-recipe-from-recipe-list", async (req, res) => {
 // ----------------------------------------------------------
 // Ingredient Centric endpoints
 
+// AllergicIngredient 
+router.get('/allergic-ingredient', async (req, res) => {
+    const tableContent = await appService.fetchAllergicIngredientFromDb();
+    res.json({ data: tableContent });
+});
+
+router.post("/insert-allergic-ingredient", async (req, res) => {
+   const { IngredientID, IngredientName } = req.body;
+   try {
+        const insertResult = await appService.insertAllergicIngredient(IngredientID, IngredientName);
+        if (insertResult) {
+            res.json({ success: true });
+        } else {
+            res.status(500).json({ success: false });
+        }
+    } catch (error) {
+        console.error('Insertion Error:', error);  // Log the actual error
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+router.patch("/update-allergic-ingredient", async (req, res) => {
+    const { IngredientID, IngredientName } = req.body;
+    const updateResult = await appService.updateAllergicIngredient(IngredientID, IngredientName);
+    if (updateResult) {
+        res.json({ success: true });
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+
 
 
 // ----------------------------------------------------------
