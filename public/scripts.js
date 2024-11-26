@@ -954,39 +954,6 @@ async function insertAllergicIngredient(event) {
     }
 }
 
-// // Inserts new records into the recipe table.
-// async function insertRecipe(event) {
-//     event.preventDefault();
-
-//     const recipeIDValue = document.getElementById('insertRecipeID').value;
-//     const recipeNameValue = document.getElementById('insertRecipeName').value;
-//     const privacyLevelValue = document.getElementById('insertPrivacyLevel').value;
-//     const usernameValue = document.getElementById('insertUsername').value;
-
-//     const response = await fetch('/insert-recipe', {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json'
-//         },
-//         body: JSON.stringify({
-//             RecipeID: recipeIDValue,
-//             RecipeName: recipeNameValue,
-//             PrivacyLevel: privacyLevelValue,
-//             Username: usernameValue
-//         })
-//     });
-
-//     const responseData = await response.json();
-//     const messageElement = document.getElementById('insertRecipeResultMsg');
-
-//     if (responseData.success) {
-//         messageElement.textContent = "Recipe Data inserted successfully!";
-//         fetchTableData();
-//     } else {
-//         messageElement.textContent = "Error inserting Recipe data!";
-//     }
-// }
-
 
 
 // ----------------------------------------------------------
