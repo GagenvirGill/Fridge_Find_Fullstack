@@ -1019,11 +1019,10 @@ window.onload = function () {
 
 
     // ingredient centric
+    document.getElementById("insertAllergicIngredient").addEventListener("submit", insertAllergicIngredient);
 
     // general
-    document.getElementById("insertAllergicIngredient").addEventListener("submit", insertAllergicIngredient);
-    document.getElementById("updateAllergicIngredient").addEventListener("submit", updateAllergicIngredient);
-    document.getElementById("resetTables").addEventListener("click", resetTables)
+    document.getElementById("resetTables").addEventListener("click", resetTables);
 };
 
 // General function to refresh the displayed table data. 
