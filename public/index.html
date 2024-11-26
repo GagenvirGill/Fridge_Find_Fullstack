@@ -32,7 +32,164 @@
 
     <br><hr><br> <!-- ========================================================================= -->
     <h2> User Centric </h2>
+    <h3>Show Users</h3>
+    <table id="appUser" border="1">
+        <thead>
+        <tr>
+            <th>Username</th>
+            <th>Profile Picture</th>
+            <th>Email</th>
+            <th>Full Name</th>
+            <th>Privacy Level</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
 
+    <h3> Create a New User </h3>
+    <form id="insertUserForm">
+        Username: <input type="text" id="insertNewUserName" placeholder="Enter Username" required maxlength="50"> (Username can't be changed later.) <br><br>
+        Profile Picture: <input type="file" id="insertProfilePicture" accept="image/*" placeholder="Attach Profile Picture"> <br><br>
+        Email: <input type="text" id="insertEmail" placeholder="Enter Email" required maxlength="100"> <br><br>
+        Full Name: <input type="text" id="insertFullName" placeholder="Enter Full Name" required maxlength="50"> <br><br>
+        Privacy Level:
+        <select id="insertUserPrivacyLevel">
+            <option value="Private">Private</option>
+            <option value="Public">Public</option>
+            <option value="Friends Only">Friends Only</option>
+        </select> <br><br>
+
+        <button type="submit"> Create </button> <br>
+    </form>
+    <div id="insertUserResultMsg"></div>
+
+    <h3>Update a User Setting except for Username</h3>
+    <p> Please fill in only fields you want to update, and note that the values are case sensitive. </p>
+    <form id="updateUserForm">
+        Username: <input type="text" id="updateUserName" placeholder="Enter Username" required maxlength="50"> <br><br>
+        New Profile Picture: <input type="file" id="updateProfilePicture" accept="image/*" placeholder="Attach New Profile Picture"> <br><br>
+        New Email: <input type="text" id="updateEmail" placeholder="Enter New Email" required maxlength="100"> <br><br>
+        New Full Name: <input type="text" id="updateFullName" placeholder="Enter New Full Name" required maxlength="50"> <br><br>
+        New Privacy Level:
+        <select id="updateUserPrivacyLevel">
+            <option value="Do Not Change">Do Not Change</option>
+            <option value="Private">Private</option>
+            <option value="Public">Public</option>
+            <option value="Friends Only">Friends Only</option>
+        </select> <br><br>
+
+        <button type="submit"> Update </button> <br>
+    </form>
+    <div id="updateUserResultMsg"></div>
+
+    <h3>Delete a User</h3>
+    <p>You can't revert this action.</p>
+    <form id="deleteUser">
+        Username: <input type="text" id="deleteUserName" placeholder="Enter Username" required maxlength="50"> <br><br>
+
+        <button type="submit"> Delete </button> <br>
+    </form>
+    <div id="deleteUserResultMsg"></div>
+
+    <h3>Public Users</h3>
+    <table id="fetchPublicUser" border="1">
+        <thead>
+        <tr>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Full Name</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <h3>Show Users Who Are Friends with Everyone</h3>
+    <table id="fetchUsersWhoAreFriendsWithEveryone" border="1">
+        <thead>
+        <tr>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Full Name</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <h3>Insert Friend</h3>
+    <form id="insertFriendForm">
+        <label for="insertFriendUsername1">Username 1:</label>
+        <input type="text" id="insertFriendUsername1" placeholder="Enter First Username" required maxlength="50">
+        <br><br>
+        <label for="insertFriendUsername2">Username 2:</label>
+        <input type="text" id="insertFriendUsername2" placeholder="Enter Second Username" required maxlength="50">
+        <br><br>
+        <button type="submit">Add Friend</button>
+    </form>
+    <div id="insertFriendResultMsg"></div>
+
+    <h3>Delete Friend</h3>
+    <p>You can't revert this action.</p>
+    <form id="deleteFriendForm">
+        <label for="deleteFriendUsername1">Username 1:</label>
+        <input type="text" id="deleteFriendUsername1" placeholder="Enter First Username" required maxlength="50">
+        <br><br>
+        <label for="deleteFriendUsername2">Username 2:</label>
+        <input type="text" id="deleteFriendUsername2" placeholder="Enter Second Username" required maxlength="50">
+        <br><br>
+        <button type="submit">Delete Friend</button>
+    </form>
+    <div id="deleteFriendResultMsg"></div>
+
+    <h3>Check Friendship Status</h3>
+    <form id="areTheyFriendsForm">
+        <label for="checkFriendsUsername1">Username 1:</label>
+        <input type="text" id="checkFriendsUsername1" placeholder="Enter First Username" required maxlength="50">
+        <br><br>
+        <label for="checkFriendsUsername2">Username 2:</label>
+        <input type="text" id="checkFriendsUsername2" placeholder="Enter Second Username" required maxlength="50">
+        <br><br>
+        <button type="submit">Check Friendship</button>
+    </form>
+    <div id="checkFriendsResultMsg"></div>
+
+    <h3>Show Notifications for Expiring Ingredients</h3>
+    <div>
+        Username: <input type="text" id="showUsersNotifications" placeholder="Enter Username" required maxlength="50">
+        <button onclick="fetchAndDisplayNotifications()">Show Notifications</button>
+    </div>
+    <br>
+    <h4 id="notificationsUsername" style="display: none;">Notifications for <span id="currentUsername"></span></h4>
+    <table id="notificationsList" border="1" style="display: none;">
+        <thead>
+        <tr>
+            <th>Notification ID</th>
+            <th>Date and Time Sent</th>
+            <th>Expiring Count</th>
+            <th>Show Details</th>
+            <th>Delete</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <div id="notificationDetails" style="display: none;">
+        <h4>Details for Notification ID: <span id="detailsNotificationID"></span></h4>
+        <table border="1">
+            <thead>
+            <tr>
+                <th>List Name</th>
+                <th>Ingredient Name</th>
+                <th>Amount</th>
+                <th>Unit</th>
+                <th>Expiry Date</th>
+            </tr>
+            </thead>
+            <tbody id="notificationDetailsBody"></tbody>
+        </table>
+    </div>
 
 
     <br><hr><br> <!-- ========================================================================= -->
@@ -62,6 +219,7 @@
             <option value="Public">Public</option>
             <option value="Friends Only">Friends Only</option>
         </select> <br><br>
+
         Username: <input type="text" id="insertUsername" placeholder="Enter User's name" maxlength="50" required> <br><br>
 
         <button type="submit"> Create </button> <br>

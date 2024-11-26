@@ -51,7 +51,7 @@ CREATE TABLE Notifications (
     NotificationID NUMBER PRIMARY KEY,
     DateAndTimeSent TIMESTAMP NOT NULL,
     Username VARCHAR2(50) NOT NULL,
-    FOREIGN KEY (Username, DateAndTimeSent) REFERENCES NotificationMessage(Username, DateAndTimeSent)
+    FOREIGN KEY (Username, DateAndTimeSent) REFERENCES NotificationMessage(Username, DateAndTimeSent) ON DELETE CASCADE
 );
 
 CREATE TABLE AllergyList (

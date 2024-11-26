@@ -175,8 +175,7 @@ async function viewUsersWithPublicPrivacy() {
     });
 }
 
-
-async function viewUsersWhoAreFriendsWithEveryone() {
+async function fetchUsersWhoAreFriendsWithEveryone() {
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
             `SELECT u.Username
@@ -201,19 +200,19 @@ async function viewUsersWhoAreFriendsWithEveryone() {
     });
 }
 
-async function fetchFriends(username) {
-    return await withOracleDB(async (connection) => {
-        const result = await connection.execute(
-            `SELECT * FROM Friends WHERE Username1 = :username OR Username2 = :username`,
-            [username]
-        );
-
-        return result.rows;
-    }).catch((error) => {
-        console.error('Error fetching friends:', error);
-        return [];
-    });
-}
+// async function fetchFriends(username) {
+//     return await withOracleDB(async (connection) => {
+//         const result = await connection.execute(
+//             `SELECT * FROM Friends WHERE Username1 = :username OR Username2 = :username`,
+//             [username]
+//         );
+//
+//         return result.rows;
+//     }).catch((error) => {
+//         console.error('Error fetching friends:', error);
+//         return [];
+//     });
+// }
 
 async function insertFriend(username1, username2) {
     if (!username1 || !username2) {
@@ -271,105 +270,164 @@ async function areTheyFriends(username1, username2) {
     });
 }
 
-async function fetchNotificationMessages(username) {
+async function fetchNotificationForExpiringIngredients(username) {
     return await withOracleDB(async (connection) => {
-        const result = await connection.execute(
-            `SELECT * FROM NotificationMessage WHERE Username = :username`,
-            [username]
-        );
+        const query = `
+            SELECT
+                n.NotificationID,
+                n.DateAndTimeSent,
+                COUNT(*) AS ExpiringCount
+            FROM
+                Notifications n
+            INNER JOIN NotificationMessage nm
+                ON n.Username = nm.Username
+                AND n.DateAndTimeSent = nm.DateAndTimeSent
+            WHERE
+                n.Username = :username
+            GROUP BY n.NotificationID, n.DateAndTimeSent
+            ORDER BY n.DateAndTimeSent DESC`;
 
+        const result = await connection.execute(query, [username]);
         return result.rows;
-    }).catch((error) => {
-        console.error('Error fetching notification messages:', error);
-        return [];
     });
 }
 
-async function insertNotificationMessage(username, messageText) {
-    if (!username || !messageText) {
-        throw new Error('Both username and messageText are required');
-    }
-
+async function fetchNotificationDetails(notificationID) {
     return await withOracleDB(async (connection) => {
-        const result = await connection.execute(
-            `INSERT INTO NotificationMessage (Username, DateAndTimeSent, MessageText)
-             VALUES (:username, SYSTIMESTAMP, :messageText)`,
-            [username, messageText],
-            { autoCommit: true }
-        );
+        const query = `
+            SELECT
+                kinv.ListName,
+                ki.IngredientName,
+                ki.Amount,
+                ki.UnitOfMeasurement,
+                kid.ExpiryDate
+            FROM
+                Notifications n
+            INNER JOIN NotificationMessage nm
+                ON n.NotificationID = :notificationID
+            INNER JOIN KitchenInventory kinv
+                ON kinv.Username = nm.Username
+            INNER JOIN KitchenIngredient ki
+                ON kinv.IngredientListID = ki.IngredientListID
+            INNER JOIN KitchenIngredientPerishableDate kid
+                ON ki.DatePurchased = kid.DatePurchased
+                AND ki.ShelfLife = kid.ShelfLife
+            WHERE
+                n.NotificationID = :notificationID`;
 
-        return result.rowsAffected && result.rowsAffected > 0;
-    }).catch((error) => {
-        console.error('Error inserting notification message:', error);
-        return false;
-    });
-}
-
-async function deleteNotificationMessage(username, dateAndTimeSent) {
-    return await withOracleDB(async (connection) => {
-        const result = await connection.execute(
-            `DELETE FROM NotificationMessage WHERE Username = :username AND DateAndTimeSent = :dateAndTimeSent`,
-            [username, dateAndTimeSent],
-            { autoCommit: true }
-        );
-
-        return result.rowsAffected && result.rowsAffected > 0;
-    }).catch((error) => {
-        console.error('Error deleting notification message:', error);
-        return false;
-    });
-}
-
-async function fetchNotifications(username) {
-    return await withOracleDB(async (connection) => {
-        const result = await connection.execute(
-            `SELECT * FROM Notifications WHERE Username = :username`,
-            [username]
-        );
-
+        const result = await connection.execute(query, [notificationID]);
         return result.rows;
-    }).catch((error) => {
-        console.error('Error fetching notifications:', error);
-        return [];
-    });
-}
-
-async function insertNotification(notificationID, username) {
-    if (!notificationID || !username) {
-        throw new Error("Both 'notificationID' and 'username' are required.");
-    }
-    return await withOracleDB(async (connection) => {
-        const result = await connection.execute(
-            `INSERT INTO Notifications (NotificationID, DateAndTimeSent, Username)
-             SELECT :notificationID, DateAndTimeSent, :username
-             FROM NotificationMessage
-             WHERE Username = :username
-             ORDER BY DateAndTimeSent DESC FETCH FIRST 1 ROWS ONLY`,
-            [notificationID, username, username],
-            { autoCommit: true }
-        );
-
-        return result.rowsAffected && result.rowsAffected > 0;
-    }).catch((error) => {
-        console.error('Error inserting notification:', error);
-        return false;
     });
 }
 
 async function deleteNotification(notificationID) {
     return await withOracleDB(async (connection) => {
-        const result = await connection.execute(
-            `DELETE FROM Notifications WHERE NotificationID = :notificationID`,
-            [notificationID],
-            { autoCommit: true }
-        );
-
-        return result.rowsAffected && result.rowsAffected > 0;
-    }).catch((error) => {
-        console.error('Error deleting notification:', error);
-        return false;
+        const query = `
+            DELETE FROM Notifications
+            WHERE NotificationID = :notificationID`;
+        await connection.execute(query, [notificationID]);
     });
 }
+
+// async function fetchNotificationMessages(username) {
+//     return await withOracleDB(async (connection) => {
+//         const result = await connection.execute(
+//             `SELECT * FROM NotificationMessage WHERE Username = :username`,
+//             [username]
+//         );
+//
+//         return result.rows;
+//     }).catch((error) => {
+//         console.error('Error fetching notification messages:', error);
+//         return [];
+//     });
+// }
+//
+// async function insertNotificationMessage(username, messageText) {
+//     if (!username || !messageText) {
+//         throw new Error('Both username and messageText are required');
+//     }
+//
+//     return await withOracleDB(async (connection) => {
+//         const result = await connection.execute(
+//             `INSERT INTO NotificationMessage (Username, DateAndTimeSent, MessageText)
+//              VALUES (:username, SYSTIMESTAMP, :messageText)`,
+//             [username, messageText],
+//             { autoCommit: true }
+//         );
+//
+//         return result.rowsAffected && result.rowsAffected > 0;
+//     }).catch((error) => {
+//         console.error('Error inserting notification message:', error);
+//         return false;
+//     });
+// }
+//
+// async function deleteNotificationMessage(username, dateAndTimeSent) {
+//     return await withOracleDB(async (connection) => {
+//         const result = await connection.execute(
+//             `DELETE FROM NotificationMessage WHERE Username = :username AND DateAndTimeSent = :dateAndTimeSent`,
+//             [username, dateAndTimeSent],
+//             { autoCommit: true }
+//         );
+//
+//         return result.rowsAffected && result.rowsAffected > 0;
+//     }).catch((error) => {
+//         console.error('Error deleting notification message:', error);
+//         return false;
+//     });
+// }
+//
+// async function fetchNotifications(username) {
+//     return await withOracleDB(async (connection) => {
+//         const result = await connection.execute(
+//             `SELECT * FROM Notifications WHERE Username = :username`,
+//             [username]
+//         );
+//
+//         return result.rows;
+//     }).catch((error) => {
+//         console.error('Error fetching notifications:', error);
+//         return [];
+//     });
+// }
+//
+// async function insertNotification(notificationID, username) {
+//     if (!notificationID || !username) {
+//         throw new Error("Both 'notificationID' and 'username' are required.");
+//     }
+//     return await withOracleDB(async (connection) => {
+//         const result = await connection.execute(
+//             `INSERT INTO Notifications (NotificationID, DateAndTimeSent, Username)
+//              SELECT :notificationID, DateAndTimeSent, :username
+//              FROM NotificationMessage
+//              WHERE Username = :username
+//              ORDER BY DateAndTimeSent DESC FETCH FIRST 1 ROWS ONLY`,
+//             [notificationID, username, username],
+//             { autoCommit: true }
+//         );
+//
+//         return result.rowsAffected && result.rowsAffected > 0;
+//     }).catch((error) => {
+//         console.error('Error inserting notification:', error);
+//         return false;
+//     });
+// }
+//
+// async function deleteNotification(notificationID) {
+//     return await withOracleDB(async (connection) => {
+//         const result = await connection.execute(
+//             `DELETE FROM Notifications WHERE NotificationID = :notificationID`,
+//             [notificationID],
+//             { autoCommit: true }
+//         );
+//
+//         return result.rowsAffected && result.rowsAffected > 0;
+//     }).catch((error) => {
+//         console.error('Error deleting notification:', error);
+//         return false;
+//     });
+// }
 
 // ----------------------------------------------------------
 // Recipe Centric service
@@ -592,16 +650,12 @@ module.exports = {
     deleteUser,
     updateUser,
     viewUsersWithPublicPrivacy,
-    viewUsersWhoAreFriendsWithEveryone,
-    fetchFriends,
+    fetchUsersWhoAreFriendsWithEveryone,
+    areTheyFriends,
     insertFriend,
     deleteFriend,
-    areTheyFriends,
-    fetchNotificationMessages,
-    insertNotificationMessage,
-    deleteNotificationMessage,
-    fetchNotifications,
-    insertNotification,
+    fetchNotificationForExpiringIngredients,
+    fetchNotificationDetails,
     deleteNotification,
 
 
