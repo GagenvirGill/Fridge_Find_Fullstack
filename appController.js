@@ -420,12 +420,46 @@ router.delete("/delete-kitchen-ingredient", async (req, res) => {
     }
 });
 
+// AllergyListHasAllergicIngredient
+router.get('/allergy-list-has-allergic-ingredient', async (req, res) => {
+    const tableContent = await appService.fetchAllergyListHasAllergicIngredientFromDb();
+    res.json({ data: tableContent });
+});
+
+router.post("/insert-allergy-list-has-allergic-ingredient", async (req, res) => {
+    const { IngredientListID, IngredientID, Severity } = req.body;
+    try {
+         const insertResult = await appService.insertAllergicIngredient(IngredientListID, IngredientID, Severity);
+         if (insertResult) {
+             res.json({ success: true });
+         } else {
+             res.status(500).json({ success: false });
+         }
+     } catch (error) { 
+         res.status(500).json({ success: false, error: error.message });
+     }
+ });
+
+ router.patch("/update-allergy-list-has-allergic-ingredient", async (req, res) => {
+    const { IngredientListID, IngredientID, Severity } = req.body;
+    try {
+        const updateResult = await appService.updateKitchenIngredient(IngredientListID, IngredientID, Severity);
+        if (updateResult) {
+            res.json({ success: true });
+        } else {
+            res.status(500).json({ success: false });
+        }
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
 
 
-
-
+// KitchenInventory
 
 // KitchenIngredientPerishableDate
+
+
 
 
 

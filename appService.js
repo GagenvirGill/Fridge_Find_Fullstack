@@ -895,6 +895,59 @@ async function deleteKitchenIngredient(IngredientID, IngredientListID) {
     }
 }
 
+// AllergyListHasAllergicIngredient
+async function fetchAllergyListHasAllergicIngredientFromDb() {
+    try {
+        return await withOracleDB(async (connection) => {
+            const result = await connection.execute('SELECT * FROM AllergyListHasAllergicIngredient');
+            return result.rows;
+        });
+    } catch(error) {
+        console.error('Database error:', error);
+        return [];
+    }
+}
+
+// Error -> invalid number TODO
+async function insertAllergyListHasAllergicIngredient(IngredientListID, IngredientID, Severity) {
+    try {
+        return await withOracleDB(async (connection) => {
+            const result = await connection.execute(
+                `INSERT INTO AllergyListHasAllergicIngredient(IngredientListID, IngredientID, Severity) 
+                VALUES (:IngredientListID, :IngredientID, :Severity)`,
+                [IngredientListID, IngredientID, Severity],
+                { autoCommit: true }
+            );
+
+            console.log('Inserted Allergy List Has Allergic Ingredient Successfully')
+            return result.rowsAffected && result.rowsAffected > 0;
+        });
+    } catch(error) {
+        console.error('Database error:', error);
+        return false;
+    }
+}
+
+async function updateAllergyListHasAllergicIngredient(IngredientListID, IngredientID, newSeverity) {
+    try {
+        return await withOracleDB(async (connection) => {
+            const result = await connection.execute(
+                `UPDATE AllergyListHasAllergicIngredient 
+                 SET Severity = :newSeverity
+                 WHERE IngredientID = :IngredientID AND IngredientListID = :IngredientListID`,
+                 [IngredientListID, IngredientID, newSeverity],
+                { autoCommit: true }
+            );
+
+            console.log('Updated AllergyListHasAllergicIngredient Successfully')
+            return result.rowsAffected && result.rowsAffected > 0;
+        });
+    } catch(error) {
+        console.error('Database error:', error);
+        return false;
+    };
+}
+
 
 // ----------------------------------------------------------
 // General service methods
@@ -988,7 +1041,12 @@ module.exports = {
     deleteAllergyList,
     fetchKitchenIngredientFromDb,
     insertKitchenIngredient,
+    updateKitchenIngredient,
     deleteKitchenIngredient,
+    fetchAllergyListHasAllergicIngredientFromDb,
+    insertAllergyListHasAllergicIngredient,
+    updateAllergyListHasAllergicIngredient,
+
 
     // General
     validateUsername,

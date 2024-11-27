@@ -495,7 +495,7 @@
     </form>
     <div id="deleteAllergyListResultMsg"></div>
 
-    <h3>Show Kitchen Ingredient List</h3>
+    <h3> Show Kitchen Ingredient List</h3>
     <table id="kitcheningredient" border="1">
         <thead>
             <tr>
@@ -574,6 +574,44 @@
         <button type="submit"> Delete </button> <br>
     </form>
     <div id="deleteKitchenIngredientResultMsg"></div>
+
+    <h3> Show Allergy List Has Allergic Ingredient List</h3>
+    <table id="allergylisthasallergicingredient" border="1">
+        <thead>
+            <tr>
+                <th>IngredientListID</th>
+                <th>IngredientID</th>
+                <th>Severity</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    
+    <h3> Create a new Allergy List Has Allergic Ingredient List </h3>
+    <form id="insertAllergyListHasAllergicIngredient">
+        IngredientListID: <input type="number" id="insertAllergyListHasAllergicIngredientIngredientListID" placeholder="Enter Ingredient List ID" required> <br><br>
+        IngredientID: <input type="number" id="insertAllergyListHasAllergicIngredientIngredientID" placeholder="Enter Ingredient ID" maxlength="50" required> <br><br>
+        Severity: <input type="number" id="insertAllergyListHasAllergicIngredientSeverity" min="1" max="10">
+        </select> <br><br>
+
+        <button type="submit"> Create </button> <br>
+    </form>
+    <div id="insertAllergyListHasAllergicIngredientResultMsg"></div>
+
+    <h3>Update a Allergy List Has Allergic Ingredient List</h3>
+    <form id="updateAllergyList">
+        IngredientListID: <input type="number" id="insertAllergyListHasAllergicIngredientIngredientListID" placeholder="Enter Ingredient List ID" required> <br><br>
+        IngredientID: <input type="number" id="insertAllergyListHasAllergicIngredientIngredientID" placeholder="Enter Ingredient ID" maxlength="50" required> <br><br>
+        Severity: <input type="number" id="insertAllergyListHasAllergicIngredientSeverity" min="1" max="10">
+        </select> <br><br>
+
+        <button type="submit"> Update </button> <br>
+    </form>
+    <div id="updateAllergyListHasAllergicIngredientResultMsg"></div>
+
+    
 
 
 

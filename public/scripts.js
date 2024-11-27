@@ -1281,6 +1281,95 @@ async function deleteKitchenIngredient(event) {
     }
 }
 
+// AllergyListHasAllergicIngredient
+async function fetchAndDisplayAllergyListHasAllergicIngredient() {
+    const response = await fetch('/allergy-list-has-allergic-ingredient', {
+        method: 'GET'
+    });
+
+    const responseData = await response.json();
+    const allergyListHasAllergicIngredientContent = responseData.data;
+
+    const tableElement = document.getElementById('allergylisthasallergicingredient'); // from index.html tag
+    const tableBody = tableElement.querySelector('tbody');
+
+    if (tableBody) {
+        tableBody.innerHTML = '';
+    }
+
+    allergyListHasAllergicIngredientContent.forEach(allergylisthasallergicingredient => {
+        const row = tableBody.insertRow();
+        allergylisthasallergicingredient.forEach((field, index) => {
+            const cell = row.insertCell(index);
+            cell.textContent = field;
+        });
+    });
+}
+
+// IngredientListID, IngredientID, Severity
+async function insertAllergyListHasAllergicIngredient(event) {
+    event.preventDefault();
+
+    const allergyListHasAllergicIngredientIngredientListID = Number(document.getElementById('insertAllergyListHasAllergicIngredientIngredientListID').value);
+    const allergyListHasAllergicIngredientIngredientID = Number(document.getElementById('insertAllergyListHasAllergicIngredientIngredientID').value);
+    const allergyListHasAllergicIngredientSeverity = Number(document.getElementById('insertAllergyListHasAllergicIngredientSeverity').value);
+
+
+    const response = await fetch('/insert-allergy-list-has-allergic-ingredient', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            IngredientListID: allergyListHasAllergicIngredientIngredientListID,
+            IngredientID: allergyListHasAllergicIngredientIngredientID,
+            Severity: allergyListHasAllergicIngredientSeverity, 
+        })
+    });
+
+    const responseData = await response.json();
+    const messageElement = document.getElementById('insertAllergyListHasAllergicIngredientResultMsg');
+
+    if (responseData.success) {
+        messageElement.textContent = "AllergyListHasAllergicIngredient data inserted successfully!";
+        fetchTableData(); 
+    } else {
+        messageElement.textContent = "Error inserting AllergyListHasAllergicIngredient data!";
+    }
+}
+
+async function updateAllergyListHasAllergicIngredient(event) {
+    event.preventDefault();
+
+    const allergyListHasAllergicIngredientIngredientListIDValue = Number(document.getElementById('updateAllergyListHasAllergicIngredientIngredientListID').value);
+    const allergyListHasAllergicIngredientIngredientIDValue = Number(document.getElementById('updateAllergyListHasAllergicIngredientIngredientID').value);
+    const allergyListHasAllergicIngredientSeverityValue = Number(document.getElementById('updateAllergyListHasAllergicIngredientSeverity').value);
+
+    const response = await fetch('/update-allergy-list-has-allergic-ingredient', {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            IngredientListID: allergyListHasAllergicIngredientIngredientListIDValue,
+            IngredientID: allergyListHasAllergicIngredientIngredientIDValue,
+            Severity: allergyListHasAllergicIngredientSeverityValue, 
+        })
+    });
+
+    const responseData = await response.json();
+    const messageElement = document.getElementById('updateAllergyListHasAllergicIngredientResultMsg');
+
+    if (responseData.success) {
+        messageElement.textContent = "AllergyListHasAllergicIngredient updated successfully!";
+        fetchTableData();
+    } else {
+        messageElement.textContent = "Error updating AllergyListHasAllergicIngredient!";
+    }
+}
+
+
+
 
 // ----------------------------------------------------------
 // General Methods
@@ -1352,6 +1441,8 @@ window.onload = function () {
     document.getElementById("updateKitchenIngredient").addEventListener("submit", updateKitchenIngredient);
     document.getElementById("deleteKitchenIngredient").addEventListener("submit", deleteKitchenIngredient);
 
+    document.getElementById("insertAllergyListHasAllergicIngredient").addEventListener("submit", insertAllergyListHasAllergicIngredient);
+    document.getElementById("updateAllergyListHasAllergicIngredient").addEventListener("submit", updateAllergyListHasAllergicIngredient);
 
 
 
@@ -1371,4 +1462,5 @@ function fetchTableData() {
     fetchAndDisplayAllergicIngredient();
     fetchAndDisplayAllergyList();
     fetchAndDisplayKitchenIngredient();
+    fetchAndDisplayAllergyListHasAllergicIngredient();
 }
