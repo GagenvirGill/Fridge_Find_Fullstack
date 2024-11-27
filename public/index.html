@@ -39,6 +39,7 @@
     <h2> Recipe Centric </h2>
 
     <h3>Show all Recipes</h3>
+    <div id="showAllRecipesResultMsg"></div>
     <table id="recipe" border="1">
         <thead>
             <tr>
@@ -82,10 +83,12 @@
         <label for="filterRecipes"> Filter the Recipes by the following Categories (Hold shift to select multiple):</label> <br><br>
         <select name="filterRecipesCategories" id="filterRecipesCategories" multiple> 
             <!-- Options are displayed dynamically and are not statically known -->
-        </select> <br><br>
+        </select> 
+        <div id="filterRecipesByCategoryFormResultMsg"></div> <br><br>
 
         <button type="submit"> Filter </button> <br>
     </form>
+    <div id="filterRecipesByCategoryTableResultMsg"></div>
     <table id="filteredRecipeTable" border="1">
         <thead>
             <tr>
@@ -105,7 +108,8 @@
         <label for="filterByRecipeList">Filter the Recipes by the following Recipe Lists: </label>
         <select name="filterRecipesRecipeLists" id="filterRecipesRecipeLists">
             <!-- Options are displayed dynamically and are not statically known -->
-        </select> <br><br>
+        </select> 
+        <div id="filterRecipesByRecipeListFormResultMsg"></div> <br><br>
 
         <button type="submit"> Filter </button> <br>
     </form>
@@ -601,7 +605,7 @@
     <div id="insertAllergyListHasAllergicIngredientResultMsg"></div>
 
     <h3>Update a Allergy List Has Allergic Ingredient List</h3>
-    <form id="updateAllergyList">
+    <form id="updateAllergyListHasAllergicIngredient">
         IngredientListID: <input type="number" id="insertAllergyListHasAllergicIngredientIngredientListID" placeholder="Enter Ingredient List ID" required> <br><br>
         IngredientID: <input type="number" id="insertAllergyListHasAllergicIngredientIngredientID" placeholder="Enter Ingredient ID" maxlength="50" required> <br><br>
         Severity: <input type="number" id="insertAllergyListHasAllergicIngredientSeverity" min="1" max="10">
@@ -611,6 +615,14 @@
     </form>
     <div id="updateAllergyListHasAllergicIngredientResultMsg"></div>
 
+    <h3>Delete a Allergy List Has Allergic Ingredient List</h3>
+    <form id="deleteAllergyListHasAllergicIngredient">
+        Ingredient ID: <input type="number" id="deleteAllergyListHasAllergicIngredientIngredientListID" placeholder="Enter Ingredient List ID" required> <br><br>
+        Ingredient List ID: <input type="number" id="deleteAllergyListHasAllergicIngredientIngredientID" placeholder="Enter Ingredient ID" required> <br><br>
+
+        <button type="submit"> Delete </button> <br>
+    </form>
+    <div id="deleteAllergyListHasAllergicIngredientResultMsg"></div>
     
 
 

@@ -46,7 +46,7 @@ async function checkDbConnection() {
 
 // Display all Recipes
 async function fetchAndDisplayRecipes() {
-    const response = await fetch('/recipe', {
+    const response = await fetch('/all-recipes', {
         method: 'GET'
     });
 
@@ -55,9 +55,16 @@ async function fetchAndDisplayRecipes() {
 
     const tableElement = document.getElementById('recipe');
     const tableBody = tableElement.querySelector('tbody');
+    const messageElement = document.getElementById('showAllRecipesResultMsg');
 
     if (tableBody) {
         tableBody.innerHTML = '';
+    }
+
+    if (responseData.success) {
+        messageElement.textContent = `Successfully retreived all Recipes`;
+    } else {
+        messageElement.textContent = `An unexpected error occured while retreiving all Recipes`;
     }
 
     recipeContent.forEach(recipe => {
@@ -93,7 +100,11 @@ async function fetchAndDisplaySimpleOrComplicatedRecipes(event) {
     const filteredRecipes = responseData.data;
 
     const messageElement = document.getElementById('simpleOrComplicatedRecipesResultMsg');
-    messageElement.textContent = `Got all ${difficultyValue} Recipes`;
+    if (responseData.success) {
+        messageElement.textContent = `Successfully retreived all ${difficultyValue} Recipes`;
+    } else {
+        messageElement.textContent = `An unexpected error occured while retreiving all ${difficultyValue} Recipes`;
+    }
 
     tableBody.innerHTML = '';
 
@@ -107,7 +118,7 @@ async function fetchAndDisplaySimpleOrComplicatedRecipes(event) {
 }
 
 async function fetchAndDisplayCategories() {
-    const response = await fetch('/category', {
+    const response = await fetch('/all-categories', {
         method: 'GET'
     });
 
@@ -116,6 +127,13 @@ async function fetchAndDisplayCategories() {
 
     const categoriesSelectBar = document.getElementById('filterRecipesCategories');
     categoriesSelectBar.innerHTML = '';
+
+    const messageElement = document.getElementById('filterRecipesByCategoryFormResultMsg');
+    if (responseData.success) {
+        messageElement.textContent = `Successfully retreived all Categories`;
+    } else {
+        messageElement.textContent = `An unexpected error occured while retreiving all Categories`;
+    }
 
     categoryContent.forEach(category => {
         const option = document.createElement('option');
@@ -134,7 +152,7 @@ async function fetchAndDisplayFilteredRecipes(event) {
 
     const selectedCategories = Array.from(categoriesSelectBar.selectedOptions).map(option => option.value);
 
-    const response = await fetch('/filtered-recipes', {
+    const response = await fetch('/filtered-recipes-by-category', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -146,6 +164,15 @@ async function fetchAndDisplayFilteredRecipes(event) {
 
     const responseData = await response.json();
     const filteredRecipes = responseData.data;
+
+    const messageElement = document.getElementById('filterRecipesByCategoryTableResultMsg');
+    if (responseData.success && filteredRecipes.length != 0) {
+        messageElement.textContent = `Successfully retreived all Recipes by the selected Categories`;
+    } else if (responseData.success && filteredRecipes.length == 0) {
+        messageElement.textContent = `There aren't any Recipes in any of the selected Categories`;
+    } else {
+        messageElement.textContent = `An unexpected error occured while retreiving Recipes in those Categories`;
+    }
 
     tableBody.innerHTML = '';
 
@@ -159,7 +186,7 @@ async function fetchAndDisplayFilteredRecipes(event) {
 }
 
 async function fetchAndDisplayRecipeLists() {
-    const response = await fetch('/recipe-list', {
+    const response = await fetch('/all-recipe-lists', {
         method: 'GET'
     });
 
@@ -168,6 +195,13 @@ async function fetchAndDisplayRecipeLists() {
 
     const recipeListSelectBar = document.getElementById('filterRecipesRecipeLists');
     recipeListSelectBar.innerHTML = '';
+
+    const messageElement = document.getElementById('filterRecipesByRecipeListFormResultMsg');
+    if (responseData.success) {
+        messageElement.textContent = `Successfully retreived all Recipe Lists`;
+    } else {
+        messageElement.textContent = `An unexpected error occured while retreiving all Recipe Lists`;
+    }
 
     recipeListContent.forEach(recipeList => {
         const recipeListFormatted = `ID: ${recipeList[0]} - \'${recipeList[1]}\' by ${recipeList[3]} - ${recipeList[2]}`
@@ -187,7 +221,7 @@ async function fetchAndDisplayRecipesByRecipeList(event) {
     const tableBody = tableElement.querySelector('tbody');
     const selectedRecipeList = recipeListSelectBar.value;
 
-    const tableResponse = await fetch(`/filter-by-recipe-list?RecipeListID=${selectedRecipeList}`, {
+    const tableResponse = await fetch(`/filter-recipes-by-recipe-list?RecipeListID=${selectedRecipeList}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json'
@@ -206,14 +240,15 @@ async function fetchAndDisplayRecipesByRecipeList(event) {
 
     const listValuesResponseData = await listValuesResponse.json();
     const recipeListValues = listValuesResponseData.data;
-    const formattedRecipeListValues = `\'${recipeListValues[0][1]}\' Recipes by ${recipeListValues[0][2]} Successfully Retreived`
 
     const messageElement = document.getElementById('recipesByRecipeListMsg');
-    if (formattedRecipeListValues.length > 0) {
-        messageElement.textContent = formattedRecipeListValues;
+    if (recipesContent.length > 0) {
+        messageElement.textContent = `\'${recipeListValues[0][1]}\' Recipes by ${recipeListValues[0][2]} Successfully Retreived`
         fetchTableData();
+    } else if (tableResponseData.success) {
+        messageElement.textContent = "There are no Recipes in the given list"
     } else {
-        messageElement.textContent = "Error getting the Recipes for the List";
+        messageElement.textContent = "An unexpected error occured while retreiving all Recipes in that Recipe List";
     }
 
     if (tableBody) {
@@ -254,12 +289,8 @@ async function insertRecipe(event) {
     const responseData = await response.json();
     const messageElement = document.getElementById('insertRecipeResultMsg');
 
-    if (responseData.success) {
-        messageElement.textContent = "Recipe Data inserted successfully!";
-        fetchTableData();
-    } else {
-        messageElement.textContent = "Error inserting Recipe data!";
-    }
+    messageElement.textContent = responseData.message;
+    fetchTableData();
 }
 
 // Updates recipe.
@@ -285,12 +316,8 @@ async function updateRecipe(event) {
     const responseData = await response.json();
     const messageElement = document.getElementById('updateRecipeResultMsg');
 
-    if (responseData.success) {
-        messageElement.textContent = "Recipe updated successfully!";
-        fetchTableData();
-    } else {
-        messageElement.textContent = "Error updating recipe!";
-    }
+    messageElement.textContent = responseData.message;
+    fetchTableData();
 }
 
 async function deleteRecipe(event) {
@@ -311,12 +338,8 @@ async function deleteRecipe(event) {
     const responseData = await response.json();
     const messageElement = document.getElementById('deleteRecipeResultMsg');
 
-    if (responseData.success) {
-        messageElement.textContent = "Recipe deleted successfully!";
-        fetchTableData();
-    } else {
-        messageElement.textContent = "Error deleting recipe!";
-    }
+    messageElement.textContent = responseData.message;
+    fetchTableData();
 }
 
 async function fetchAndDisplayARecipesIngredients(event) {
@@ -326,7 +349,7 @@ async function fetchAndDisplayARecipesIngredients(event) {
     const tableBody = tableElement.querySelector('tbody');
     const recipeIDValue = document.getElementById('getRecipeIDForItsIngredients').value;
 
-    const tableResponse = await fetch(`/recipe-ingredient-for-recipe?RecipeID=${recipeIDValue}`, {
+    const tableResponse = await fetch(`/recipe-ingredients-for-recipe?RecipeID=${recipeIDValue}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json'
@@ -334,26 +357,11 @@ async function fetchAndDisplayARecipesIngredients(event) {
     });
 
     const tableResponseData = await tableResponse.json();
-
-    const nameResponse = await fetch(`/recipe-name?RecipeID=${recipeIDValue}`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    });
-
-    const nameResponseData = await nameResponse.json();
-
     const recipeIngredientsContent = tableResponseData.data;
-    const recipeName = nameResponseData.RecipeName;
 
     const messageElement = document.getElementById('recipesIngredientsNameMsg');
-    if (recipeName.length > 0) {
-        messageElement.textContent = `${recipeName} Ingredients Successfully Retrieved`;
-        fetchTableData();
-    } else {
-        messageElement.textContent = "Error getting the ingredients";
-    }
+    messageElement.textContent = tableResponseData.message;
+    fetchTableData();
 
     if (tableBody) {
         tableBody.innerHTML = '';
@@ -402,12 +410,8 @@ async function insertRecipeIngredient(event) {
     const responseData = await response.json();
     const messageElement = document.getElementById('insertRecipeIngredientResultMsg');
 
-    if (responseData.success) {
-        messageElement.textContent = "Recipe Ingredient Data inserted successfully!";
-        fetchTableData();
-    } else {
-        messageElement.textContent = "Error inserting Recipe Ingredient Data";
-    }
+    messageElement.textContent = responseData.message;
+    fetchTableData();
 }
 
 async function updateRecipeIngredient(event) {
@@ -436,12 +440,8 @@ async function updateRecipeIngredient(event) {
     const responseData = await response.json();
     const messageElement = document.getElementById('updateRecipeIngredientResultMsg');
 
-    if (responseData.success) {
-        messageElement.textContent = "Recipe Ingredient updated successfully!";
-        fetchTableData();
-    } else {
-        messageElement.textContent = "Error updating recipe ingredient!";
-    }
+    messageElement.textContent = responseData.message;
+    fetchTableData();
 }
 
 async function deleteRecipeIngredient(event) {
@@ -464,12 +464,8 @@ async function deleteRecipeIngredient(event) {
     const responseData = await response.json();
     const messageElement = document.getElementById('deleteRecipeIngredientResultMsg');
 
-    if (responseData.success) {
-        messageElement.textContent = "Recipe Ingredient deleted successfully!";
-        fetchTableData();
-    } else {
-        messageElement.textContent = "Error deleting recipe ingredient!";
-    }
+    messageElement.textContent = responseData.message;
+    fetchTableData();
 }
 
 async function fetchAndDisplayARecipesSteps(event) {
@@ -479,7 +475,7 @@ async function fetchAndDisplayARecipesSteps(event) {
     const tableBody = tableElement.querySelector('tbody');
     const recipeIDValue = document.getElementById('getRecipeIDForItsSteps').value;
 
-    const tableResponse = await fetch(`/recipe-step-for-recipe?RecipeID=${recipeIDValue}`, {
+    const tableResponse = await fetch(`/recipe-steps-for-recipe?RecipeID=${recipeIDValue}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json'
@@ -487,26 +483,11 @@ async function fetchAndDisplayARecipesSteps(event) {
     });
 
     const tableResponseData = await tableResponse.json();
-
-    const nameResponse = await fetch(`/recipe-name?RecipeID=${recipeIDValue}`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    });
-
-    const nameResponseData = await nameResponse.json();
-
     const recipeStepContent = tableResponseData.data;
-    const recipeName = nameResponseData.RecipeName;
 
     const messageElement = document.getElementById('recipesStepsNameMsg');
-    if (recipeName.length > 0) {
-        messageElement.textContent = `${recipeName} Steps Successfully Retrieved`;
-        fetchTableData();
-    } else {
-        messageElement.textContent = "Error getting the steps";
-    }
+    messageElement.textContent = tableResponseData.message;
+    fetchTableData();
 
     if (tableBody) {
         tableBody.innerHTML = '';
@@ -543,12 +524,8 @@ async function insertRecipeStep(event) {
     const responseData = await response.json();
     const messageElement = document.getElementById('insertRecipeStepResultMsg');
 
-    if (responseData.success) {
-        messageElement.textContent = "Recipe Step Data inserted successfully!";
-        fetchTableData();
-    } else {
-        messageElement.textContent = "Error inserting Recipe Step Data";
-    }
+    messageElement.textContent = responseData.message;
+    fetchTableData();
 }
 
 async function updateRecipeStep(event) {
@@ -575,12 +552,8 @@ async function updateRecipeStep(event) {
     const responseData = await response.json();
     const messageElement = document.getElementById('updateRecipeStepResultMsg');
 
-    if (responseData.success) {
-        messageElement.textContent = "Recipe Step updated successfully!";
-        fetchTableData();
-    } else {
-        messageElement.textContent = "Error updating recipe step!";
-    }
+    messageElement.textContent = responseData.message;
+    fetchTableData();
 }
 
 async function deleteRecipeStep(event) {
@@ -603,12 +576,8 @@ async function deleteRecipeStep(event) {
     const responseData = await response.json();
     const messageElement = document.getElementById('deleteRecipeStepResultMsg');
 
-    if (responseData.success) {
-        messageElement.textContent = "Recipe Step deleted successfully!";
-        fetchTableData();
-    } else {
-        messageElement.textContent = "Error deleting recipe step!";
-    }
+    messageElement.textContent = responseData.message;
+    fetchTableData();
 }
 
 async function insertCategory(event) {
@@ -631,12 +600,8 @@ async function insertCategory(event) {
     const responseData = await response.json();
     const messageElement = document.getElementById('insertCategoryResultMsg');
 
-    if (responseData.success) {
-        messageElement.textContent = "Category Data inserted successfully!";
-        fetchTableData();
-    } else {
-        messageElement.textContent = "Error inserting Category Data";
-    }
+    messageElement.textContent = responseData.message;
+    fetchTableData();
 }
 
 async function updateCategory(event) {
@@ -659,12 +624,8 @@ async function updateCategory(event) {
     const responseData = await response.json();
     const messageElement = document.getElementById('updateCategoryResultMsg');
 
-    if (responseData.success) {
-        messageElement.textContent = "Category updated successfully!";
-        fetchTableData();
-    } else {
-        messageElement.textContent = "Error updating category!";
-    }
+    messageElement.textContent = responseData.message;
+    fetchTableData();
 }
 
 async function deleteCategory(event) {
@@ -685,12 +646,8 @@ async function deleteCategory(event) {
     const responseData = await response.json();
     const messageElement = document.getElementById('deleteCategoryResultMsg');
 
-    if (responseData.success) {
-        messageElement.textContent = "Category deleted successfully!";
-        fetchTableData();
-    } else {
-        messageElement.textContent = "Error deleting category!";
-    }
+    messageElement.textContent = responseData.message;
+    fetchTableData();
 }
 
 async function insertRecipeIntoCategory(event) {
@@ -713,12 +670,8 @@ async function insertRecipeIntoCategory(event) {
     const responseData = await response.json();
     const messageElement = document.getElementById('addARecipeToCategoryResultMsg');
 
-    if (responseData.success) {
-        messageElement.textContent = "Recipe added to Category successfully!";
-        fetchTableData();
-    } else {
-        messageElement.textContent = "Error adding Recipe data to Category";
-    }
+    messageElement.textContent = responseData.message;
+    fetchTableData();
 }
 
 async function deleteRecipeFromCategory(event) {
@@ -741,12 +694,8 @@ async function deleteRecipeFromCategory(event) {
     const responseData = await response.json();
     const messageElement = document.getElementById('deleteARecipeFromCategoryResultMsg');
 
-    if (responseData.success) {
-        messageElement.textContent = "Recipe deleted from Category successfully!";
-        fetchTableData();
-    } else {
-        messageElement.textContent = "Error deleting recipe from category!";
-    }
+    messageElement.textContent = responseData.message;
+    fetchTableData();
 }
 
 async function insertRecipeList(event) {
@@ -773,12 +722,8 @@ async function insertRecipeList(event) {
     const responseData = await response.json();
     const messageElement = document.getElementById('insertRecipeListResultMsg');
 
-    if (responseData.success) {
-        messageElement.textContent = "Recipe List Data inserted successfully!";
-        fetchTableData();
-    } else {
-        messageElement.textContent = "Error inserting recipe list data";
-    }
+    messageElement.textContent = responseData.message;
+    fetchTableData();
 }
 
 async function updateRecipeList(event) {
@@ -803,12 +748,8 @@ async function updateRecipeList(event) {
     const responseData = await response.json();
     const messageElement = document.getElementById('updateRecipeListResultMsg');
 
-    if (responseData.success) {
-        messageElement.textContent = "Recipe List updated successfully!";
-        fetchTableData();
-    } else {
-        messageElement.textContent = "Error updating recipe list!";
-    }
+    messageElement.textContent = responseData.message;
+    fetchTableData();
 }
 
 async function deleteRecipeList(event) {
@@ -829,12 +770,8 @@ async function deleteRecipeList(event) {
     const responseData = await response.json();
     const messageElement = document.getElementById('deleteRecipeListUpdateMsg');
 
-    if (responseData.success) {
-        messageElement.textContent = "Recipe List deleted successfully!";
-        fetchTableData();
-    } else {
-        messageElement.textContent = "Error deleting recipe list!";
-    }
+    messageElement.textContent = responseData.message;
+    fetchTableData();
 }
 
 async function insertRecipeToRecipeList(event) {
@@ -857,12 +794,8 @@ async function insertRecipeToRecipeList(event) {
     const responseData = await response.json();
     const messageElement = document.getElementById('insertRecipeToRecipeListResultMsg');
 
-    if (responseData.success) {
-        messageElement.textContent = "Recipe added to Recipe List successfully!";
-        fetchTableData();
-    } else {
-        messageElement.textContent = "Error adding Recipe data to Recipe List";
-    }
+    messageElement.textContent = responseData.message;
+    fetchTableData();
 }
 
 async function deleteRecipeFromRecipeList(event) {
@@ -885,12 +818,8 @@ async function deleteRecipeFromRecipeList(event) {
     const responseData = await response.json();
     const messageElement = document.getElementById('deleteRecipeFromRecipeListResultMsg');
 
-    if (responseData.success) {
-        messageElement.textContent = "Recipe deleted from Recipe List successfully!";
-        fetchTableData();
-    } else {
-        messageElement.textContent = "Error deleting recipe from recipe list!";
-    }
+    messageElement.textContent = responseData.message;
+    fetchTableData();
 }
 
 
@@ -1068,6 +997,7 @@ async function insertAllergyList(event) {
 }
 
  // Gives me an error - number TODO
+ // IngredientListID, PrivacyLevel, ListDescription, Username, ListName
 async function updateAllergyList(event) {
     event.preventDefault();
 
@@ -1368,6 +1298,34 @@ async function updateAllergyListHasAllergicIngredient(event) {
     }
 }
 
+async function deleteAllergyListHasAllergicIngredient(event) {
+    event.preventDefault();
+
+    const allergyListHasAllergicIngredientIngredientListIDDelete = Number(document.getElementById('deleteAllergyListHasAllergicIngredientIngredientListID').value);
+    const allergyListHasAllergicIngredientIngredientIDDelete = Number(document.getElementById('deleteAllergyListHasAllergicIngredientIngredientID').value);
+
+    const response = await fetch('/delete-kitchen-ingredient', {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            IngredientID: allergyListHasAllergicIngredientIngredientListIDDelete,
+            IngredientListID: allergyListHasAllergicIngredientIngredientIDDelete,
+        })
+    });
+
+    const responseData = await response.json();
+    const messageElement = document.getElementById('deleteAllergyListHasAllergicIngredientResultMsg');
+
+    if (responseData.success) {
+        messageElement.textContent = "AllergyListHasAllergicIngredient deleted successfully!";
+        fetchTableData();
+    } else {
+        messageElement.textContent = "Error deleting AllergyListHasAllergicIngredient!";
+    }
+}
+
 
 
 
@@ -1443,6 +1401,7 @@ window.onload = function () {
 
     document.getElementById("insertAllergyListHasAllergicIngredient").addEventListener("submit", insertAllergyListHasAllergicIngredient);
     document.getElementById("updateAllergyListHasAllergicIngredient").addEventListener("submit", updateAllergyListHasAllergicIngredient);
+    document.getElementById("deleteAllergyListHasAllergicIngredient").addEventListener("submit", deleteAllergyListHasAllergicIngredient);
 
 
 
