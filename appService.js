@@ -685,6 +685,7 @@ async function deleteRecipeFromRecipeList(RecipeID, RecipeListID) {
 // ----------------------------------------------------------
 // Ingredient Centric service
 
+// AllergicIngredient
 async function fetchAllergicIngredientFromDb() {
     try {
         return await withOracleDB(async (connection) => {
@@ -751,6 +752,40 @@ async function deleteAllergicIngredient(IngredientID) {
         return false;
     }
 }
+
+// AllergyList
+async function fetchAllergyListFromDb() {
+    try {
+        return await withOracleDB(async (connection) => {
+            const result = await connection.execute('SELECT * FROM AllergyList');
+            return result.rows;
+        });
+    } catch(error) {
+        console.error('Database error:', error);
+        return [];
+    }
+}
+
+// IngredientListID, PrivacyLevel, ListDescription, Username, ListName
+async function insertAllergyList(IngredientListID, PrivacyLevel, ListDescription, Username, ListName) {
+    try {
+        return await withOracleDB(async (connection) => {
+            const result = await connection.execute(
+                `INSERT INTO AllergyList(IngredientListID, PrivacyLevel, ListDescription, Username, ListName) 
+                VALUES (:IngredientListID, :PrivacyLevel, :ListDescription, :Username, :ListName)`,
+                [IngredientListID, PrivacyLevel, ListDescription, Username, ListName],
+                { autoCommit: true }
+            );
+
+            console.log('Inserted AllergyList Successfully')
+            return result.rowsAffected && result.rowsAffected > 0;
+        });
+    } catch(error) {
+        console.error('Database error:', error);
+        return false;
+    }
+}
+
 
 
 
@@ -840,7 +875,8 @@ module.exports = {
     insertAllergicIngredient,
     updateAllergicIngredient,
     deleteAllergicIngredient,
-
+    fetchAllergyListFromDb, 
+    insertAllergyList,
 
     // General
     validateUsername,

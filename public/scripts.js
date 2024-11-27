@@ -897,7 +897,7 @@ async function deleteRecipeFromRecipeList(event) {
 // ----------------------------------------------------------
 // Ingredient Centric methods
 
-// Display all Allergic Ingredients
+// AllergicIngredient
 async function fetchAndDisplayAllergicIngredient() {
     const response = await fetch('/allergic-ingredient', {
         method: 'GET'
@@ -922,9 +922,6 @@ async function fetchAndDisplayAllergicIngredient() {
     });
 }
 
-
-
-// Inserts new records into the recipe table.
 async function insertAllergicIngredient(event) {
     event.preventDefault();
 
@@ -1009,6 +1006,67 @@ async function deleteAllergicIngredient(event) {
 }
 
 
+// AllergyList
+async function fetchAndDisplayAllergyList() {
+    const response = await fetch('/allergy-list', {
+        method: 'GET'
+    });
+
+    const responseData = await response.json();
+    const allergyListContent = responseData.data;
+
+    const tableElement = document.getElementById('allergylist'); // from index.html tag
+    const tableBody = tableElement.querySelector('tbody');
+
+    if (tableBody) {
+        tableBody.innerHTML = '';
+    }
+
+    allergyListContent.forEach(allergylist => {
+        const row = tableBody.insertRow();
+        allergylist.forEach((field, index) => {
+            const cell = row.insertCell(index);
+            cell.textContent = field;
+        });
+    });
+}
+
+// IngredientListID, PrivacyLevel, ListDescription, Username, ListName
+async function insertAllergyList(event) {
+    event.preventDefault();
+
+    const allergyListIngredientListID = Number(document.getElementById('insertAllergyListIngredientListID').value);
+    const allergyListPrivacyLevel = document.getElementById('insertAllergyListPrivacyLevel').value;
+    const allergyListListDescription = document.getElementById('insertAllergyListListDescription').value;
+    const allergyListUsername = document.getElementById('insertAllergyListUsername').value;
+    const allergyListName = document.getElementById('insertAllergyListName').value;
+
+
+    const response = await fetch('/insert-allergy-list', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            IngredientListID: allergyListIngredientListID,
+            PrivacyLevel: allergyListPrivacyLevel,
+            ListDescription: allergyListListDescription, 
+            Username: allergyListUsername,
+            ListName: allergyListName,
+        })
+    });
+
+    const responseData = await response.json();
+    const messageElement = document.getElementById('insertAllergyListResultMsg');
+
+    if (responseData.success) {
+        messageElement.textContent = "Allergic Ingredient data inserted successfully!";
+        fetchTableData(); 
+    } else {
+        messageElement.textContent = "Error inserting Allergic Ingredient data!";
+    }
+}
+
 
 
 
@@ -1074,6 +1132,10 @@ window.onload = function () {
     document.getElementById("updateAllergicIngredient").addEventListener("submit", updateAllergicIngredient);
     document.getElementById("deleteAllergicIngredient").addEventListener("submit", deleteAllergicIngredient);
 
+    document.getElementById("insertAllergyList").addEventListener("submit", insertAllergyList);
+
+
+
     // general
     document.getElementById("resetTables").addEventListener("click", resetTables);
 };
@@ -1088,4 +1150,5 @@ function fetchTableData() {
     fetchAndDisplayFilteredRecipes();
     // Ingredient Centric
     fetchAndDisplayAllergicIngredient();
+    fetchAndDisplayAllergyList();
 }
