@@ -61,12 +61,12 @@ router.delete('/delete-user', async (req, res) => {
 });
 
 router.patch('/update-user', async (req, res) => {
-    const { Username, newProfilePicture, newEmail, newFullName, newDefaultPrivacyLevel } = req.body;
+    const { Username, NewProfilePicture, NewEmail, NewFullName, NewDefaultPrivacyLevel } = req.body;
     if (!Username) {
         return res.status(400).json({ success: false, message: "Username is required for update." });
     }
     try {
-        const updateResult = await appService.updateUser(Username, newProfilePicture, newEmail, newFullName, newDefaultPrivacyLevel);
+        const updateResult = await appService.updateUser(Username, NewProfilePicture, NewEmail, NewFullName, NewDefaultPrivacyLevel);
         if (updateResult) {
             res.json({ success: true });
         } else {
@@ -104,21 +104,9 @@ router.get('/friends-with-everyone', async (req, res) => {
 
 // ----------------------------------------------------------
 // Friends
-router.get('/are-they-friends', async (req, res) => {
-    const { username1, username2 } = req.query;
-    if (!username1 || !username2) {
-        return res.status(400).json({
-            success: false,
-            message: "Both 'username1' and 'username2' are required."
-        });
-    }
-    try {
-        const areFriends = await appService.areTheyFriends(username1, username2);
-        res.json({ success: true, areFriends });
-    } catch (error) {
-        console.error('Error checking friendship:', error);
-        res.status(500).json({ success: false, message: "Internal server error." });
-    }
+router.get('/friendships', async (req, res) => {
+    const tableContent = await appService.fetchFriendshipsFromDb();
+    res.json({ data: tableContent });
 });
 
 router.post('/insert-friend', async (req, res) => {
@@ -170,6 +158,24 @@ router.delete('/delete-friend', async (req, res) => {
         res.status(500).json({ success: false, message: "Internal server error." });
     }
 });
+
+router.get('/are-they-friends', async (req, res) => {
+    const { username1, username2 } = req.query;
+    if (!username1 || !username2) {
+        return res.status(400).json({
+            success: false,
+            message: "Both 'username1' and 'username2' are required."
+        });
+    }
+    try {
+        const areFriends = await appService.areTheyFriends(username1, username2);
+        res.json({ success: true, areFriends });
+    } catch (error) {
+        console.error('Error checking friendship:', error);
+        res.status(500).json({ success: false, message: "Internal server error." });
+    }
+});
+
 
 // ----------------------------------------------------------
 // NotificationMessage

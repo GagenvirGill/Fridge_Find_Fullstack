@@ -97,7 +97,7 @@ async function insertUser(Username, ProfilePicture, Email, FullName, DefaultPriv
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
             `INSERT INTO AppUser(Username, ProfilePicture, Email, FullName, DefaultPrivacyLevel) VALUES (:Username, :ProfilePicture, :Email, :FullName, :DefaultPrivacyLevel)`,
-            [Username, ProfilePicture || null, Email, FullName, DefaultPrivacyLevel || 'Private'],
+            [Username, ProfilePicture, Email, FullName, DefaultPrivacyLevel || 'Private'],
             { autoCommit: true }
         );
 
@@ -185,11 +185,11 @@ async function fetchUsersWhoAreFriendsWithEveryone() {
                  FROM AppUser a
                  WHERE a.Username != u.Username
                    AND NOT EXISTS (
-                       SELECT 1
-                       FROM Friends f
-                       WHERE (f.Username1 = u.Username AND f.Username2 = a.Username)
-                          OR (f.Username1 = a.Username AND f.Username2 = u.Username)
-                   )
+                     SELECT 1
+                     FROM Friends f
+                     WHERE (f.Username1 = u.Username AND f.Username2 = a.Username)
+                        OR (f.Username1 = a.Username AND f.Username2 = u.Username)
+                 )
              )`
         );
 
@@ -200,19 +200,18 @@ async function fetchUsersWhoAreFriendsWithEveryone() {
     });
 }
 
-// async function fetchFriends(username) {
-//     return await withOracleDB(async (connection) => {
-//         const result = await connection.execute(
-//             `SELECT * FROM Friends WHERE Username1 = :username OR Username2 = :username`,
-//             [username]
-//         );
-//
-//         return result.rows;
-//     }).catch((error) => {
-//         console.error('Error fetching friends:', error);
-//         return [];
-//     });
-// }
+async function fetchFriendshipsFromDb() {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            `SELECT * FROM Friends`
+        );
+
+        return result.rows;
+    }).catch((error) => {
+        console.error('Error fetching friendships:', error);
+        return [];
+    });
+}
 
 async function insertFriend(username1, username2) {
     if (!username1 || !username2) {
@@ -279,9 +278,9 @@ async function fetchNotificationForExpiringIngredients(username) {
                 COUNT(*) AS ExpiringCount
             FROM
                 Notifications n
-            INNER JOIN NotificationMessage nm
-                ON n.Username = nm.Username
-                AND n.DateAndTimeSent = nm.DateAndTimeSent
+                    INNER JOIN NotificationMessage nm
+                               ON n.Username = nm.Username
+                                   AND n.DateAndTimeSent = nm.DateAndTimeSent
             WHERE
                 n.Username = :username
             GROUP BY n.NotificationID, n.DateAndTimeSent
@@ -303,15 +302,15 @@ async function fetchNotificationDetails(notificationID) {
                 kid.ExpiryDate
             FROM
                 Notifications n
-            INNER JOIN NotificationMessage nm
-                ON n.NotificationID = :notificationID
-            INNER JOIN KitchenInventory kinv
-                ON kinv.Username = nm.Username
-            INNER JOIN KitchenIngredient ki
-                ON kinv.IngredientListID = ki.IngredientListID
-            INNER JOIN KitchenIngredientPerishableDate kid
-                ON ki.DatePurchased = kid.DatePurchased
-                AND ki.ShelfLife = kid.ShelfLife
+                    INNER JOIN NotificationMessage nm
+                               ON n.NotificationID = :notificationID
+                    INNER JOIN KitchenInventory kinv
+                               ON kinv.Username = nm.Username
+                    INNER JOIN KitchenIngredient ki
+                               ON kinv.IngredientListID = ki.IngredientListID
+                    INNER JOIN KitchenIngredientPerishableDate kid
+                               ON ki.DatePurchased = kid.DatePurchased
+                                   AND ki.ShelfLife = kid.ShelfLife
             WHERE
                 n.NotificationID = :notificationID`;
 
@@ -523,10 +522,10 @@ async function fetchRecipeIngredientsForRecipeFromDb(RecipeID) {
 
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(`
-            SELECT ri.* 
-            FROM RecipeIngredient ri 
-            JOIN Recipe r ON r.RecipeID = ri.RecipeID 
-            WHERE ri.RecipeID=:RecipeID`,
+                    SELECT ri.*
+                    FROM RecipeIngredient ri
+                             JOIN Recipe r ON r.RecipeID = ri.RecipeID
+                    WHERE ri.RecipeID=:RecipeID`,
             [intRecipeID]
         );
         return result.rows;
@@ -545,9 +544,9 @@ async function fetchRecipesName(RecipeID) {
 
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(`
-            SELECT RecipeName
-            FROM Recipe
-            WHERE RecipeID=:RecipeID`,
+                    SELECT RecipeName
+                    FROM Recipe
+                    WHERE RecipeID=:RecipeID`,
             [intRecipeID]
         );
         return result.rows;
@@ -651,9 +650,10 @@ module.exports = {
     updateUser,
     viewUsersWithPublicPrivacy,
     fetchUsersWhoAreFriendsWithEveryone,
-    areTheyFriends,
+    fetchFriendshipsFromDb,
     insertFriend,
     deleteFriend,
+    areTheyFriends,
     fetchNotificationForExpiringIngredients,
     fetchNotificationDetails,
     deleteNotification,

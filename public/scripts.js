@@ -44,6 +44,7 @@ async function fetchAndDisplayUsers() {
 
     try {
         const response = await fetch('/users', { method: 'GET' });
+        //TODO: make a helper function for duplicated code later.
         const responseData = await response.json();
         const users = responseData.data;
 
@@ -84,7 +85,7 @@ async function insertUser(event) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 Username: username,
-                ProfilePicture: profilePicture || null,
+                ProfilePicture: profilePicture,
                 Email: email,
                 FullName: fullName,
                 DefaultPrivacyLevel: privacyLevel,
@@ -96,9 +97,10 @@ async function insertUser(event) {
 
         if (responseData.success) {
             messageElement.textContent = 'User inserted successfully!';
-            await fetchAndDisplayUsers();
+            fetchTableData();
+            // await fetchAndDisplayUsers();
         } else {
-            messageElement.textContent = 'Error inserting user.';
+            alert('Error inserting user.');
         }
     } catch (error) {
         console.error('Error inserting user:', error);
@@ -109,13 +111,13 @@ async function insertUser(event) {
 async function updateUser(event) {
     event.preventDefault();
 
-    const username = document.getElementById('updateUsername').value;
-    const profilePicture = document.getElementById('updateProfilePicture').value;
-    const newEmail = document.getElementById('updateEmail').value;
-    const newFullName = document.getElementById('updateFullName').value;
-    const newPrivacyLevel = document.getElementById('updatePrivacyLevel').value;
+    const usernameValue = document.getElementById('updateUsername').value;
+    const newProfilePictureValue = document.getElementById('updateProfilePicture').value;
+    const newEmailValue = document.getElementById('updateEmail').value;
+    const newFullNameValue = document.getElementById('updateFullName').value;
+    const newPrivacyLevelValue = document.getElementById('updateUserPrivacyLevel').value;
 
-    if (!username) {
+    if (!usernameValue) {
         alert('Username is required for updating.');
         return;
     }
@@ -125,11 +127,11 @@ async function updateUser(event) {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                Username: username,
-                ProfilePicture: profilePicture || undefined,
-                NewEmail: newEmail || undefined,
-                NewFullName: newFullName || undefined,
-                NewDefaultPrivacyLevel: newPrivacyLevel || undefined,
+                Username: usernameValue,
+                NewProfilePicture: newProfilePictureValue,
+                NewEmail: newEmailValue,
+                NewFullName: newFullNameValue,
+                NewDefaultPrivacyLevel: newPrivacyLevelValue
             }),
         });
 
@@ -138,9 +140,9 @@ async function updateUser(event) {
 
         if (responseData.success) {
             messageElement.textContent = 'User updated successfully!';
-            await fetchAndDisplayUsers();
+            fetchTableData();
         } else {
-            messageElement.textContent = 'Error updating user.';
+            alert('Error updating user.');
         }
     } catch (error) {
         console.error('Error updating user:', error);
@@ -170,9 +172,9 @@ async function deleteUser(event) {
 
         if (responseData.success) {
             messageElement.textContent = 'User deleted successfully!';
-            fetchAndDisplayUsers();
+            fetchTableData();
         } else {
-            messageElement.textContent = 'Error deleting user.';
+            alert('Error deleting user.');
         }
     } catch (error) {
         console.error('Error deleting user:', error);
@@ -230,6 +232,30 @@ async function fetchAndDisplayUsersWhoAreFriendsWithEveryone() {
     }
 }
 
+async function fetchAndDisplayFriendships() {
+    const tableElement = document.getElementById('fetchAndDisplayFriendships');
+    const tableBody = tableElement.querySelector('tbody');
+
+    try {
+        const response = await fetch('/friendships', { method: 'GET' });
+        const responseData = await response.json();
+        const users = responseData.data;
+
+        if (tableBody) {
+            tableBody.innerHTML = '';
+        }
+
+        users.forEach(user => {
+            const row = tableBody.insertRow();
+            const cell = row.insertCell(0);
+            cell.textContent = user;
+        });
+    } catch (error) {
+        console.error('Error fetching friendships:', error);
+        alert('Error fetching friendships.');
+    }
+}
+
 async function insertFriend(event) {
     event.preventDefault();
 
@@ -253,12 +279,13 @@ async function insertFriend(event) {
 
         if (responseData.success) {
             messageElement.textContent = 'Friend added successfully!';
+            fetchTableData();
         } else {
-            messageElement.textContent = 'Error adding friend.';
+            alert('Error adding friend.');
         }
     } catch (error) {
         console.error('Error inserting friend:', error);
-        alert('Error inserting friend.');
+        alert('Error adding friend.');
     }
 }
 
@@ -285,8 +312,9 @@ async function deleteFriend(event) {
 
         if (responseData.success) {
             messageElement.textContent = 'Friend deleted successfully!';
+            fetchTableData();
         } else {
-            messageElement.textContent = 'Error deleting friend.';
+            alert('Error deleting friend.');
         }
     } catch (error) {
         console.error('Error deleting friend:', error);
@@ -321,7 +349,9 @@ async function areTheyFriends(event) {
     }
 }
 
-async function fetchAndDisplayNotifications() {
+async function fetchAndDisplayNotifications(event) {
+    event.preventDefault(); //!!!
+
     const username = document.getElementById('showUsersNotifications').value;
     if (!username) {
         alert('Please enter a username.');
@@ -340,7 +370,7 @@ async function fetchAndDisplayNotifications() {
 
         data.data.forEach(notification => {
             const row = tableBody.insertRow();
-            row.insertCell(0).textContent = notification.NotificationID;
+            row.insertCell(0).textContent = notification.NotificationID; //!!!
             row.insertCell(1).textContent = notification.DateAndTimeSent;
             row.insertCell(2).textContent = notification.ExpiringCount;
             const showButton = row.insertCell(3).appendChild(document.createElement('button'));
@@ -350,6 +380,7 @@ async function fetchAndDisplayNotifications() {
             deleteButton.textContent = 'Delete';
             deleteButton.onclick = () => deleteNotification(notification.NotificationID);
         });
+
     } else {
         alert('Error fetching notifications.');
     }
@@ -386,9 +417,11 @@ async function deleteNotification(notificationID) {
     });
 
     const data = await response.json();
+    const messageElement = document.getElementById('deleteNotificationResultMsg');
+
     if (data.success) {
-        alert('Notification deleted successfully.');
-        fetchAndDisplayNotifications();
+        messageElement.textContent = 'Notification deleted successfully.';
+        fetchTableData();
     } else {
         alert('Error deleting notification.');
     }
@@ -878,6 +911,7 @@ function fetchTableData() {
     fetchAndDisplayUsers();
     fetchAndDisplayPublicUsers();
     fetchAndDisplayUsersWhoAreFriendsWithEveryone();
+    fetchAndDisplayFriendships();
     fetchAndDisplayNotifications();
     fetchAndDisplayRecipes();
 }
