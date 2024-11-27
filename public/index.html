@@ -495,6 +495,88 @@
     </form>
     <div id="deleteAllergyListResultMsg"></div>
 
+    <h3>Show Kitchen Ingredient List</h3>
+    <table id="kitcheningredient" border="1">
+        <thead>
+            <tr>
+                <th>DatePurchased</th>
+                <th>ShelfLife</th>
+                <th>IngredientID</th>
+                <th>IngredientName</th>
+                <th>IngredientListID</th>
+                <th>Amount</th>
+                <th>UnitOfMeasurement</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <h3> Create a new Kitchen Ingredient List </h3>
+    <form id="insertKitchenIngredient">
+        Date Purchased: <input type="datetime-local" id="insertKitchenIngredientDatePurchased" placeholder="Enter Date Purchased" required> <br><br>
+        List ShelfLife: <input type="number" id="insertKitchenIngredientShelfLife" placeholder="Enter Shelf Life" maxlength="50"> <br><br>
+        List IngredientID: <input type="number" id="insertKitchenIngredientIngredientID" placeholder="Enter Ingredient ID" maxlength="50" required> <br><br>
+        List IngredientName: <input type="text" id="insertKitchenIngredientIngredientName" placeholder="Enter Ingredient Name" maxlength="50" required> <br><br>
+        List IngredientListID: <input type="number" id="insertKitchenIngredientIngredientListID" placeholder="Enter Ingredient List ID" maxlength="50" required> <br><br>
+        List Amount: <input type="number" id="insertKitchenIngredientAmount" placeholder="Enter Amount" maxlength="50"> <br><br>
+        List Unit Of Measurement: 
+        <select id="insertKitchenIngredientUnitOfMeasurement">
+            <option value="Do Not Change">Do Not Change</option>
+            <option value="Piece">Piece</option>
+            <option value="Milliliters">Milliliters</option>
+            <option value="Liters">Liters</option>
+            <option value="Ounces">Ounces</option>
+            <option value="Cups">Cups</option>
+            <option value="Grams">Grams</option>
+            <option value="Pounds">Pounds</option>
+            <option value="Kilograms">Kilograms</option>
+            <option value="Tablespoons">Tablespoons</option>
+            <option value="Teaspoons">Teaspoons</option>
+        </select> <br><br>
+
+        <button type="submit"> Create </button> <br>
+    </form>
+    <div id="insertKitchenIngredientResultMsg"></div>
+
+    <h3> Create a new Kitchen Ingredient List </h3>
+    <form id="updateKitchenIngredient">
+        New Date Purchased: <input type="datetime-local" id="updateKitchenIngredientDatePurchased" placeholder="Enter Date Purchased" required> <br><br>
+        New List ShelfLife: <input type="number" id="updateKitchenIngredientShelfLife" placeholder="Enter Shelf Life" maxlength="50"> <br><br>
+        List IngredientID: <input type="number" id="updateKitchenIngredientIngredientID" placeholder="Enter Ingredient ID" maxlength="50" required> <br><br>
+        New List IngredientName: <input type="text" id="updateKitchenIngredientIngredientName" placeholder="Enter Ingredient Name" maxlength="50" required> <br><br>
+        List IngredientListID: <input type="number" id="updateKitchenIngredientIngredientListID" placeholder="Enter Ingredient List ID" maxlength="50" required> <br><br>
+        New List Amount: <input type="number" id="updateKitchenIngredientAmount" placeholder="Enter Amount" maxlength="50"> <br><br>
+        New List Unit Of Measurement: 
+        <select id="updateKitchenIngredientUnitOfMeasurement">
+            <option value="Do Not Change">Do Not Change</option>
+            <option value="Piece">Piece</option>
+            <option value="Milliliters">Milliliters</option>
+            <option value="Liters">Liters</option>
+            <option value="Ounces">Ounces</option>
+            <option value="Cups">Cups</option>
+            <option value="Grams">Grams</option>
+            <option value="Pounds">Pounds</option>
+            <option value="Kilograms">Kilograms</option>
+            <option value="Tablespoons">Tablespoons</option>
+            <option value="Teaspoons">Teaspoons</option>
+        </select> <br><br>
+
+        <button type="submit"> Create </button> <br>
+    </form>
+    <div id="updateKitchenIngredientResultMsg"></div>
+
+    <h3>Delete a Kitchen Ingredient List</h3>
+    <form id="deleteKitchenIngredient">
+        Ingredient ID: <input type="number" id="deleteKitchenIngredientIngredientID" placeholder="Enter Kitchen Ingredient List ID" required> <br><br>
+        Ingredient List ID: <input type="number" id="deleteKitchenIngredientIngredientListID" placeholder="Enter Kitchen Ingredient List ID" required> <br><br>
+
+        <button type="submit"> Delete </button> <br>
+    </form>
+    <div id="deleteKitchenIngredientResultMsg"></div>
+
+
+
 
 
     <br><hr><br> <!-- ========================================================================= -->
