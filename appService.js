@@ -786,6 +786,43 @@ async function insertAllergyList(IngredientListID, PrivacyLevel, ListDescription
     }
 }
 
+ // Gives me an error - number TODO
+async function updateAllergyList(IngredientListID, newPrivacyLevel, newListDescription, newUsername, newListName) {
+    try {
+        return await withOracleDB(async (connection) => {
+            const result = await connection.execute(
+                `UPDATE AllergyList 
+                 SET PrivacyLevel = :newPrivacyLevel, ListDescription = :newListDescription, Username = :newUsername, ListName = :newListName
+                 WHERE IngredientListID = :IngredientListID`,
+                 [IngredientListID, newPrivacyLevel, newListDescription, newUsername, newListName],
+                { autoCommit: true }
+            );
+
+            console.log('Updated AllergyList Successfully')
+            return result.rowsAffected && result.rowsAffected > 0;
+        });
+    } catch(error) {
+        console.error('Database error:', error);
+        return false;
+    };
+}
+
+async function deleteAllergyList(IngredientListID) {
+    try {
+        return await withOracleDB(async (connection) => {
+            const result = await connection.execute(
+                'DELETE FROM AllergyList WHERE IngredientListID=:IngredientListID',
+                [IngredientListID],
+                { autoCommit: true }
+            );
+            console.log('Deleted AllergyList Successfully')
+            return result.rowsAffected && result.rowsAffected > 0;;
+        });
+    } catch(error) {
+        console.error('Database error:', error);
+        return false;
+    }
+}
 
 
 
@@ -877,6 +914,8 @@ module.exports = {
     deleteAllergicIngredient,
     fetchAllergyListFromDb, 
     insertAllergyList,
+    updateAllergyList,
+    deleteAllergyList,
 
     // General
     validateUsername,

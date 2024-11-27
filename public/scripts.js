@@ -1067,7 +1067,71 @@ async function insertAllergyList(event) {
     }
 }
 
+ // Gives me an error - number TODO
+async function updateAllergyList(event) {
+    event.preventDefault();
 
+    const allergyListIngredientListIDValue = Number(document.getElementById('updateAllergyListIngredientListID').value);
+    if (isNaN(allergyListIngredientListIDValue) || allergyListIngredientListIDValue <= 0) {
+        alert('Invalid Ingredient List ID!');
+        return;
+    }    
+
+    const allergyListPrivacyLevelValue = document.getElementById('updateAllergyListPrivacyLevel').value;
+    const allergyListListDescriptionValue = document.getElementById('updateAllergyListListDescription').value;
+    const allergyListUsernameValue = document.getElementById('updateAllergyListUsername').value;
+    const allergyListNameValue = document.getElementById('updateAllergyListName').value;
+
+    const response = await fetch('/update-allergy-list', {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            IngredientListID: allergyListIngredientListIDValue,
+            PrivacyLevel: allergyListPrivacyLevelValue,
+            ListDescription: allergyListListDescriptionValue, 
+            Username: allergyListUsernameValue,
+            ListName: allergyListNameValue,
+        })
+    });
+
+    const responseData = await response.json();
+    const messageElement = document.getElementById('updateAllergyListResultMsg');
+
+    if (responseData.success) {
+        messageElement.textContent = "Allergy List updated successfully!";
+        fetchTableData();
+    } else {
+        messageElement.textContent = "Error updating Allergy List!";
+    }
+}
+
+async function deleteAllergyList(event) {
+    event.preventDefault();
+
+    const allergyListIDDelete = Number(document.getElementById('deleteAllergyListIngredientListID').value);
+
+    const response = await fetch('/delete-allergy-list', {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            IngredientListID: allergyListIDDelete,
+        })
+    });
+
+    const responseData = await response.json();
+    const messageElement = document.getElementById('deleteAllergyListResultMsg');
+
+    if (responseData.success) {
+        messageElement.textContent = "AllergyList deleted successfully!";
+        fetchTableData();
+    } else {
+        messageElement.textContent = "Error deleting AllergyList!";
+    }
+}
 
 
 // ----------------------------------------------------------
@@ -1133,6 +1197,8 @@ window.onload = function () {
     document.getElementById("deleteAllergicIngredient").addEventListener("submit", deleteAllergicIngredient);
 
     document.getElementById("insertAllergyList").addEventListener("submit", insertAllergyList);
+    document.getElementById("updateAllergyList").addEventListener("submit", updateAllergyList);
+    document.getElementById("deleteAllergyList").addEventListener("submit", deleteAllergyList);
 
 
 

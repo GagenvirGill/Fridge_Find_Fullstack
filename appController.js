@@ -341,6 +341,35 @@ router.post("/insert-allergy-list", async (req, res) => {
      }
  });
 
+ // Gives me an error - number TODO
+ router.patch("/update-allergy-list", async (req, res) => {
+    const { IngredientListID, PrivacyLevel, ListDescription, Username, ListName } = req.body;
+    try {
+        const updateResult = await appService.updateAllergyList(IngredientListID, PrivacyLevel, ListDescription, Username, ListName);
+        if (updateResult) {
+            res.json({ success: true });
+        } else {
+            res.status(500).json({ success: false });
+        }
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+router.delete("/delete-allergy-list", async (req, res) => {
+    const { IngredientListID } = req.body;
+    try {
+        const deleteResult = await appService.deleteAllergyList(IngredientListID);
+        if (deleteResult) {
+            res.json({ success: true });
+        } else {
+            res.status(500).json({ success: false });
+        }
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
 
 
 // ----------------------------------------------------------

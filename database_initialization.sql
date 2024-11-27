@@ -191,10 +191,10 @@ INSERT INTO Notifications (NotificationID, DateAndTimeSent, Username) VALUES (4,
 INSERT INTO Notifications (NotificationID, DateAndTimeSent, Username) VALUES (5, TIMESTAMP '2024-9-19 01:00:03', 'Charlie');
 
 INSERT INTO AllergyList (IngredientListID, PrivacyLevel, ListDescription, Username, ListName) VALUES (1, 'Private', 'These are the allergies that Alice has', 'Alice', 'Alices Allergies');
-INSERT INTO AllergyList (IngredientListID, PrivacyLevel, ListDescription, Username, ListName) VALUES (2, 'Public', 'These are the allergies that Charlie has', 'Alice', 'Charlies Allergies');
-INSERT INTO AllergyList (IngredientListID, PrivacyLevel, ListDescription, Username, ListName) VALUES (3, 'Public', 'These are the allergies that Bob has', 'Bob', 'Bobs Allergies');
-INSERT INTO AllergyList (IngredientListID, PrivacyLevel, ListDescription, Username, ListName) VALUES (4, 'Public', 'These are the allergies that Kevin has', 'Bob', 'Kevins Allergies');
-INSERT INTO AllergyList (IngredientListID, PrivacyLevel, ListDescription, Username, ListName) VALUES (5, 'Friends Only', 'These are the allergies that Jason has', 'Alice', 'Jasons Allergies');
+INSERT INTO AllergyList (IngredientListID, PrivacyLevel, ListDescription, Username, ListName) VALUES (2, 'Public', 'These are the allergies that Charlie has', 'Charlie', 'Charlies Allergies');
+INSERT INTO AllergyList (IngredientListID, PrivacyLevel, ListDescription, Username, ListName) VALUES (3, 'Public', 'These are the allergies that James has', 'James', 'James Allergies');
+INSERT INTO AllergyList (IngredientListID, PrivacyLevel, ListDescription, Username, ListName) VALUES (4, 'Public', 'These are the allergies that Kevin has', 'Kevin', 'Kevins Allergies');
+INSERT INTO AllergyList (IngredientListID, PrivacyLevel, ListDescription, Username, ListName) VALUES (5, 'Friends Only', 'These are the allergies that Jason has', 'Jason', 'Jasons Allergies');
 
 INSERT INTO AllergicIngredient (IngredientID, IngredientName) VALUES (1, 'Peanuts');
 INSERT INTO AllergicIngredient (IngredientID, IngredientName) VALUES (2, 'Shellfish');
