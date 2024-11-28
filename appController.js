@@ -44,20 +44,8 @@ router.post('/insert-user', async (req, res) => {
 
 router.delete('/delete-user', async (req, res) => {
     const { Username } = req.body;
-    if (!Username) {
-        return res.status(400).json({ success: false, message: "Username is required." });
-    }
-    try {
-        const deleteResult = await appService.deleteUser(Username);
-        if (deleteResult) {
-            res.json({ success: true });
-        } else {
-            res.status(500).json({ success: false, message: "Failed to delete user." });
-        }
-    } catch (error) {
-        console.error('Error deleting user:', error);
-        res.status(500).json({ success: false, message: "Internal server error." });
-    }
+    const returnValue = await appService.deleteUser(Username);
+    res.json(returnValue);
 });
 
 router.patch('/update-user', async (req, res) => {
@@ -94,93 +82,103 @@ router.get('/public-users', async (req, res) => {
 
 router.get('/friends-with-everyone', async (req, res) => {
     try {
-        const usersWhoAreFriendsWithEveryone = await appService.fetchUsersWhoAreFriendsWithEveryone();
-        res.json({ success: true, data: usersWhoAreFriendsWithEveryone });
+        const usersWhoAreFriendsWithEveryone = await appService.viewUsersWhoAreFriendsWithEveryone();
+        if (usersWhoAreFriendsWithEveryone.length > 0) {
+            res.json({ success: true, data: usersWhoAreFriendsWithEveryone });
+        } else {
+            res.status(404).json({ success: false, message: "No users who are friends with everyone found." });
+        }
     } catch (error) {
         console.error('Error fetching users who are friends with everyone:', error);
-        res.status(500).json({ success: false, message: "Internal server error." });
+        res.status(500).json({ success: false, message: "Error fetching users who are friends with everyone." });
     }
 });
 
 // ----------------------------------------------------------
 // Friends
-router.get('/friendships', async (req, res) => {
-    const tableContent = await appService.fetchFriendshipsFromDb();
-    res.json({ data: tableContent });
-});
+// router.get('/friendships', async (req, res) => {
+//     try {
+//         const friends = await appService.fetchFriendshipsFromDb();
+//         res.json({ data: friends });
+//     } catch (error) {
+//         console.error('Error fetching friendships:', error);
+//         res.status(500).json({ success: false, message: "Internal server error." });
+//     }
+// });
 
-router.post('/insert-friend', async (req, res) => {
-    const { username1, username2 } = req.body;
+// Working in progress!!
 
-    if (!username1 || !username2) {
-        return res.status(400).json({
-            success: false,
-            message: "Both 'username1' and 'username2' are required."
-        });
-    }
-    if (username1 === username2) {
-        return res.status(400).json({
-            success: false,
-            message: "'username1' and 'username2' cannot be the same."
-        });
-    }
+// router.get('/are-they-friends', async (req, res) => {
+//     const { username1, username2 } = req.query;
+//     if (!username1 || !username2) {
+//         return res.status(400).json({
+//             success: false,
+//             message: "Both 'username1' and 'username2' are required."
+//         });
+//     }
+//     try {
+//         const areFriends = await appService.areTheyFriends(username1, username2);
+//         res.json({ success: true, areFriends });
+//     } catch (error) {
+//         console.error('Error checking friendship:', error);
+//         res.status(500).json({ success: false, message: "Internal server error." });
+//     }
+// });
 
-    try {
-        const insertResult = await appService.insertFriend(username1, username2);
-        if (insertResult) {
-            res.json({ success: true });
-        } else {
-            res.status(500).json({ success: false, message: "Failed to insert friend relationship." });
-        }
-    } catch (error) {
-        console.error('Error inserting friend:', error);
-        res.status(500).json({ success: false, message: "Internal server error." });
-    }
-});
+// router.post('/insert-friend', async (req, res) => {
+//     const { username1, username2 } = req.body;
 
-router.delete('/delete-friend', async (req, res) => {
-    const { username1, username2 } = req.body;
-    if (!username1 || !username2) {
-        return res.status(400).json({
-            success: false,
-            message: "Both 'username1' and 'username2' are required."
-        });
-    }
-    try {
-        const deleteResult = await appService.deleteFriend(username1, username2);
-        if (deleteResult) {
-            res.json({ success: true });
-        } else {
-            res.status(500).json({ success: false, message: "Failed to delete friend relationship." });
-        }
-    } catch (error) {
-        console.error('Error deleting friend:', error);
-        res.status(500).json({ success: false, message: "Internal server error." });
-    }
-});
+//     if (!username1 || !username2) {
+//         return res.status(400).json({
+//             success: false,
+//             message: "Both 'username1' and 'username2' are required."
+//         });
+//     }
+//     if (username1 === username2) {
+//         return res.status(400).json({
+//             success: false,
+//             message: "'username1' and 'username2' cannot be the same."
+//         });
+//     }
 
-router.get('/are-they-friends', async (req, res) => {
-    const { username1, username2 } = req.query;
-    if (!username1 || !username2) {
-        return res.status(400).json({
-            success: false,
-            message: "Both 'username1' and 'username2' are required."
-        });
-    }
-    try {
-        const areFriends = await appService.areTheyFriends(username1, username2);
-        res.json({ success: true, areFriends });
-    } catch (error) {
-        console.error('Error checking friendship:', error);
-        res.status(500).json({ success: false, message: "Internal server error." });
-    }
-});
+//     try {
+//         const insertResult = await appService.insertFriend(username1, username2);
+//         if (insertResult) {
+//             res.json({ success: true });
+//         } else {
+//             res.status(500).json({ success: false, message: "Failed to insert friend relationship." });
+//         }
+//     } catch (error) {
+//         console.error('Error inserting friend:', error);
+//         res.status(500).json({ success: false, message: "Internal server error." });
+//     }
+// });
 
+// router.delete('/delete-friend', async (req, res) => {
+//     const { username1, username2 } = req.body;
+//     if (!username1 || !username2) {
+//         return res.status(400).json({
+//             success: false,
+//             message: "Both 'username1' and 'username2' are required."
+//         });
+//     }
+//     try {
+//         const deleteResult = await appService.deleteFriend(username1, username2);
+//         if (deleteResult) {
+//             res.json({ success: true });
+//         } else {
+//             res.status(500).json({ success: false, message: "Failed to delete friend relationship." });
+//         }
+//     } catch (error) {
+//         console.error('Error deleting friend:', error);
+//         res.status(500).json({ success: false, message: "Internal server error." });
+//     }
+// });
 
 // ----------------------------------------------------------
 // NotificationMessage
-// Fetch notifications for expiring ingredients
-router.get('/notification-expiring-ingredients', async (req, res) => {
+
+router.get('/notifications', async (req, res) => {
     const { username } = req.query;
 
     if (!username) {
@@ -191,16 +189,20 @@ router.get('/notification-expiring-ingredients', async (req, res) => {
     }
 
     try {
-        const ingredients = await appService.fetchNotificationForExpiringIngredients(username);
-        res.json({ success: true, data: ingredients });
+        const notifications = await appService.fetchNotificationForExpiringIngredients(username);
+        if (notifications.length > 0) {
+            res.json({ success: true, data: notifications });
+        } else {
+            res.status(404).json({ success: false, message: "No notifications found for the user." });
+        }
     } catch (error) {
-        console.error('Error fetching expiring ingredients:', error);
-        res.status(500).json({ success: false, message: "Error fetching expiring ingredients." });
+        console.error('Error fetching notifications:', error);
+        res.status(500).json({ success: false, message: "Internal server error." });
     }
 });
 
-// Fetch notification details
-router.get('/notification-details', async (req, res) => {
+
+router.get('/notifications/details', async (req, res) => {
     const { notificationID } = req.query;
 
     if (!notificationID) {
@@ -219,7 +221,7 @@ router.get('/notification-details', async (req, res) => {
     }
 });
 
-// Delete a notification
+
 router.delete('/notification', async (req, res) => {
     const { notificationID } = req.body;
 
@@ -238,89 +240,6 @@ router.delete('/notification', async (req, res) => {
         res.status(500).json({ success: false, message: "Error deleting notification." });
     }
 });
-//
-// router.get('/notification-messages', async (req, res) => {
-//     const { username } = req.query;
-//     const messages = await appService.fetchNotificationMessages(username);
-//     res.json({ data: messages });
-// });
-//
-// router.post('/insert-notification-message', async (req, res) => {
-//     const { username, messageText } = req.body;
-//
-//     if (!username || !messageText) {
-//         return res.status(400).json({
-//             success: false,
-//             message: "Both 'username' and 'messageText' are required."
-//         });
-//     }
-//
-//     try {
-//         const insertResult = await appService.insertNotificationMessage(username, messageText);
-//         if (insertResult) {
-//             res.json({ success: true });
-//         } else {
-//             res.status(500).json({ success: false, message: "Failed to insert notification message." });
-//         }
-//     } catch (error) {
-//         console.error('Error inserting notification message:', error);
-//         res.status(500).json({ success: false, message: "Internal server error." });
-//     }
-// });
-//
-//
-// router.delete('/delete-notification-message', async (req, res) => {
-//     const { username, dateAndTimeSent } = req.body;
-//     const deleteResult = await appService.deleteNotificationMessage(username, dateAndTimeSent);
-//     if (deleteResult) {
-//         res.json({ success: true });
-//     } else {
-//         res.status(500).json({ success: false });
-//     }
-// });
-//
-// // ----------------------------------------------------------
-// // Notifications
-//
-// router.get('/notifications', async (req, res) => {
-//     const { username } = req.query;
-//     const notifications = await appService.fetchNotifications(username);
-//     res.json({ data: notifications });
-// });
-//
-// router.post('/insert-notification', async (req, res) => {
-//     const { notificationID, username } = req.body;
-//
-//     if (!notificationID || !username) {
-//         return res.status(400).json({
-//             success: false,
-//             message: "Both 'notificationID' and 'username' are required."
-//         });
-//     }
-//
-//     try {
-//         const insertResult = await appService.insertNotification(notificationID, username);
-//         if (insertResult) {
-//             res.json({ success: true });
-//         } else {
-//             res.status(500).json({ success: false, message: "Failed to insert notification." });
-//         }
-//     } catch (error) {
-//         console.error('Error inserting notification:', error);
-//         res.status(500).json({ success: false, message: "Internal server error." });
-//     }
-// });
-//
-//
-// router.delete('/delete-notification', async (req, res) => {
-//     const { notificationID } = req.body;
-//     const deleteResult = await appService.deleteNotification(notificationID);
-//     if (deleteResult) {
-//         res.json({ success: true });
-//     } else {
-//         res.status(500).json({ success: false });
-//     }
-// });
 
 // ----------------------------------------------------------
 // Recipe Centric endpoints

@@ -37,7 +37,7 @@
     <thead>
     <tr>
         <th>Username</th>
-        <th>Profile Picture</th>
+        <!-- <th>Profile Picture</th> -->
         <th>Email</th>
         <th>Full Name</th>
         <th>Privacy Level</th>
@@ -49,8 +49,8 @@
 
 <h3> Create a New User </h3>
 <form id="insertUserForm">
-    Username: <input type="text" id="insertNewUserName" placeholder="Enter Username" required maxlength="50"> (Username can't be changed later.) <br><br>
-    Profile Picture: <input type="text" id="insertProfilePicture" placeholder="Attach Profile Picture"> <br><br>
+    Username: <input type="text" id="insertUsername" placeholder="Enter Username" required maxlength="50"> (Username can't be changed later.) <br><br>
+    <!-- Profile Picture: <input type="file" id="insertProfilePicture" accept="image/*" placeholder="Attach Profile Picture"> <br><br> -->
     Email: <input type="text" id="insertEmail" placeholder="Enter Email" required maxlength="100"> <br><br>
     Full Name: <input type="text" id="insertFullName" placeholder="Enter Full Name" required maxlength="50"> <br><br>
     Privacy Level:
@@ -60,19 +60,20 @@
         <option value="Friends Only">Friends Only</option>
     </select> <br><br>
 
-    <button type="submit"> Create </button> <br><br>
+    <button type="submit"> Create </button> <br>
 </form>
 <div id="insertUserResultMsg"></div>
 
 <h3>Update a User Setting except for Username</h3>
-<p>The values are case-sensitive and if you enter the wrong case, the update statement will not do anything.</p>
+<p> Please fill in only fields you want to update, and note that the values are case sensitive. </p>
 <form id="updateUserForm">
     Username: <input type="text" id="updateUsername" placeholder="Enter Username" required maxlength="50"> <br><br>
     <!-- New Profile Picture: <input type="file" id="updateProfilePicture" accept="image/*" placeholder="Attach New Profile Picture"> <br><br> -->
-    New Email: <input type="text" id="updateEmail" placeholder="Enter New Email" required maxlength="100"> <br><br>
-    New Full Name: <input type="text" id="updateFullName" placeholder="Enter New Full Name" required maxlength="50"> <br><br>
+    New Email: <input type="text" id="updateEmail" placeholder="Enter New Email" maxlength="100"> <br><br>
+    New Full Name: <input type="text" id="updateFullName" placeholder="Enter New Full Name" maxlength="50"> <br><br>
     New Privacy Level:
     <select id="updateUserPrivacyLevel">
+        <option value="Do Not Change">Do Not Change</option>
         <option value="Private">Private</option>
         <option value="Public">Public</option>
         <option value="Friends Only">Friends Only</option>
@@ -84,8 +85,8 @@
 
 <h3>Delete a User</h3>
 <p>You can't revert this action.</p>
-<form id="deleteUser">
-    Username: <input type="text" id="deleteUserName" placeholder="Enter Username" required maxlength="50"> <br><br>
+<form id="deleteUserForm">
+    Username: <input type="text" id="deleteUsername" placeholder="Enter Username" required maxlength="50"> <br><br>
 
     <button type="submit"> Delete </button> <br>
 </form>
@@ -109,16 +110,14 @@
     <thead>
     <tr>
         <th>Username</th>
-        <th>Email</th>
-        <th>Full Name</th>
     </tr>
     </thead>
     <tbody>
     </tbody>
 </table>
 
-<h3>Show Friendship</h3>
-<table id="fetchAndDisplayFriendships" border="1">
+<!-- <h3>Show Friendships</h3>
+<table id="friendships" border="1">
     <thead>
     <tr>
         <th>Username 1</th>
@@ -128,7 +127,7 @@
     </thead>
     <tbody>
     </tbody>
-</table>
+</table> -->
 
 <h3>Insert Friend</h3>
 <form id="insertFriendForm">
@@ -170,7 +169,8 @@
 <h3>Show Notifications for Expiring Ingredients</h3>
 <div>
     Username: <input type="text" id="showUsersNotifications" placeholder="Enter Username" required maxlength="50">
-    <button onclick="fetchAndDisplayNotifications()">Show Notifications</button>
+    <!-- <button onclick="fetchAndDisplayNotifications()">Show Notifications</button> -->
+    <button> Show Notifications (WIP)</button>
 </div>
 <br>
 <h4 id="notificationsUsername" style="display: none;">Notifications for <span id="currentUsername"></span></h4>

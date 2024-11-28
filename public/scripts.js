@@ -44,7 +44,6 @@ async function fetchAndDisplayUsers() {
 
     try {
         const response = await fetch('/users', { method: 'GET' });
-        //TODO: make a helper function for duplicated code later.
         const responseData = await response.json();
         const users = responseData.data;
 
@@ -68,7 +67,7 @@ async function fetchAndDisplayUsers() {
 async function insertUser(event) {
     event.preventDefault();
 
-    const username = document.getElementById('insertNewUserName').value;
+    const username = document.getElementById('insertUsername').value;
     const profilePicture = document.getElementById('insertProfilePicture').value;
     const email = document.getElementById('insertEmail').value;
     const fullName = document.getElementById('insertFullName').value;
@@ -85,7 +84,7 @@ async function insertUser(event) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 Username: username,
-                ProfilePicture: profilePicture,
+                ProfilePicture: profilePicture || null,
                 Email: email,
                 FullName: fullName,
                 DefaultPrivacyLevel: privacyLevel,
@@ -97,10 +96,9 @@ async function insertUser(event) {
 
         if (responseData.success) {
             messageElement.textContent = 'User inserted successfully!';
-            fetchTableData();
-            // await fetchAndDisplayUsers();
+            await fetchAndDisplayUsers();
         } else {
-            alert('Error inserting user.');
+            messageElement.textContent = 'Error inserting user.';
         }
     } catch (error) {
         console.error('Error inserting user:', error);
@@ -111,13 +109,13 @@ async function insertUser(event) {
 async function updateUser(event) {
     event.preventDefault();
 
-    const usernameValue = document.getElementById('updateUsername').value;
-    const newProfilePictureValue = document.getElementById('updateProfilePicture').value;
-    const newEmailValue = document.getElementById('updateEmail').value;
-    const newFullNameValue = document.getElementById('updateFullName').value;
-    const newPrivacyLevelValue = document.getElementById('updateUserPrivacyLevel').value;
+    const username = document.getElementById('updateUsername').value;
+    const newProfilePicture = document.getElementById('updateProfilePicture').value;
+    const newEmail = document.getElementById('updateEmail').value;
+    const newFullName = document.getElementById('updateFullName').value;
+    const newPrivacyLevel = document.getElementById('updateUserPrivacyLevel').value;
 
-    if (!usernameValue) {
+    if (!username) {
         alert('Username is required for updating.');
         return;
     }
@@ -127,11 +125,11 @@ async function updateUser(event) {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                Username: usernameValue,
-                NewProfilePicture: newProfilePictureValue,
-                NewEmail: newEmailValue,
-                NewFullName: newFullNameValue,
-                NewDefaultPrivacyLevel: newPrivacyLevelValue
+                Username: username,
+                NewProfilePicture: newProfilePicture,
+                NewEmail: newEmail,
+                NewFullName: newFullName,
+                NewDefaultPrivacyLevel: newPrivacyLevel,
             }),
         });
 
@@ -140,9 +138,9 @@ async function updateUser(event) {
 
         if (responseData.success) {
             messageElement.textContent = 'User updated successfully!';
-            fetchTableData();
+            fetchAndDisplayUsers();
         } else {
-            alert('Error updating user.');
+            messageElement.textContent = 'Error updating user.';
         }
     } catch (error) {
         console.error('Error updating user:', error);
@@ -154,11 +152,6 @@ async function deleteUser(event) {
     event.preventDefault();
 
     const username = document.getElementById('deleteUsername').value;
-
-    if (!username) {
-        alert('Username is required for deletion.');
-        return;
-    }
 
     try {
         const response = await fetch('/delete-user', {
@@ -172,9 +165,9 @@ async function deleteUser(event) {
 
         if (responseData.success) {
             messageElement.textContent = 'User deleted successfully!';
-            fetchTableData();
+            fetchAndDisplayUsers();
         } else {
-            alert('Error deleting user.');
+            messageElement.textContent = 'Error deleting user.';
         }
     } catch (error) {
         console.error('Error deleting user:', error);
@@ -232,29 +225,31 @@ async function fetchAndDisplayUsersWhoAreFriendsWithEveryone() {
     }
 }
 
-async function fetchAndDisplayFriendships() {
-    const tableElement = document.getElementById('fetchAndDisplayFriendships');
-    const tableBody = tableElement.querySelector('tbody');
+// async function fetchAndDisplayFriendships() {
+//     const tableElement = document.getElementById('friendships');
+//     const tableBody = tableElement.querySelector('tbody');
 
-    try {
-        const response = await fetch('/friendships', { method: 'GET' });
-        const responseData = await response.json();
-        const users = responseData.data;
+//     try {
+//         const response = await fetch('/friendships', { method: 'GET' });
+//         const responseData = await response.json();
+//         const friendships = responseData.data;
 
-        if (tableBody) {
-            tableBody.innerHTML = '';
-        }
+//         if (tableBody) {
+//             tableBody.innerHTML = '';
+//         }
 
-        users.forEach(user => {
-            const row = tableBody.insertRow();
-            const cell = row.insertCell(0);
-            cell.textContent = user;
-        });
-    } catch (error) {
-        console.error('Error fetching friendships:', error);
-        alert('Error fetching friendships.');
-    }
-}
+//         friendships.forEach(friendship => {
+//             const row = tableBody.insertRow();
+//             friendship.forEach((field, index) => {
+//                 const cell = row.insertCell(index);
+//                 cell.textContent = field;
+//             });
+//         });
+//     } catch (error) {
+//         console.error('Error fetching friendships:', error);
+//         alert('Error fetching friendships.');
+//     }
+// }
 
 async function insertFriend(event) {
     event.preventDefault();
@@ -279,13 +274,12 @@ async function insertFriend(event) {
 
         if (responseData.success) {
             messageElement.textContent = 'Friend added successfully!';
-            fetchTableData();
         } else {
-            alert('Error adding friend.');
+            messageElement.textContent = 'Error adding friend.';
         }
     } catch (error) {
         console.error('Error inserting friend:', error);
-        alert('Error adding friend.');
+        alert('Error inserting friend.');
     }
 }
 
@@ -312,9 +306,8 @@ async function deleteFriend(event) {
 
         if (responseData.success) {
             messageElement.textContent = 'Friend deleted successfully!';
-            fetchTableData();
         } else {
-            alert('Error deleting friend.');
+            messageElement.textContent = 'Error deleting friend.';
         }
     } catch (error) {
         console.error('Error deleting friend:', error);
@@ -349,282 +342,85 @@ async function areTheyFriends(event) {
     }
 }
 
-async function fetchAndDisplayNotifications(event) {
-    event.preventDefault(); //!!!
-
-    const username = document.getElementById('showUsersNotifications').value;
-    if (!username) {
-        alert('Please enter a username.');
-        return;
-    }
-
-    const response = await fetch(`/notifications?username=${username}`);
-    const data = await response.json();
-
-    if (data.success) {
-        const tableBody = document.getElementById('notificationsList').querySelector('tbody');
-        tableBody.innerHTML = '';
-        document.getElementById('notificationsUsername').style.display = 'block';
-        document.getElementById('currentUsername').textContent = username;
-        document.getElementById('notificationsList').style.display = 'table';
-
-        data.data.forEach(notification => {
-            const row = tableBody.insertRow();
-            row.insertCell(0).textContent = notification.NotificationID; //!!!
-            row.insertCell(1).textContent = notification.DateAndTimeSent;
-            row.insertCell(2).textContent = notification.ExpiringCount;
-            const showButton = row.insertCell(3).appendChild(document.createElement('button'));
-            showButton.textContent = 'Show';
-            showButton.onclick = () => fetchNotificationDetails(notification.NotificationID);
-            const deleteButton = row.insertCell(4).appendChild(document.createElement('button'));
-            deleteButton.textContent = 'Delete';
-            deleteButton.onclick = () => deleteNotification(notification.NotificationID);
-        });
-
-    } else {
-        alert('Error fetching notifications.');
-    }
-}
-
-async function fetchNotificationDetails(notificationID) {
-    const response = await fetch(`/notifications/details?notificationID=${notificationID}`);
-    const data = await response.json();
-
-    if (data.success) {
-        const tableBody = document.getElementById('notificationDetailsBody');
-        tableBody.innerHTML = '';
-        document.getElementById('notificationDetails').style.display = 'block';
-        document.getElementById('detailsNotificationID').textContent = notificationID;
-
-        data.data.forEach(detail => {
-            const row = tableBody.insertRow();
-            row.insertCell(0).textContent = detail.ListName;
-            row.insertCell(1).textContent = detail.IngredientName;
-            row.insertCell(2).textContent = detail.Amount;
-            row.insertCell(3).textContent = detail.UnitOfMeasurement;
-            row.insertCell(4).textContent = detail.ExpiryDate;
-        });
-    } else {
-        alert('Error fetching notification details.');
-    }
-}
-
-async function deleteNotification(notificationID) {
-    const response = await fetch('/notifications', {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ notificationID }),
-    });
-
-    const data = await response.json();
-    const messageElement = document.getElementById('deleteNotificationResultMsg');
-
-    if (data.success) {
-        messageElement.textContent = 'Notification deleted successfully.';
-        fetchTableData();
-    } else {
-        alert('Error deleting notification.');
-    }
-}
-
-//
-// async function fetchAndDisplayNotificationMessages() {
-//     const tableElement = document.getElementById('notificationMessagesTable');
-//     const tableBody = tableElement.querySelector('tbody');
-//     const username = document.getElementById('fetchNotificationMessagesUsername').value;
-//
-//     if (!username) {
-//         alert('Username is required to fetch notification messages!');
-//         return;
-//     }
-//
-//     try {
-//         const response = await fetch(`/notification-messages?username=${username}`, {
-//             method: 'GET',
-//         });
-//
-//         const responseData = await response.json();
-//         const messages = responseData.data;
-//
-//         if (tableBody) {
-//             tableBody.innerHTML = '';
-//         }
-//
-//         messages.forEach(message => {
-//             const row = tableBody.insertRow();
-//             message.forEach((field, index) => {
-//                 const cell = row.insertCell(index);
-//                 cell.textContent = field;
-//             });
-//         });
-//     } catch (error) {
-//         console.error('Error fetching notification messages:', error);
-//         alert('Error fetching notification messages.');
-//     }
-// }
-
-// async function insertNotificationMessage(event) {
-//     event.preventDefault();
-//
-//     const username = document.getElementById('insertNotificationUsername').value;
-//     const messageText = document.getElementById('insertNotificationMessageText').value;
-//
-//     if (!username || !messageText) {
-//         alert('Both username and message text are required!');
-//         return;
-//     }
-//
-//     try {
-//         const response = await fetch('/insert-notification-message', {
-//             method: 'POST',
-//             headers: { 'Content-Type': 'application/json' },
-//             body: JSON.stringify({ username, messageText }),
-//         });
-//
-//         const responseData = await response.json();
-//         const messageElement = document.getElementById('insertNotificationMessageResultMsg');
-//
-//         if (responseData.success) {
-//             messageElement.textContent = 'Notification message inserted successfully!';
-//             fetchAndDisplayNotificationMessages();
-//         } else {
-//             messageElement.textContent = 'Error inserting notification message.';
-//         }
-//     } catch (error) {
-//         console.error('Error inserting notification message:', error);
-//         alert('Error inserting notification message.');
-//     }
-// }
-//
-// async function deleteNotificationMessage(event) {
-//     event.preventDefault();
-//
-//     const username = document.getElementById('deleteNotificationUsername').value;
-//     const dateAndTimeSent = document.getElementById('deleteNotificationDateAndTimeSent').value;
-//
-//     if (!username || !dateAndTimeSent) {
-//         alert('Username and Date/Time are required to delete the notification message!');
-//         return;
-//     }
-//
-//     try {
-//         const response = await fetch('/delete-notification-message', {
-//             method: 'DELETE',
-//             headers: { 'Content-Type': 'application/json' },
-//             body: JSON.stringify({ username, dateAndTimeSent }),
-//         });
-//
-//         const responseData = await response.json();
-//         const messageElement = document.getElementById('deleteNotificationMessageResultMsg');
-//
-//         if (responseData.success) {
-//             messageElement.textContent = 'Notification message deleted successfully!';
-//             fetchAndDisplayNotificationMessages();
-//         } else {
-//             messageElement.textContent = 'Error deleting notification message.';
-//         }
-//     } catch (error) {
-//         console.error('Error deleting notification message:', error);
-//         alert('Error deleting notification message.');
-//     }
-// }
-//
+// Working in progress!!
 // async function fetchAndDisplayNotifications() {
-//     const tableElement = document.getElementById('notificationsTable');
-//     const tableBody = tableElement.querySelector('tbody');
-//     const username = document.getElementById('fetchNotificationsUsername').value;
-//
+//     const username = document.getElementById('showUsersNotifications').value;
 //     if (!username) {
-//         alert('Username is required to fetch notifications!');
+//         alert('Please enter a username.');
 //         return;
 //     }
-//
-//     try {
-//         const response = await fetch(`/notifications?username=${username}`, {
-//             method: 'GET',
-//         });
-//
-//         const responseData = await response.json();
-//         const notifications = responseData.data;
-//
-//         if (tableBody) {
-//             tableBody.innerHTML = '';
-//         }
-//
-//         notifications.forEach(notification => {
+
+//     const response = await fetch(`/notifications?username=${username}`);
+//     const data = await response.json();
+//     console.log("API Response Data:", data);
+//     console.log("Notification Array:", data.data);
+//     data.data.forEach((notification, index) => {
+//         console.log(`Notification ${index + 1}:`, notification);
+//     });
+
+
+//     if (data.success) {
+//         const tableBody = document.getElementById('notificationsList').querySelector('tbody');
+//         tableBody.innerHTML = '';
+//         document.getElementById('notificationsUsername').style.display = 'block';
+//         document.getElementById('currentUsername').textContent = username;
+//         document.getElementById('notificationsList').style.display = 'table';
+
+//         data.data.forEach(notification => {
 //             const row = tableBody.insertRow();
-//             notification.forEach((field, index) => {
-//                 const cell = row.insertCell(index);
-//                 cell.textContent = field;
-//             });
+//             row.insertCell(0).textContent = notification[0] || 'N/A'; // NotificationID
+//             row.insertCell(1).textContent = notification[1] || 'N/A'; // DateAndTimeSent
+//             row.insertCell(2).textContent = notification[3] || 0;     // ExpiringCount
+
+//             const showButton = row.insertCell(3).appendChild(document.createElement('button'));
+//             showButton.textContent = 'Show';
+//             showButton.onclick = () => fetchNotificationDetails(notification[0]);
+
+//             const deleteButton = row.insertCell(4).appendChild(document.createElement('button'));
+//             deleteButton.textContent = 'Delete';
+//             deleteButton.onclick = () => deleteNotification(notification[0]);
 //         });
-//     } catch (error) {
-//         console.error('Error fetching notifications:', error);
+
+//     } else {
 //         alert('Error fetching notifications.');
 //     }
 // }
-//
-// async function insertNotification(event) {
-//     event.preventDefault();
-//
-//     const notificationID = document.getElementById('insertNotificationID').value;
-//     const username = document.getElementById('insertNotificationUsernameForNotif').value;
-//
-//     if (!notificationID || !username) {
-//         alert('Notification ID and Username are required!');
-//         return;
-//     }
-//
-//     try {
-//         const response = await fetch('/insert-notification', {
-//             method: 'POST',
-//             headers: { 'Content-Type': 'application/json' },
-//             body: JSON.stringify({ notificationID, username }),
+
+// async function fetchNotificationDetails(notificationID) {
+//     const response = await fetch(`/notifications/details?notificationID=${notificationID}`);
+//     const data = await response.json();
+
+//     if (data.success) {
+//         const tableBody = document.getElementById('notificationDetailsBody');
+//         tableBody.innerHTML = '';
+//         document.getElementById('notificationDetails').style.display = 'block';
+//         document.getElementById('detailsNotificationID').textContent = notificationID;
+
+//         data.data.forEach(detail => {
+//             const row = tableBody.insertRow();
+//             row.insertCell(0).textContent = detail.ListName;
+//             row.insertCell(1).textContent = detail.IngredientName;
+//             row.insertCell(2).textContent = detail.Amount;
+//             row.insertCell(3).textContent = detail.UnitOfMeasurement;
+//             row.insertCell(4).textContent = detail.ExpiryDate;
 //         });
-//
-//         const responseData = await response.json();
-//         const messageElement = document.getElementById('insertNotificationResultMsg');
-//
-//         if (responseData.success) {
-//             messageElement.textContent = 'Notification inserted successfully!';
-//             fetchAndDisplayNotifications();
-//         } else {
-//             messageElement.textContent = 'Error inserting notification.';
-//         }
-//     } catch (error) {
-//         console.error('Error inserting notification:', error);
-//         alert('Error inserting notification.');
+//     } else {
+//         alert('Error fetching notification details.');
 //     }
 // }
-//
-// async function deleteNotification(event) {
-//     event.preventDefault();
-//
-//     const notificationID = document.getElementById('deleteNotificationID').value;
-//
-//     if (!notificationID) {
-//         alert('Notification ID is required to delete a notification!');
-//         return;
-//     }
-//
-//     try {
-//         const response = await fetch('/delete-notification', {
-//             method: 'DELETE',
-//             headers: { 'Content-Type': 'application/json' },
-//             body: JSON.stringify({ notificationID }),
-//         });
-//
-//         const responseData = await response.json();
-//         const messageElement = document.getElementById('deleteNotificationResultMsg');
-//
-//         if (responseData.success) {
-//             messageElement.textContent = 'Notification deleted successfully!';
-//             fetchAndDisplayNotifications();
-//         } else {
-//             messageElement.textContent = 'Error deleting notification.';
-//         }
-//     } catch (error) {
-//         console.error('Error deleting notification:', error);
+
+// async function deleteNotification(notificationID) {
+//     const response = await fetch('/notifications', {
+//         method: 'DELETE',
+//         headers: { 'Content-Type': 'application/json' },
+//         body: JSON.stringify({ notificationID }),
+//     });
+
+//     const data = await response.json();
+//     if (data.success) {
+//         alert('Notification deleted successfully.');
+//         fetchAndDisplayNotifications();
+//     } else {
 //         alert('Error deleting notification.');
 //     }
 // }
@@ -882,7 +678,6 @@ window.onload = function () {
     document.getElementById('deleteFriendForm').addEventListener('submit', deleteFriend);
     document.getElementById('areTheyFriendsForm').addEventListener('submit', areTheyFriends);
 
-
     // document.getElementById('fetchNotificationMessagesBtn').addEventListener('click', fetchAndDisplayNotificationMessages);
     // document.getElementById('insertNotificationMessageForm').addEventListener('submit', insertNotificationMessage);
     // document.getElementById('deleteNotificationMessageForm').addEventListener('submit', deleteNotificationMessage);
@@ -905,13 +700,13 @@ window.onload = function () {
     document.getElementById("resetTables").addEventListener("click", resetTables);
 };
 
-// General function to refresh the displayed table data. 
+// General function to refresh the displayed table data.
 // You can invoke this after any table-modifying operation to keep consistency.
 function fetchTableData() {
     fetchAndDisplayUsers();
     fetchAndDisplayPublicUsers();
     fetchAndDisplayUsersWhoAreFriendsWithEveryone();
-    fetchAndDisplayFriendships();
-    fetchAndDisplayNotifications();
+    // fetchAndDisplayFriendships();
+    // fetchAndDisplayNotifications();
     fetchAndDisplayRecipes();
 }

@@ -24,8 +24,7 @@ COMMIT;
 -- Create Tables
 CREATE TABLE AppUser (
                          Username VARCHAR2(50) PRIMARY KEY,
-                         ProfilePicture VARCHAR2(50),
---     ProfilePicture BLOB,
+    -- ProfilePicture BLOB,
                          Email VARCHAR2(100) NOT NULL UNIQUE,
                          FullName VARCHAR2(50) NOT NULL,
                          DefaultPrivacyLevel VARCHAR2(20) DEFAULT 'Private' CHECK (DefaultPrivacyLevel IN ('Private', 'Public', 'Friends Only'))
@@ -160,7 +159,7 @@ CREATE TABLE RecipeListHasRecipe (
                                      RecipeID NUMBER,
                                      PRIMARY KEY (RecipeListID, RecipeID),
                                      FOREIGN KEY (RecipeID) REFERENCES Recipe(RecipeID) ON DELETE CASCADE,
-                                     FOREIGN KEY (RecipeListID) REFERENCES RecipeList(RecipeListID)
+                                     FOREIGN KEY (RecipeListID) REFERENCES RecipeList(RecipeListID) ON DELETE CASCADE
 );
 
 
@@ -171,30 +170,31 @@ CREATE TABLE RecipeListHasRecipe (
 -- INSERT INTO AppUser (Username, ProfilePicture, Email, FullName, DefaultPrivacyLevel) VALUES ('Bob', EMPTY_BLOB(), 'bob@gmail.com', 'Bob Person', 'Friends Only');
 -- INSERT INTO AppUser (Username, ProfilePicture, Email, FullName, DefaultPrivacyLevel) VALUES ('Kevin', HEXTORAW('496D616765'), 'kevin@gmail.com', 'Kevin Person', 'Private');
 -- INSERT INTO AppUser (Username, ProfilePicture, Email, FullName, DefaultPrivacyLevel) VALUES ('Jason', HEXTORAW('48656C6C6F'), 'jason@gmail.com', 'Jason Person', 'Friends Only');
-INSERT INTO AppUser (Username, ProfilePicture, Email, FullName, DefaultPrivacyLevel) VALUES ('Alice', '', 'alice@gmail.com', 'Alice Person', 'Private');
-INSERT INTO AppUser (Username, ProfilePicture, Email, FullName, DefaultPrivacyLevel) VALUES ('Charlie', '', 'charlie@gmail.com', 'Charlie Person', 'Public');
-INSERT INTO AppUser (Username, ProfilePicture, Email, FullName, DefaultPrivacyLevel) VALUES ('Bob', '', 'bob@gmail.com', 'Bob Person', 'Friends Only');
-INSERT INTO AppUser (Username, ProfilePicture, Email, FullName, DefaultPrivacyLevel) VALUES ('Kevin', '', 'kevin@gmail.com', 'Kevin Person', 'Private');
-INSERT INTO AppUser (Username, ProfilePicture, Email, FullName, DefaultPrivacyLevel) VALUES ('Jason', '', 'jason@gmail.com', 'Jason Person', 'Friends Only');
-
+INSERT INTO AppUser (Username, Email, FullName, DefaultPrivacyLevel) VALUES ('Alice', 'alice@gmail.com', 'Alice Person', 'Private');
+INSERT INTO AppUser (Username, Email, FullName, DefaultPrivacyLevel) VALUES ('Charlie', 'charlie@gmail.com', 'Charlie Person', 'Public');
+INSERT INTO AppUser (Username, Email, FullName, DefaultPrivacyLevel) VALUES ('Bob', 'bob@gmail.com', 'Bob Person', 'Friends Only');
+INSERT INTO AppUser (Username, Email, FullName, DefaultPrivacyLevel) VALUES ('Kevin', 'kevin@gmail.com', 'Kevin Person', 'Private');
+INSERT INTO AppUser (Username, Email, FullName, DefaultPrivacyLevel) VALUES ('Jason', 'jason@gmail.com', 'Jason Person', 'Friends Only');
 
 INSERT INTO Friends (Username1, Username2, DateAndTimeCreated) VALUES ('Alice', 'Charlie', TIMESTAMP '2024-01-15 10:00:00');
-INSERT INTO Friends (Username1, Username2, DateAndTimeCreated) VALUES ('Charlie', 'Bob', TIMESTAMP '2022-01-16 11:30:00');
+INSERT INTO Friends (Username1, Username2, DateAndTimeCreated) VALUES ('Alice', 'Bob', TIMESTAMP '2024-01-15 11:00:00');
+INSERT INTO Friends (Username1, Username2, DateAndTimeCreated) VALUES ('Alice', 'Kevin', TIMESTAMP '2024-01-15 13:00:00');
+INSERT INTO Friends (Username1, Username2, DateAndTimeCreated) VALUES ('Alice', 'Jason', TIMESTAMP '2024-01-15 14:00:00');
+INSERT INTO Friends (Username1, Username2, DateAndTimeCreated) VALUES ('Charlie', 'Jason', TIMESTAMP '2022-01-16 11:30:00');
 INSERT INTO Friends (Username1, Username2, DateAndTimeCreated) VALUES ('Bob', 'Kevin', TIMESTAMP '2023-01-17 12:15:00');
 INSERT INTO Friends (Username1, Username2, DateAndTimeCreated) VALUES ('Kevin', 'Jason', TIMESTAMP '2020-01-18 13:45:00');
-INSERT INTO Friends (Username1, Username2, DateAndTimeCreated) VALUES ('Jason', 'Charlie', TIMESTAMP '2021-01-19 14:00:00');
 
-INSERT INTO NotificationMessage (Username, DateAndTimeSent, MessageText) VALUES ('Alice', TIMESTAMP '2024-05-19 10:00:03', 'Your potatoes expire in 7 days');
-INSERT INTO NotificationMessage (Username, DateAndTimeSent, MessageText) VALUES ('Alice', TIMESTAMP '2024-05-19 10:00:04', 'Your lettuce expire in 7 days');
-INSERT INTO NotificationMessage (Username, DateAndTimeSent, MessageText) VALUES ('Alice', TIMESTAMP '2024-05-19 10:00:05', 'Your rice expire in 7 days');
-INSERT INTO NotificationMessage (Username, DateAndTimeSent, MessageText) VALUES ('Alice', TIMESTAMP '2024-05-19 10:00:06', 'Your apples expire in 7 days');
-INSERT INTO NotificationMessage (Username, DateAndTimeSent, MessageText) VALUES ('Charlie', TIMESTAMP '2024-9-19 01:00:03', 'Your chicken expires in 3 days');
+-- INSERT INTO NotificationMessage (Username, DateAndTimeSent, MessageText) VALUES ('Alice', TIMESTAMP '2024-05-19 10:00:03', 'Your potatoes expire in 7 days');
+-- INSERT INTO NotificationMessage (Username, DateAndTimeSent, MessageText) VALUES ('Alice', TIMESTAMP '2024-05-19 10:00:04', 'Your lettuce expire in 7 days');
+-- INSERT INTO NotificationMessage (Username, DateAndTimeSent, MessageText) VALUES ('Alice', TIMESTAMP '2024-05-19 10:00:05', 'Your rice expire in 7 days');
+-- INSERT INTO NotificationMessage (Username, DateAndTimeSent, MessageText) VALUES ('Alice', TIMESTAMP '2024-05-19 10:00:06', 'Your apples expire in 7 days');
+-- INSERT INTO NotificationMessage (Username, DateAndTimeSent, MessageText) VALUES ('Charlie', TIMESTAMP '2024-9-19 01:00:03', 'Your chicken expires in 3 days');
 
-INSERT INTO Notifications (NotificationID, DateAndTimeSent, Username) VALUES (1, TIMESTAMP '2024-05-19 10:00:03', 'Alice');
-INSERT INTO Notifications (NotificationID, DateAndTimeSent, Username) VALUES (2, TIMESTAMP '2024-05-19 10:00:04', 'Alice');
-INSERT INTO Notifications (NotificationID, DateAndTimeSent, Username) VALUES (3, TIMESTAMP '2024-05-19 10:00:05', 'Alice');
-INSERT INTO Notifications (NotificationID, DateAndTimeSent, Username) VALUES (4, TIMESTAMP '2024-05-19 10:00:06', 'Alice');
-INSERT INTO Notifications (NotificationID, DateAndTimeSent, Username) VALUES (5, TIMESTAMP '2024-9-19 01:00:03', 'Charlie');
+-- INSERT INTO Notifications (NotificationID, DateAndTimeSent, Username) VALUES (1, TIMESTAMP '2024-05-19 10:00:03', 'Alice');
+-- INSERT INTO Notifications (NotificationID, DateAndTimeSent, Username) VALUES (2, TIMESTAMP '2024-05-19 10:00:04', 'Alice');
+-- INSERT INTO Notifications (NotificationID, DateAndTimeSent, Username) VALUES (3, TIMESTAMP '2024-05-19 10:00:05', 'Alice');
+-- INSERT INTO Notifications (NotificationID, DateAndTimeSent, Username) VALUES (4, TIMESTAMP '2024-05-19 10:00:06', 'Alice');
+-- INSERT INTO Notifications (NotificationID, DateAndTimeSent, Username) VALUES (5, TIMESTAMP '2024-9-19 01:00:03', 'Charlie');
 
 INSERT INTO AllergyList (IngredientListID, PrivacyLevel, ListDescription, Username, ListName) VALUES (1, 'Private', 'These are the allergies that Alice has', 'Alice', 'Alices Allergies');
 INSERT INTO AllergyList (IngredientListID, PrivacyLevel, ListDescription, Username, ListName) VALUES (2, 'Public', 'These are the allergies that Charlie has', 'Alice', 'Charlies Allergies');
