@@ -178,68 +178,68 @@ router.get('/friends-with-everyone', async (req, res) => {
 // ----------------------------------------------------------
 // NotificationMessage
 
-router.get('/notifications', async (req, res) => {
-    const { username } = req.query;
+// router.get('/notifications', async (req, res) => {
+//     const { username } = req.query;
 
-    if (!username) {
-        return res.status(400).json({
-            success: false,
-            message: "Username is required.",
-        });
-    }
+//     if (!username) {
+//         return res.status(400).json({
+//             success: false,
+//             message: "Username is required.",
+//         });
+//     }
 
-    try {
-        const notifications = await appService.fetchNotificationForExpiringIngredients(username);
-        if (notifications.length > 0) {
-            res.json({ success: true, data: notifications });
-        } else {
-            res.status(404).json({ success: false, message: "No notifications found for the user." });
-        }
-    } catch (error) {
-        console.error('Error fetching notifications:', error);
-        res.status(500).json({ success: false, message: "Internal server error." });
-    }
-});
-
-
-router.get('/notifications/details', async (req, res) => {
-    const { notificationID } = req.query;
-
-    if (!notificationID) {
-        return res.status(400).json({
-            success: false,
-            message: "Notification ID is required.",
-        });
-    }
-
-    try {
-        const details = await appService.fetchNotificationDetails(notificationID);
-        res.json({ success: true, data: details });
-    } catch (error) {
-        console.error('Error fetching notification details:', error);
-        res.status(500).json({ success: false, message: "Error fetching notification details." });
-    }
-});
+//     try {
+//         const notifications = await appService.fetchNotificationForExpiringIngredients(username);
+//         if (notifications.length > 0) {
+//             res.json({ success: true, data: notifications });
+//         } else {
+//             res.status(404).json({ success: false, message: "No notifications found for the user." });
+//         }
+//     } catch (error) {
+//         console.error('Error fetching notifications:', error);
+//         res.status(500).json({ success: false, message: "Internal server error." });
+//     }
+// });
 
 
-router.delete('/notification', async (req, res) => {
-    const { notificationID } = req.body;
+// router.get('/notifications/details', async (req, res) => {
+//     const { notificationID } = req.query;
 
-    if (!notificationID) {
-        return res.status(400).json({
-            success: false,
-            message: "Notification ID is required.",
-        });
-    }
+//     if (!notificationID) {
+//         return res.status(400).json({
+//             success: false,
+//             message: "Notification ID is required.",
+//         });
+//     }
 
-    try {
-        await appService.deleteNotification(notificationID);
-        res.json({ success: true, message: "Notification deleted successfully." });
-    } catch (error) {
-        console.error('Error deleting notification:', error);
-        res.status(500).json({ success: false, message: "Error deleting notification." });
-    }
-});
+//     try {
+//         const details = await appService.fetchNotificationDetails(notificationID);
+//         res.json({ success: true, data: details });
+//     } catch (error) {
+//         console.error('Error fetching notification details:', error);
+//         res.status(500).json({ success: false, message: "Error fetching notification details." });
+//     }
+// });
+
+
+// router.delete('/notification', async (req, res) => {
+//     const { notificationID } = req.body;
+
+//     if (!notificationID) {
+//         return res.status(400).json({
+//             success: false,
+//             message: "Notification ID is required.",
+//         });
+//     }
+
+//     try {
+//         await appService.deleteNotification(notificationID);
+//         res.json({ success: true, message: "Notification deleted successfully." });
+//     } catch (error) {
+//         console.error('Error deleting notification:', error);
+//         res.status(500).json({ success: false, message: "Error deleting notification." });
+//     }
+// });
 
 // ----------------------------------------------------------
 // Recipe Centric endpoints
