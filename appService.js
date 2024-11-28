@@ -367,10 +367,10 @@ async function fetchRecipeFromDb() {
         const result = await connection.execute('SELECT * FROM Recipe');
 
         console.log('Fetched Recipes Successfully');
-        return result.rows;
+        return { success: true, data: result.rows };
     }).catch((error) => {
         console.error('Database error:', error);
-        return [];
+        return { success: false, data: [] };
     });
 }
 
@@ -397,10 +397,10 @@ async function fetchSimpleOrComplicatedRecipesFromDb(Difficulty) {
         const result = await connection.execute(query);
 
         console.log(`Fetched ${Difficulty} Recipes Successfully`);
-        return result.rows;
+        return { success: true, data: result.rows };
     }).catch((error) => {
         console.error('Database error:', error);
-        return [];
+        return { success: false, data: [] };
     });
 }
 
@@ -409,15 +409,18 @@ async function fetchCategoryFromDb() {
         const result = await connection.execute('SELECT CategoryName FROM Category');
 
         console.log('Fetched Categories Successfully');
-        return result.rows;
+        return { success: true, data: result.rows };
     }).catch((error) => {
         console.error('Database error:', error);
-        return [];
+        return { success: false, data: [] };
     });
 }
 
-async function fetchFilteredRecipesFromDb(Categories) {
+async function fetchRecipesByCategoryFromDb(Categories) {
     return await withOracleDB(async (connection) => {
+        // NOTE: Do not need to check that the categories exist as we dynamically display 
+        //       all existing categories to the user in the select bar
+        //       so therefore all categories submitted to this method, are guaranteed to exist
         const bindVariables = {};
 
         let formattedValues = Categories.map((category, index) => `:Category${index}`).join(', ');
@@ -436,10 +439,10 @@ async function fetchFilteredRecipesFromDb(Categories) {
         const result = await connection.execute(query, bindVariables);
 
         console.log('Fetched Filtered Recipes Successfully');
-        return result.rows;
+        return { success: true, data: result.rows };
     }).catch((error) => {
         console.error('Database error:', error);
-        return [];
+        return { success: false, data: [] };
     });
 }
 
@@ -448,16 +451,19 @@ async function fetchRecipeListFromDb() {
         const result = await connection.execute('SELECT * FROM RecipeList');
 
         console.log('Fetched Recipe Lists Successfully');
-        return result.rows;
+        return { success: true, data: result.rows };
     }).catch((error) => {
         console.error('Database error:', error);
-        return [];
+        return { success: false, data: [] };
     });
 }
 
 async function fetchRecipesByRecipeListFromDb(RecipeListID) {
     return await withOracleDB(async (connection) => {
-        console.log(RecipeListID);
+        // NOTE: Do not need to check that the RecipeListID exists as we dynamically display 
+        //       all existing RecipeLists to the user in the select bar
+        //       so therefore all RecipeListIDs that are submitted to this method, are guaranteed to exist
+
         const query = `
             SELECT r.*
             FROM Recipe r
@@ -468,20 +474,22 @@ async function fetchRecipesByRecipeListFromDb(RecipeListID) {
         const result = await connection.execute(query, [RecipeListID]);
 
         console.log('Fetched Recipes by Recipe List Successfully');
-        return result.rows;
+        return { success: true, data: result.rows };
     }).catch((error) => {
         console.error('Database error:', error);
-        return [];
+        return { success: false, data: [] };
     });
 }
 
 async function insertRecipe(RecipeID, RecipeName, PrivacyLevel, Username) {
-    // validate username
     const isUsernameValid = await validateUsername(Username);
-
-    // If it doesnt return false
     if (!isUsernameValid) {
-        return false;
+        return { success: false, message: `A User with the Username \'${Username}\' does not exist` };
+    }
+
+    const isRecipeIDValid = await validateRecipeID(RecipeID);
+    if (isRecipeIDValid) {
+        return { success: false, message: `A Recipe with Recipe ID \'${RecipeID}\' already exists` };
     }
 
     return await withOracleDB(async (connection) => {
@@ -492,15 +500,20 @@ async function insertRecipe(RecipeID, RecipeName, PrivacyLevel, Username) {
         );
 
         console.log('Inserted Recipe Successfully');
-        return result.rowsAffected && result.rowsAffected > 0;
+        return { success: result.rowsAffected && result.rowsAffected > 0, message: `Successfully created \'${RecipeName}\' Recipe` };
     }).catch((error) => {
         console.error('Database error:', error);
-        return false;
+        return { success: false, message: `An unexpected error occured while creating the Recipe` };
     });
 }
 
 async function updateRecipe(RecipeID, NewRecipeName, NewPrivacyLevel) {
-    let query = `UPDATE Recipe SET`;
+    const isRecipeIDValid = await validateRecipeID(RecipeID);
+    if (!isRecipeIDValid) {
+        return { success: false, message: `A Recipe with Recipe ID \'${RecipeID}\' does not exist` };
+    }
+
+    let query = `UPDATE Recipe SET `;
     let queryParams = [];
 
     if (NewRecipeName == "" && NewPrivacyLevel != "Do Not Change") {
@@ -526,14 +539,19 @@ async function updateRecipe(RecipeID, NewRecipeName, NewPrivacyLevel) {
         );
 
         console.log('Updated Recipe Successfully');
-        return result.rowsAffected && result.rowsAffected > 0;
+        return { success: result.rowsAffected && result.rowsAffected > 0, message: `Successfully updated Recipe with ID \'${RecipeID}\'` };
     }).catch((error) => {
         console.error('Database error:', error);
-        return false;
+        return { success: false, message: `An unexpected error occured while updating the Recipe` };
     });
 }
 
 async function deleteRecipe(RecipeID) {
+    const isRecipeIDValid = await validateRecipeID(RecipeID);
+    if (!isRecipeIDValid) {
+        return { success: false, message: `A Recipe with Recipe ID \'${RecipeID}\' does not exist` };
+    }
+
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
             'DELETE FROM Recipe WHERE RecipeID=:RecipeID',
@@ -542,63 +560,57 @@ async function deleteRecipe(RecipeID) {
         );
 
         console.log('Deleted Recipe Successfully');
-        return result.rowsAffected && result.rowsAffected > 0;;
+        return { success: result.rowsAffected && result.rowsAffected > 0, message: `Successfully deleted Recipe with ID \'${RecipeID}\'` };
     }).catch((error) => {
         console.error('Database error:', error);
-        return false;
+        return { success: false, message: `An unexpected error occured while deleting the Recipe` };
     });
 }
 
 async function fetchRecipeIngredientsForRecipeFromDb(RecipeID) {
     const intRecipeID = parseInt(RecipeID, 10);
-
     if (isNaN(intRecipeID)) {
         console.log('invalid Recipe ID')
-        return false;
+        return { success: false, message: `Invalid Recipe ID: \'${RecipeID}\'`, data: [] };
+    }
+
+    const isRecipeIDValid = await validateRecipeID(intRecipeID);
+    if (!isRecipeIDValid) {
+        return { success: false, message: `A Recipe with Recipe ID \'${intRecipeID}\' does not exist`, data: [] };
     }
 
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(`
             SELECT ri.*
-        FROM RecipeIngredient ri 
+            FROM RecipeIngredient ri 
             JOIN Recipe r ON r.RecipeID = ri.RecipeID 
             WHERE ri.RecipeID =: RecipeID`,
             [intRecipeID]
         );
 
         console.log('Fetched Recipe Ingredients for Recipe Successfully');
-        return result.rows;
+        return {
+            success: result.rowsAffected && result.rowsAffected > 0,
+            message: `Successfully retreived the ingredients for the Recipe with ID \'${intRecipeID}\'`,
+            data: result.rows
+        };
     }).catch((error) => {
         console.error('Database error:', error);
-        return [];
-    });
-}
-
-async function fetchRecipesName(RecipeID) {
-    const intRecipeID = parseInt(RecipeID, 10);
-
-    if (isNaN(intRecipeID)) {
-        console.log('invalid Recipe ID')
-        return false;
-    }
-
-    return await withOracleDB(async (connection) => {
-        const result = await connection.execute(`
-            SELECT RecipeName
-            FROM Recipe
-            WHERE RecipeID =: RecipeID`,
-            [intRecipeID]
-        );
-
-        console.log('Fetched a Recipes Name Succesfully');
-        return result.rows;
-    }).catch((error) => {
-        console.error('Database error:', error);
-        return false;
+        return { success: false, message: `An unexpected error occured while retreiving the ingredients for the Recipe`, data: [] };
     });
 }
 
 async function insertRecipeIngredient(RecipeIngredientID, RecipeIngredientName, RecipeID, Amount, UnitOfMeasurement) {
+    const isRecipeIDValid = await validateRecipeID(RecipeID);
+    if (!isRecipeIDValid) {
+        return { success: false, message: `A Recipe with Recipe ID \'${RecipeID}\' does not exist` };
+    }
+
+    const isRecipeIngredientIDValid = await validateRecipeIngredientID(RecipeIngredientID, RecipeID);
+    if (isRecipeIngredientIDValid) {
+        return { success: false, message: `A Recipe Ingredient with ID \'${RecipeIngredientID}\' already exists for the Recipe with ID \'${RecipeID}\'` };
+    }
+
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
             `INSERT INTO RecipeIngredient(IngredientID, IngredientName, RecipeID, Amount, UnitOfMeasurement) VALUES(: RecipeIngredientID, : RecipeIngredientName, : RecipeID, : Amount, : UnitOfMeasurement)`,
@@ -607,14 +619,24 @@ async function insertRecipeIngredient(RecipeIngredientID, RecipeIngredientName, 
         );
 
         console.log('Inserted Recipe Ingredient Successfully');
-        return result.rowsAffected && result.rowsAffected > 0;
+        return { success: result.rowsAffected && result.rowsAffected > 0, message: `Successfully created \'${RecipeIngredientName}\' Recipe Ingredient` };
     }).catch((error) => {
         console.error('Database error:', error);
-        return false;
+        return { success: false, message: `An unexpected error occured while creating the Recipe Ingredient` };
     });
 }
 
 async function updateRecipeIngredient(RecipeIngredientID, RecipeID, NewRecipeIngredientName, NewAmount, NewUnitOfMeasurement) {
+    const isRecipeIDValid = await validateRecipeID(RecipeID);
+    if (!isRecipeIDValid) {
+        return { success: false, message: `A Recipe with Recipe ID \'${RecipeID}\' does not exist` };
+    }
+
+    const isRecipeIngredientIDValid = await validateRecipeIngredientID(RecipeIngredientID, RecipeID);
+    if (!isRecipeIngredientIDValid) {
+        return { success: false, message: `A Recipe Ingredient with ID \'${RecipeIngredientID}\' for the Recipe with ID \'${RecipeID}\' does not exist` };
+    }
+
     let queryParams = [];
     let querySetClauses = [];
 
@@ -631,7 +653,7 @@ async function updateRecipeIngredient(RecipeIngredientID, RecipeID, NewRecipeIng
         queryParams.push(NewUnitOfMeasurement);
     }
 
-    let query = `UPDATE RecipeIngredient SET`;
+    let query = `UPDATE RecipeIngredient SET `;
     query += querySetClauses.join(`, `);
     query += ` WHERE IngredientID =: RecipeIngredientID AND RecipeID =: RecipeID`;
     queryParams.push(RecipeIngredientID);
@@ -645,14 +667,24 @@ async function updateRecipeIngredient(RecipeIngredientID, RecipeID, NewRecipeIng
         );
 
         console.log('Updated Recipe Ingredient Successfully');
-        return result.rowsAffected && result.rowsAffected > 0;
+        return { success: result.rowsAffected && result.rowsAffected > 0, message: `Successfully updated Recipe Ingredient with ID \'${RecipeIngredientID}\' for the Recipe with ID \'${RecipeID}\'` };
     }).catch((error) => {
         console.error('Database error:', error);
-        return false;
+        return { success: false, message: `An unexpected error occured while updating the Recipe Ingredient` };
     });
 }
 
 async function deleteRecipeIngredient(RecipeIngredientID, RecipeID) {
+    const isRecipeIDValid = await validateRecipeID(RecipeID);
+    if (!isRecipeIDValid) {
+        return { success: false, message: `A Recipe with Recipe ID \'${RecipeID}\' does not exist` };
+    }
+
+    const isRecipeIngredientIDValid = await validateRecipeIngredientID(RecipeIngredientID, RecipeID);
+    if (!isRecipeIngredientIDValid) {
+        return { success: false, message: `A Recipe Ingredient with ID \'${RecipeIngredientID}\' for the Recipe with ID \'${RecipeID}\' does not exist` };
+    }
+
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
             'DELETE FROM RecipeIngredient WHERE IngredientID=:RecipeIngredientID AND RecipeID=:RecipeID',
@@ -660,18 +692,23 @@ async function deleteRecipeIngredient(RecipeIngredientID, RecipeID) {
             { autoCommit: true }
         );
         console.log('Deleted Recipe Ingredient Successfully');
-        return result.rowsAffected && result.rowsAffected > 0;;
+        return { success: result.rowsAffected && result.rowsAffected > 0, message: `Successfully deleted Recipe Ingredient with ID \'${RecipeIngredientID}\' for the Recipe with ID \'${RecipeID}\'` };
     }).catch((error) => {
         console.error('Database error:', error);
-        return false;
+        return { success: false, message: `An unexpected error occured while deleting the Recipe Ingredient` };
     });
 }
 
 async function fetchRecipeStepsForRecipe(RecipeID) {
     const intRecipeID = parseInt(RecipeID, 10);
-
     if (isNaN(intRecipeID)) {
-        return false;
+        console.log('invalid Recipe ID')
+        return { success: false, message: `Invalid Recipe ID: \'${RecipeID}\'`, data: [] };
+    }
+
+    const isRecipeIDValid = await validateRecipeID(intRecipeID);
+    if (!isRecipeIDValid) {
+        return { success: false, message: `A Recipe with Recipe ID \'${intRecipeID}\' does not exist`, data: [] };
     }
 
     return await withOracleDB(async (connection) => {
@@ -684,14 +721,28 @@ async function fetchRecipeStepsForRecipe(RecipeID) {
         );
 
         console.log('Fetched Recipe Steps for Recipe Successfully');
-        return result.rows;
+        return {
+            success: result.rowsAffected && result.rowsAffected > 0,
+            message: `Successfully retreived the steps for the Recipe with ID \'${intRecipeID}\'`,
+            data: result.rows
+        };
     }).catch((error) => {
         console.error('Database error:', error);
-        return [];
+        return { success: false, message: `An unexpected error occured while retreiving the steps for the Recipe`, data: [] };
     });
 }
 
 async function insertRecipeStep(RecipeID, StepNumber, StepInformation) {
+    const isRecipeIDValid = await validateRecipeID(RecipeID);
+    if (!isRecipeIDValid) {
+        return { success: false, message: `A Recipe with Recipe ID \'${RecipeID}\' does not exist` };
+    }
+
+    const isRecipeStepValid = await validateRecipeStep(StepNumber, RecipeID);
+    if (isRecipeStepValid) {
+        return { success: false, message: `A Recipe Step with Step Number \'${StepNumber}\' already exists for the Recipe with ID \'${RecipeID}\'` };
+    }
+
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
             `INSERT INTO RecipeStep(RecipeID, StepNumber, StepInformation) VALUES(: RecipeID, : StepNumber, : StepInformation)`,
@@ -700,14 +751,29 @@ async function insertRecipeStep(RecipeID, StepNumber, StepInformation) {
         );
 
         console.log('Inserted Recipe Step Successfully');
-        return result.rowsAffected && result.rowsAffected > 0;
+        return { success: result.rowsAffected && result.rowsAffected > 0, message: `Successfully created Recipe Step with Step Number \'${StepNumber}\' for Recipe with ID \'${RecipeID}\'` };
     }).catch((error) => {
         console.error('Database error:', error);
-        return false;
+        return { success: false, message: `An unexpected error occured while creating the recipe step` };
     });
 }
 
 async function updateRecipeStep(RecipeID, OldStepNumber, NewStepNumber, NewStepInformation) {
+    const isRecipeIDValid = await validateRecipeID(RecipeID);
+    if (!isRecipeIDValid) {
+        return { success: false, message: `A Recipe with Recipe ID \'${RecipeID}\' does not exist` };
+    }
+
+    const isOldRecipeStepValid = await validateRecipeStep(OldStepNumber, RecipeID);
+    if (!isOldRecipeStepValid) {
+        return { success: false, message: `A Recipe Step with Step Number \'${OldStepNumber}\' for the Recipe with ID \'${RecipeID}\' does not exist` };
+    }
+
+    const isNewRecipeStepValid = await validateRecipeStep(NewStepNumber, RecipeID);
+    if (isNewRecipeStepValid) {
+        return { success: false, message: `A Recipe Step with Step Number \'${NewStepNumber}\' already exists for the Recipe with ID \'${RecipeID}\'` };
+    }
+
     let queryParams = [];
     let querySetClauses = [];
 
@@ -720,7 +786,7 @@ async function updateRecipeStep(RecipeID, OldStepNumber, NewStepNumber, NewStepI
         queryParams.push(NewStepInformation);
     }
 
-    let query = `UPDATE RecipeStep SET`;
+    let query = `UPDATE RecipeStep SET `;
     query += querySetClauses.join(`, `);
     query += ` WHERE StepNumber =: OldStepNumber AND RecipeID =: RecipeID`;
     queryParams.push(OldStepNumber);
@@ -734,14 +800,24 @@ async function updateRecipeStep(RecipeID, OldStepNumber, NewStepNumber, NewStepI
         );
 
         console.log('Updated Recipe Step Successfully')
-        return result.rowsAffected && result.rowsAffected > 0;
+        return { success: result.rowsAffected && result.rowsAffected > 0, message: `Successfully updated Recipe Step with Step Number \'${OldStepNumber}\' for the Recipe with ID \'${RecipeID}\'` };
     }).catch((error) => {
         console.error('Database error:', error);
-        return false;
+        return { success: false, message: `An unexpected error occured while updating the Recipe Step` };
     });
 }
 
 async function deleteRecipeStep(RecipeID, StepNumber) {
+    const isRecipeIDValid = await validateRecipeID(RecipeID);
+    if (!isRecipeIDValid) {
+        return { success: false, message: `A Recipe with Recipe ID \'${RecipeID}\' does not exist` };
+    }
+
+    const isOldRecipeStepValid = await validateRecipeStep(StepNumber, RecipeID);
+    if (!isOldRecipeStepValid) {
+        return { success: false, message: `A Recipe Step with Step Number \'${StepNumber}\' for the Recipe with ID \'${RecipeID}\' does not exist` };
+    }
+
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
             'DELETE FROM RecipeStep WHERE StepNumber=:StepNumber AND RecipeID=:RecipeID',
@@ -750,14 +826,19 @@ async function deleteRecipeStep(RecipeID, StepNumber) {
         );
 
         console.log('Deleted Recipe Step Successfully');
-        return result.rowsAffected && result.rowsAffected > 0;;
+        return { success: result.rowsAffected && result.rowsAffected > 0, message: `Successfully deleted Recipe Step with Step Number \'${StepNumber}\' for the Recipe with ID \'${RecipeID}\'` };
     }).catch((error) => {
         console.error('Database error:', error);
-        return false;
+        return { success: false, message: `An unexpected error occured while deleting the Recipe Step` };
     });
 }
 
 async function insertCategory(CategoryName, CategoryDescription) {
+    const isCategoryNameValid = await validateCategoryName(CategoryName);
+    if (isCategoryNameValid) {
+        return { success: false, message: `A Category with Category Name \'${CategoryName}\' already exists` };
+    }
+
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
             `INSERT INTO Category(CategoryName, CategoryDescription) VALUES(: CategoryName, : CategoryDescription)`,
@@ -766,14 +847,19 @@ async function insertCategory(CategoryName, CategoryDescription) {
         );
 
         console.log('Inserted Category Successfully');
-        return result.rowsAffected && result.rowsAffected > 0;
+        return { success: result.rowsAffected && result.rowsAffected > 0, message: `Successfully created the Category with Category Name \'${CategoryName}\'` };
     }).catch((error) => {
         console.error('Database error:', error);
-        return false;
+        return { success: false, message: `An unexpected error occured while creating the Category` };
     });
 }
 
 async function updateCategory(CategoryName, NewCategoryDescription) {
+    const isCategoryNameValid = await validateCategoryName(CategoryName);
+    if (!isCategoryNameValid) {
+        return { success: false, message: `A Category with Category Name \'${CategoryName}\' does not exist` };
+    }
+
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
             `UPDATE Category SET CategoryDescription =: NewCategoryDescription WHERE CategoryName =: CategoryName`,
@@ -782,14 +868,19 @@ async function updateCategory(CategoryName, NewCategoryDescription) {
         );
 
         console.log('Updated Category Successfully');
-        return result.rowsAffected && result.rowsAffected > 0;
+        return { success: result.rowsAffected && result.rowsAffected > 0, message: `Successfully updated the Category with Category Name \'${CategoryName}\'` };
     }).catch((error) => {
         console.error('Database error:', error);
-        return false;
+        return { success: false, message: `An unexpected error occured while updating the Category` };
     });
 }
 
 async function deleteCategory(CategoryName) {
+    const isCategoryNameValid = await validateCategoryName(CategoryName);
+    if (!isCategoryNameValid) {
+        return { success: false, message: `A Category with Category Name \'${CategoryName}\' does not exist` };
+    }
+
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
             'DELETE FROM Category WHERE CategoryName=:CategoryName',
@@ -798,14 +889,29 @@ async function deleteCategory(CategoryName) {
         );
 
         console.log('Deleted Category Successfully');
-        return result.rowsAffected && result.rowsAffected > 0;;
+        return { success: result.rowsAffected && result.rowsAffected > 0, message: `Successfully deleted the Category with Category Name \'${CategoryName}\'` };
     }).catch((error) => {
         console.error('Database error:', error);
-        return false;
+        return { success: false, message: `An unexpected error occured while deleting the Category` };
     });
 }
 
 async function insertRecipeIntoCategory(RecipeID, CategoryName) {
+    const isCategoryNameValid = await validateCategoryName(CategoryName);
+    if (!isCategoryNameValid) {
+        return { success: false, message: `A Category with Category Name \'${CategoryName}\' does not exist` };
+    }
+
+    const isRecipeIDValid = await validateRecipeID(RecipeID);
+    if (!isRecipeIDValid) {
+        return { success: false, message: `A Recipe with Recipe ID \'${RecipeID}\' does not exist` };
+    }
+
+    const isRecipeCategoryRelationValid = await validateRecipeCategoryRelation(RecipeID, CategoryName);
+    if (isRecipeCategoryRelationValid) {
+        return { success: false, message: `The Recipe with ID \'${RecipeID}\' is already associated with the \'${CategoryName}\' Category` };
+    }
+
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
             `INSERT INTO RecipeHasCategory(RecipeID, CategoryName) VALUES(: RecipeID, : CategoryName)`,
@@ -814,14 +920,29 @@ async function insertRecipeIntoCategory(RecipeID, CategoryName) {
         );
 
         console.log('Inserted Recipe into Category Successfully');
-        return result.rowsAffected && result.rowsAffected > 0;
+        return { success: result.rowsAffected && result.rowsAffected > 0, message: `Successfully added the Recipe with ID \'${RecipeID}\' to the \'${CategoryName}\' Category` };
     }).catch((error) => {
         console.error('Database error:', error);
-        return false;
+        return { success: false, message: `An unexpected error occured while adding the Recipe to the Category` };
     });
 }
 
 async function deleteRecipeFromCategory(RecipeID, CategoryName) {
+    const isCategoryNameValid = await validateCategoryName(CategoryName);
+    if (!isCategoryNameValid) {
+        return { success: false, message: `A Category with Category Name \'${CategoryName}\' does not exist` };
+    }
+
+    const isRecipeIDValid = await validateRecipeID(RecipeID);
+    if (!isRecipeIDValid) {
+        return { success: false, message: `A Recipe with Recipe ID \'${RecipeID}\' does not exist` };
+    }
+
+    const isRecipeCategoryRelationValid = await validateRecipeCategoryRelation(RecipeID, CategoryName);
+    if (!isRecipeCategoryRelationValid) {
+        return { success: false, message: `The Recipe with ID \'${RecipeID}\' is not associated with the \'${CategoryName}\' Category` };
+    }
+
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
             'DELETE FROM RecipeHasCategory WHERE RecipeID=:RecipeID AND CategoryName=:CategoryName',
@@ -830,14 +951,17 @@ async function deleteRecipeFromCategory(RecipeID, CategoryName) {
         );
 
         console.log('Deleted Recipe from Category Successfully');
-        return result.rowsAffected && result.rowsAffected > 0;;
+        return { success: result.rowsAffected && result.rowsAffected > 0, message: `Successfully removed the Recipe with ID \'${RecipeID}\' from the \'${CategoryName}\' Category` };
     }).catch((error) => {
         console.error('Database error:', error);
-        return false;
+        return { success: false, message: `An unexpected error occured while removing the Recipe from the Category` };
     });
 }
 
 async function fetchRecipeList(RecipeListID) {
+    // NOTE: Do not need to check that the RecipeListID exists as we dynamically display 
+    //       all existing RecipeLists to the user in the select bar
+    //       so therefore all RecipeListIDs that are submitted to this method, are guaranteed to exist
     const intRecipeListID = parseInt(RecipeListID, 10);
 
     if (isNaN(intRecipeListID)) {
@@ -862,6 +986,16 @@ async function fetchRecipeList(RecipeListID) {
 }
 
 async function insertRecipeList(RecipeListID, RecipeListName, PrivacyLevel, Username) {
+    const isRecipeListIDValid = await validateRecipeListID(RecipeListID);
+    if (isRecipeListIDValid) {
+        return { success: false, message: `A Recipe List with ID \'${RecipeListID}\' already exists` };
+    }
+
+    const isUsernameValid = await validateUsername(Username);
+    if (!isUsernameValid) {
+        return { success: false, message: `A User with Username \'${Username}\' does not exist` };
+    }
+
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
             `INSERT INTO RecipeList(RecipeListID, RecipeListName, PrivacyLevel, Username) VALUES(:RecipeListID, :RecipeListName, :PrivacyLevel, :Username)`,
@@ -870,14 +1004,19 @@ async function insertRecipeList(RecipeListID, RecipeListName, PrivacyLevel, User
         );
 
         console.log('Inserted Recipe List Successfully');
-        return result.rowsAffected && result.rowsAffected > 0;
+        return { success: result.rowsAffected && result.rowsAffected > 0, message: `Successfully created the Recipe List with ID \'${RecipeListID}\'` };
     }).catch((error) => {
         console.error('Database error:', error);
-        return false;
+        return { success: false, message: `An unexpected error occured while creating the Recipe List` };
     });
 }
 
 async function updateRecipeList(RecipeListID, RecipeListName, PrivacyLevel) {
+    const isRecipeListIDValid = await validateRecipeListID(RecipeListID);
+    if (!isRecipeListIDValid) {
+        return { success: false, message: `A Recipe List with ID \'${RecipeListID}\' does not exist` };
+    }
+
     return await withOracleDB(async (connection) => {
         let queryParams = [];
         let querySetClauses = [];
@@ -903,14 +1042,19 @@ async function updateRecipeList(RecipeListID, RecipeListName, PrivacyLevel) {
         );
 
         console.log('Updated Recipe List Successfully');
-        return result.rowsAffected && result.rowsAffected > 0;
+        return { success: result.rowsAffected && result.rowsAffected > 0, message: `Successfully updated the Recipe List with ID \'${RecipeListID}\'` };
     }).catch((error) => {
         console.error('Database error:', error);
-        return false;
+        return { success: false, message: `An unexpected error occured while updating the Recipe List` };
     });
 }
 
 async function deleteRecipeList(RecipeListID) {
+    const isRecipeListIDValid = await validateRecipeListID(RecipeListID);
+    if (!isRecipeListIDValid) {
+        return { success: false, message: `A Recipe List with ID \'${RecipeListID}\' does not exist` };
+    }
+
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
             'DELETE FROM RecipeList WHERE RecipeListID=:RecipeListID',
@@ -919,14 +1063,29 @@ async function deleteRecipeList(RecipeListID) {
         );
 
         console.log('Deleted Recipe List Successfully');
-        return result.rowsAffected && result.rowsAffected > 0;;
+        return { success: result.rowsAffected && result.rowsAffected > 0, message: `Successfully deleted the Recipe List with ID \'${RecipeListID}\'` };
     }).catch((error) => {
         console.error('Database error:', error);
-        return false;
+        return { success: false, message: `An unexpected error occured while deleting the Recipe List` };
     });
 }
 
 async function insertRecipeIntoRecipeList(RecipeID, RecipeListID) {
+    const isRecipeListIDValid = await validateRecipeListID(RecipeListID);
+    if (!isRecipeListIDValid) {
+        return { success: false, message: `A Recipe List with ID \'${RecipeListID}\' does not exist` };
+    }
+
+    const isRecipeIDValid = await validateRecipeID(RecipeID);
+    if (!isRecipeIDValid) {
+        return { success: false, message: `A Recipe with Recipe ID \'${RecipeID}\' does not exist` };
+    }
+
+    const isRecipeRecipeListRelationValid = await validateRecipeRecipeListRelation(RecipeID, RecipeListID);
+    if (isRecipeRecipeListRelationValid) {
+        return { success: false, message: `A Recipe with Recipe ID \'${RecipeID}\' is already in the Recipe List with ID \'${RecipeListID}\'` };
+    }
+
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
             `INSERT INTO RecipeListHasRecipe(RecipeListID, RecipeID) VALUES(: RecipeListID, : RecipeID)`,
@@ -935,14 +1094,29 @@ async function insertRecipeIntoRecipeList(RecipeID, RecipeListID) {
         );
 
         console.log('Inserted Recipe into Recipe List Successfully');
-        return result.rowsAffected && result.rowsAffected > 0;
+        return { success: result.rowsAffected && result.rowsAffected > 0, message: `Successfully added the Recipe with ID \'${RecipeID}\' to the Recipe List with ID \'${RecipeListID}\'` };
     }).catch((error) => {
         console.error('Database error:', error);
-        return false;
+        return { success: false, message: `An unexpected error occured while adding the Recipe to the Recipe List` };
     });
 }
 
 async function deleteRecipeFromRecipeList(RecipeID, RecipeListID) {
+    const isRecipeListIDValid = await validateRecipeListID(RecipeListID);
+    if (!isRecipeListIDValid) {
+        return { success: false, message: `A Recipe List with ID \'${RecipeListID}\' does not exist` };
+    }
+
+    const isRecipeIDValid = await validateRecipeID(RecipeID);
+    if (!isRecipeIDValid) {
+        return { success: false, message: `A Recipe with Recipe ID \'${RecipeID}\' does not exist` };
+    }
+
+    const isRecipeRecipeListRelationValid = await validateRecipeRecipeListRelation(RecipeID, RecipeListID);
+    if (!isRecipeRecipeListRelationValid) {
+        return { success: false, message: `A Recipe with Recipe ID \'${RecipeID}\' is not in the Recipe List with ID \'${RecipeListID}\'` };
+    }
+
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
             'DELETE FROM RecipeListHasRecipe WHERE RecipeID=:RecipeID AND RecipeListID=:RecipeListID',
@@ -951,16 +1125,99 @@ async function deleteRecipeFromRecipeList(RecipeID, RecipeListID) {
         );
 
         console.log('Deleted Recipe from Recipe List Successfully');
-        return result.rowsAffected && result.rowsAffected > 0;;
+        return { success: result.rowsAffected && result.rowsAffected > 0, message: `Successfully removed the Recipe with ID \'${RecipeID}\' from the Recipe List with ID \'${RecipeListID}\'` };
     }).catch((error) => {
         console.error('Database error:', error);
-        return false;
+        return { success: false, message: `An unexpected error occured while removing the Recipe from the Recipe List` };
     });
 }
 
 
 // ----------------------------------------------------------
 // Ingredient Centric service
+
+async function fetchAllergicIngredientFromDb() {
+    try {
+        return await withOracleDB(async (connection) => {
+            const result = await connection.execute('SELECT * FROM AllergicIngredient');
+            return result.rows;
+        });
+    } catch (error) {
+        console.error('Database error:', error);
+        return [];
+    }
+}
+
+async function insertAllergicIngredient(IngredientID, IngredientName) {
+    try {
+        return await withOracleDB(async (connection) => {
+            const result = await connection.execute(
+                `INSERT INTO AllergicIngredient(IngredientID, IngredientName) VALUES (:IngredientID, :IngredientName)`,
+                [IngredientID, IngredientName],
+                { autoCommit: true }
+            );
+
+            console.log('Inserted AllergicIngredient Successfully')
+            return result.rowsAffected && result.rowsAffected > 0;
+        });
+    } catch (error) {
+        console.error('Database error:', error);
+        return false;
+    }
+}
+
+// ERROR - TODO
+async function updateAllergicIngredient(IngredientID, newIngredientName) {
+    try {
+        return await withOracleDB(async (connection) => {
+            const result = await connection.execute(
+                `UPDATE AllergicIngredient 
+                 SET IngredientName = :newIngredientName
+                 WHERE IngredientID = :IngredientID`,
+                [newIngredientName, IngredientID],
+                { autoCommit: true }
+            );
+
+            console.log('Updated Allergic Ingredient Successfully')
+            return result.rowsAffected && result.rowsAffected > 0;
+        });
+    } catch (error) {
+        console.error('Database error:', error);
+        return false;
+    };
+}
+
+async function deleteAllergicIngredient(IngredientID) {
+    try {
+        return await withOracleDB(async (connection) => {
+            const result = await connection.execute(
+                'DELETE FROM AllergicIngredient WHERE IngredientID=:IngredientID',
+                [IngredientID],
+                { autoCommit: true }
+            );
+            console.log('Deleted Allergic Ingredient Successfully')
+            return result.rowsAffected && result.rowsAffected > 0;;
+        });
+    } catch (error) {
+        console.error('Database error:', error);
+        return false;
+    }
+}
+
+// async function deleteRecipeIngredient(RecipeIngredientID, RecipeID) {
+//     return await withOracleDB(async (connection) => {
+//         const result = await connection.execute(
+//             'DELETE FROM RecipeIngredient WHERE IngredientID=:RecipeIngredientID AND RecipeID=:RecipeID',
+//             [RecipeIngredientID, RecipeID],
+//             { autoCommit: true }
+//         );
+//         console.log('Deleted Recipe Ingredient Successfully');
+//         return result.rowsAffected && result.rowsAffected > 0;;
+//     }).catch((error) => {
+//         console.error('Database error:', error);
+//         return false;
+//     });
+// }
 
 
 
@@ -975,6 +1232,111 @@ async function validateUsername(Username) {
         )
 
         console.log('Username Validated Successfully');
+        return result.rows[0][0] > 0;
+    }).catch((error) => {
+        console.error('Database error:', error);
+        return false;
+    });
+}
+
+async function validateRecipeID(RecipeID) {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            `SELECT COUNT(*) AS count FROM Recipe WHERE RecipeID =: RecipeID`,
+            [RecipeID]
+        )
+
+        console.log('RecipeID Validated Successfully');
+        return result.rows[0][0] > 0;
+    }).catch((error) => {
+        console.error('Database error:', error);
+        return false;
+    });
+}
+
+async function validateRecipeIngredientID(RecipeIngredientID, RecipeID) {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            `SELECT COUNT(*) AS count FROM RecipeIngredient WHERE RecipeID =: RecipeID AND IngredientID =: RecipeIngredientID`,
+            [RecipeID, RecipeIngredientID]
+        )
+
+        console.log('RecipeIngredientID Validated Successfully');
+        return result.rows[0][0] > 0;
+    }).catch((error) => {
+        console.error('Database error:', error);
+        return false;
+    });
+}
+
+async function validateRecipeStep(StepNumber, RecipeID) {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            `SELECT COUNT(*) AS count FROM RecipeStep WHERE RecipeID =: RecipeID AND StepNumber =: StepNumber`,
+            [RecipeID, StepNumber]
+        )
+
+        console.log('StepNumber Validated Successfully');
+        return result.rows[0][0] > 0;
+    }).catch((error) => {
+        console.error('Database error:', error);
+        return false;
+    });
+}
+
+async function validateCategoryName(CategoryName) {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            `SELECT COUNT(*) AS count FROM Category WHERE CategoryName =: CategoryName`,
+            [CategoryName]
+        )
+
+        console.log('CategoryName Validated Successfully');
+        return result.rows[0][0] > 0;
+    }).catch((error) => {
+        console.error('Database error:', error);
+        return false;
+    });
+}
+
+async function validateRecipeCategoryRelation(RecipeID, CategoryName) {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            `SELECT COUNT(*) AS count FROM RecipeHasCategory WHERE RecipeID =: RecipeID AND CategoryName =: CategoryName`,
+            [RecipeID, CategoryName]
+        )
+
+        console.log('Recipe and Category relation Validated Successfully');
+        return result.rows[0][0] > 0;
+    }).catch((error) => {
+        console.error('Database error:', error);
+        return false;
+    });
+}
+
+async function validateRecipeListID(RecipeListID) {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            `SELECT COUNT(*) AS count FROM RecipeList WHERE RecipeListID =: RecipeListID`,
+            [RecipeListID]
+        )
+
+        console.log('RecipeListID Validated Successfully');
+        return result.rows[0][0] > 0;
+    }).catch((error) => {
+        console.error('Database error:', error);
+        return false;
+    });
+}
+
+async function validateRecipeRecipeListRelation(RecipeID, RecipeListID) {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            `SELECT COUNT(*) AS count FROM RecipeListHasRecipe WHERE RecipeID =: RecipeID AND RecipeListID =: RecipeListID`,
+            [RecipeID, RecipeListID]
+        )
+
+        console.log('Recipe and Recipe List relation Validated Successfully');
         return result.rows[0][0] > 0;
     }).catch((error) => {
         console.error('Database error:', error);
@@ -1030,14 +1392,13 @@ module.exports = {
     fetchRecipeFromDb,
     fetchSimpleOrComplicatedRecipesFromDb,
     fetchCategoryFromDb,
-    fetchFilteredRecipesFromDb,
+    fetchRecipesByCategoryFromDb,
     fetchRecipeListFromDb,
     fetchRecipesByRecipeListFromDb,
     insertRecipe,
     updateRecipe,
     deleteRecipe,
     fetchRecipeIngredientsForRecipeFromDb,
-    fetchRecipesName,
     insertRecipeIngredient,
     updateRecipeIngredient,
     deleteRecipeIngredient,
@@ -1058,8 +1419,20 @@ module.exports = {
     deleteRecipeFromRecipeList,
 
     // Ingredient Centric
+    fetchAllergicIngredientFromDb,
+    insertAllergicIngredient,
+    updateAllergicIngredient,
+    deleteAllergicIngredient,
+
 
     // General
     validateUsername,
+    validateRecipeID,
+    validateRecipeIngredientID,
+    validateRecipeStep,
+    validateCategoryName,
+    validateRecipeCategoryRelation,
+    validateRecipeListID,
+    validateRecipeRecipeListRelation,
     initiateTables,
 };
