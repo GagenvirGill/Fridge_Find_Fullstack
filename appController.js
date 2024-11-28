@@ -263,6 +263,7 @@ router.post("/insert-allergy-list", async (req, res) => {
 router.patch("/update-allergy-list", async (req, res) => {
     const { IngredientListID, PrivacyLevel, ListDescription, Username, ListName } = req.body;
     try {
+        // const updateResult = await appService.updateAllergyList(IngredientListID, PrivacyLevel, ListDescription, Username, ListName);
         const updateResult = await appService.updateAllergyList(IngredientListID, PrivacyLevel, ListDescription, Username, ListName);
         if (updateResult) {
             res.json({ success: true });
@@ -289,54 +290,54 @@ router.delete("/delete-allergy-list", async (req, res) => {
 });
 
 // KitchenIngredient
-router.get('/kitchen-ingredient', async (req, res) => {
-    const tableContent = await appService.fetchKitchenIngredientFromDb();
-    res.json({ data: tableContent });
-});
+// router.get('/kitchen-ingredient', async (req, res) => {
+//     const tableContent = await appService.fetchKitchenIngredientFromDb();
+//     res.json({ data: tableContent });
+// });
 
-// Gives me an error - TODO
-router.post("/insert-kitchen-ingredient", async (req, res) => {
-   const { DatePurchased, ShelfLife, IngredientID, IngredientName, IngredientListID, Amount, UnitOfMeasurement } = req.body;
-   try {
-        const insertResult = await appService.insertAllergicIngredient(DatePurchased, ShelfLife, IngredientID, IngredientName, IngredientListID, Amount, UnitOfMeasurement);
-        if (insertResult) {
-            res.json({ success: true });
-        } else {
-            res.status(500).json({ success: false });
-        }
-    } catch (error) { 
-        res.status(500).json({ success: false, error: error.message });
-    }
-});
+// // Gives me an error - TODO
+// router.post("/insert-kitchen-ingredient", async (req, res) => {
+//    const { DatePurchased, ShelfLife, IngredientID, IngredientName, IngredientListID, Amount, UnitOfMeasurement } = req.body;
+//    try {
+//         const insertResult = await appService.insertKitchenIngredient(DatePurchased, ShelfLife, IngredientID, IngredientName, IngredientListID, Amount, UnitOfMeasurement);
+//         if (insertResult) {
+//             res.json({ success: true });
+//         } else {
+//             res.status(500).json({ success: false });
+//         }
+//     } catch (error) { 
+//         res.status(500).json({ success: false, error: error.message });
+//     }
+// });
 
-// Gives me an error - TODO
-router.patch("/update-kitchen-ingredient", async (req, res) => {
-    const { DatePurchased, ShelfLife, IngredientID, IngredientName, IngredientListID, Amount, UnitOfMeasurement } = req.body;
-    try {
-        const updateResult = await appService.updateKitchenIngredient(DatePurchased, ShelfLife, IngredientID, IngredientName, IngredientListID, Amount, UnitOfMeasurement);
-        if (updateResult) {
-            res.json({ success: true });
-        } else {
-            res.status(500).json({ success: false });
-        }
-    } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
-    }
-});
+// // Gives me an error - TODO
+// router.patch("/update-kitchen-ingredient", async (req, res) => {
+//     const { DatePurchased, ShelfLife, IngredientID, IngredientName, IngredientListID, Amount, UnitOfMeasurement } = req.body;
+//     try {
+//         const updateResult = await appService.updateKitchenIngredient(DatePurchased, ShelfLife, IngredientID, IngredientName, IngredientListID, Amount, UnitOfMeasurement);
+//         if (updateResult) {
+//             res.json({ success: true });
+//         } else {
+//             res.status(500).json({ success: false });
+//         }
+//     } catch (error) {
+//         res.status(500).json({ success: false, error: error.message });
+//     }
+// });
 
-router.delete("/delete-kitchen-ingredient", async (req, res) => {
-    const { IngredientID, IngredientListID  } = req.body;
-    try {
-        const deleteResult = await appService.deleteAllergyList(IngredientID, IngredientListID);
-        if (deleteResult) {
-            res.json({ success: true });
-        } else {
-            res.status(500).json({ success: false });
-        }
-    } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
-    }
-});
+// router.delete("/delete-kitchen-ingredient", async (req, res) => {
+//     const { IngredientID, IngredientListID  } = req.body;
+//     try {
+//         const deleteResult = await appService.deleteAllergyList(IngredientID, IngredientListID);
+//         if (deleteResult) {
+//             res.json({ success: true });
+//         } else {
+//             res.status(500).json({ success: false });
+//         }
+//     } catch (error) {
+//         res.status(500).json({ success: false, error: error.message });
+//     }
+// });
 
 // AllergyListHasAllergicIngredient
 router.get('/allergy-list-has-allergic-ingredient', async (req, res) => {
@@ -344,47 +345,47 @@ router.get('/allergy-list-has-allergic-ingredient', async (req, res) => {
     res.json({ data: tableContent });
 });
 
-router.post("/insert-allergy-list-has-allergic-ingredient", async (req, res) => {
-    const { IngredientListID, IngredientID, Severity } = req.body;
-    try {
-         const insertResult = await appService.insertAllergicIngredient(IngredientListID, IngredientID, Severity);
-         if (insertResult) {
-             res.json({ success: true });
-         } else {
-             res.status(500).json({ success: false });
-         }
-     } catch (error) { 
-         res.status(500).json({ success: false, error: error.message });
-     }
- });
+// router.post("/insert-allergy-list-has-allergic-ingredient", async (req, res) => {
+//     const { IngredientListID, IngredientID, Severity } = req.body;
+//     try {
+//          const insertResult = await appService.insertAllergicIngredient(IngredientListID, IngredientID, Severity);
+//          if (insertResult) {
+//              res.json({ success: true });
+//          } else {
+//              res.status(500).json({ success: false });
+//          }
+//      } catch (error) { 
+//          res.status(500).json({ success: false, error: error.message });
+//      }
+//  });
 
- router.patch("/update-allergy-list-has-allergic-ingredient", async (req, res) => {
-    const { IngredientListID, IngredientID, Severity } = req.body;
-    try {
-        const updateResult = await appService.updateKitchenIngredient(IngredientListID, IngredientID, Severity);
-        if (updateResult) {
-            res.json({ success: true });
-        } else {
-            res.status(500).json({ success: false });
-        }
-    } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
-    }
-});
+//  router.patch("/update-allergy-list-has-allergic-ingredient", async (req, res) => {
+//     const { IngredientListID, IngredientID, Severity } = req.body;
+//     try {
+//         const updateResult = await appService.updateKitchenIngredient(IngredientListID, IngredientID, Severity);
+//         if (updateResult) {
+//             res.json({ success: true });
+//         } else {
+//             res.status(500).json({ success: false });
+//         }
+//     } catch (error) {
+//         res.status(500).json({ success: false, error: error.message });
+//     }
+// });
 
-router.delete("/delete-allergy-list-has-allergic-ingredient", async (req, res) => {
-    const { IngredientListID, IngredientID } = req.body;
-    try {
-        const deleteResult = await appService.deleteAllergyList(IngredientListID, IngredientID);
-        if (deleteResult) {
-            res.json({ success: true });
-        } else {
-            res.status(500).json({ success: false });
-        }
-    } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
-    }
-});
+// router.delete("/delete-allergy-list-has-allergic-ingredient", async (req, res) => {
+//     const { IngredientListID, IngredientID } = req.body;
+//     try {
+//         const deleteResult = await appService.deleteAllergyList(IngredientListID, IngredientID);
+//         if (deleteResult) {
+//             res.json({ success: true });
+//         } else {
+//             res.status(500).json({ success: false });
+//         }
+//     } catch (error) {
+//         res.status(500).json({ success: false, error: error.message });
+//     }
+// });
 
 
 // KitchenInventory

@@ -4,11 +4,7 @@ node_modules/
 # Logs
 *.log
 
-<<<<<<< HEAD
-# dotenv environment variable files, this was originally commented out
-=======
 # dotenv environment variable files
->>>>>>> db81cd6db5c219eb5e6d70f1b3f51779183d129d
 .env
 
 # IDEs and editors

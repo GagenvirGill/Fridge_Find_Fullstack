@@ -1085,131 +1085,132 @@ async function fetchAndDisplayKitchenIngredient() {
 }
 
 
-// kitchenIngredient
-// DatePurchased, ShelfLife, IngredientID, IngredientName, IngredientListID, Amount, UnitOfMeasurement
-async function insertKitchenIngredient(event) {
-    event.preventDefault();
+// // kitchenIngredient
+// // DatePurchased, ShelfLife, IngredientID, IngredientName, IngredientListID, Amount, UnitOfMeasurement
+// async function insertKitchenIngredient(event) {
+//     event.preventDefault();
 
-    const datePurchased = document.getElementById('insertKitchenIngredientDatePurchased').value;
-    // const formattedDatePurchased = new Date(datePurchased).toISOString().slice(0, 19).replace('T', ' ');
-    const formattedDatePurchased = moment(datePurchased).format('YYYY-MM-DD HH:mm:ss');
+//     //const datePurchased = document.getElementById('insertKitchenIngredientDatePurchased').value;
+//     //const formattedDatePurchased = new Date(datePurchased).toISOString().slice(0, 19).replace('T', ' ');
+//     //const formattedDatePurchased = moment(datePurchased).format('YYYY-MM-DD HH:mm:ss');
 
-    const kitchenIngredientDatePurchased = formattedDatePurchased;
-    const kitchenIngredientShelfLife = Number(document.getElementById('insertKitchenIngredientShelfLife').value);
-    const kitchenIngredientIngredientID = Number(document.getElementById('insertKitchenIngredientIngredientID').value);
-    const kitchenIngredientIngredientName = document.getElementById('insertKitchenIngredientIngredientName').value;
-    const kitchenIngredientIngredientListID = Number(document.getElementById('insertKitchenIngredientIngredientListID').value);
-    const kitchenIngredientAmount = Number(document.getElementById('insertKitchenIngredientAmount').value);
-    const kitchenIngredientUnitOfMeasurement = document.getElementById('insertKitchenIngredientUnitOfMeasurement').value;
+//     const kitchenIngredientDatePurchased = Datetime(document.getElementById('insertKitchenIngredientDatePurchased').value);
+//     // const kitchenIngredientDatePurchased = document.getElementById('insertKitchenIngredientDatePurchased').value);
+//     const kitchenIngredientShelfLife = Number(document.getElementById('insertKitchenIngredientShelfLife').value);
+//     const kitchenIngredientIngredientID = Number(document.getElementById('insertKitchenIngredientIngredientID').value);
+//     const kitchenIngredientIngredientName = document.getElementById('insertKitchenIngredientIngredientName').value;
+//     const kitchenIngredientIngredientListID = Number(document.getElementById('insertKitchenIngredientIngredientListID').value);
+//     const kitchenIngredientAmount = Number(document.getElementById('insertKitchenIngredientAmount').value);
+//     const kitchenIngredientUnitOfMeasurement = document.getElementById('insertKitchenIngredientUnitOfMeasurement').value;
 
-    console.log({
-        DatePurchased: formattedDatePurchased,
-        ShelfLife: kitchenIngredientShelfLife,
-        IngredientID: kitchenIngredientIngredientID,
-        IngredientName: kitchenIngredientIngredientName,
-        IngredientListID: kitchenIngredientIngredientListID,
-        Amount: kitchenIngredientAmount,
-        UnitOfMeasurement: kitchenIngredientUnitOfMeasurement,
-    });
+//     console.log({
+//         DatePurchased: formattedDatePurchased,
+//         ShelfLife: kitchenIngredientShelfLife,
+//         IngredientID: kitchenIngredientIngredientID,
+//         IngredientName: kitchenIngredientIngredientName,
+//         IngredientListID: kitchenIngredientIngredientListID,
+//         Amount: kitchenIngredientAmount,
+//         UnitOfMeasurement: kitchenIngredientUnitOfMeasurement,
+//     });
 
-    const response = await fetch('/insert-kitchen-ingredient', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            DatePurchased: kitchenIngredientDatePurchased,
-            ShelfLife: kitchenIngredientShelfLife,
-            IngredientID: kitchenIngredientIngredientID,
-            IngredientName: kitchenIngredientIngredientName,
-            IngredientListID: kitchenIngredientIngredientListID,
-            Amount: kitchenIngredientAmount,
-            UnitOfMeasurement: kitchenIngredientUnitOfMeasurement,
-        })
-    });
+//     const response = await fetch('/insert-kitchen-ingredient', {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/json'
+//         },
+//         body: JSON.stringify({
+//             DatePurchased: kitchenIngredientDatePurchased,
+//             ShelfLife: kitchenIngredientShelfLife,
+//             IngredientID: kitchenIngredientIngredientID,
+//             IngredientName: kitchenIngredientIngredientName,
+//             IngredientListID: kitchenIngredientIngredientListID,
+//             Amount: kitchenIngredientAmount,
+//             UnitOfMeasurement: kitchenIngredientUnitOfMeasurement,
+//         })
+//     });
 
-    const responseData = await response.json();
-    const messageElement = document.getElementById('insertKitchenIngredientResultMsg');
+//     const responseData = await response.json();
+//     const messageElement = document.getElementById('insertKitchenIngredientResultMsg');
 
-    if (responseData.success) {
-        messageElement.textContent = "Kitchen Ingredient data inserted successfully!";
-        fetchTableData(); 
-    } else {
-        messageElement.textContent = "Error inserting Kitchen Ingredient data!";
-    }
-}
+//     if (responseData.success) {
+//         messageElement.textContent = "Kitchen Ingredient data inserted successfully!";
+//         fetchTableData(); 
+//     } else {
+//         messageElement.textContent = "Error inserting Kitchen Ingredient data!";
+//     }
+// }
 
-async function updateKitchenIngredient(event) {
-    event.preventDefault();
+// async function updateKitchenIngredient(event) {
+//     event.preventDefault();
 
     
-    const datePurchased2 = document.getElementById('updateKitchenIngredientDatePurchased').value;
-    // const formattedDatePurchased = new Date(datePurchased).toISOString().slice(0, 19).replace('T', ' ');
-    const formattedDatePurchased2 = moment(datePurchased2).format('YYYY-MM-DD HH:mm:ss');
+//     const datePurchased2 = document.getElementById('updateKitchenIngredientDatePurchased').value;
+//     // const formattedDatePurchased = new Date(datePurchased).toISOString().slice(0, 19).replace('T', ' ');
+//     const formattedDatePurchased2 = moment(datePurchased2).format('YYYY-MM-DD HH:mm:ss');
 
-    const kitchenIngredientDatePurchasedValue = formattedDatePurchased2;
-    const kitchenIngredientShelfLifeValue = Number(document.getElementById('updateKitchenIngredientShelfLife').value);
-    const kitchenIngredientIngredientIDValue = Number(document.getElementById('updateKitchenIngredientIngredientID').value);
-    const kitchenIngredientIngredientNameValue = document.getElementById('updateKitchenIngredientIngredientName').value;
-    const kitchenIngredientIngredientListIDValue = Number(document.getElementById('updateKitchenIngredientIngredientListID').value);
-    const kitchenIngredientAmountValue = Number(document.getElementById('updateKitchenIngredientAmount').value);
-    const kitchenIngredientUnitOfMeasuremenValue = document.getElementById('updateKitchenIngredientUnitOfMeasurement').value;
+//     const kitchenIngredientDatePurchasedValue = formattedDatePurchased2;
+//     const kitchenIngredientShelfLifeValue = Number(document.getElementById('updateKitchenIngredientShelfLife').value);
+//     const kitchenIngredientIngredientIDValue = Number(document.getElementById('updateKitchenIngredientIngredientID').value);
+//     const kitchenIngredientIngredientNameValue = document.getElementById('updateKitchenIngredientIngredientName').value;
+//     const kitchenIngredientIngredientListIDValue = Number(document.getElementById('updateKitchenIngredientIngredientListID').value);
+//     const kitchenIngredientAmountValue = Number(document.getElementById('updateKitchenIngredientAmount').value);
+//     const kitchenIngredientUnitOfMeasuremenValue = document.getElementById('updateKitchenIngredientUnitOfMeasurement').value;
 
-    const response = await fetch('/update-kitchen-ingredient', {
-        method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            DatePurchased: kitchenIngredientDatePurchasedValue,
-            ShelfLife: kitchenIngredientShelfLifeValue,
-            IngredientID: kitchenIngredientIngredientIDValue,
-            IngredientName: kitchenIngredientIngredientNameValue,
-            IngredientListID: kitchenIngredientIngredientListIDValue,
-            Amount: kitchenIngredientAmountValue,
-            UnitOfMeasurement: kitchenIngredientUnitOfMeasuremenValue,
-        })
-    });
+//     const response = await fetch('/update-kitchen-ingredient', {
+//         method: 'PATCH',
+//         headers: {
+//             'Content-Type': 'application/json'
+//         },
+//         body: JSON.stringify({
+//             DatePurchased: kitchenIngredientDatePurchasedValue,
+//             ShelfLife: kitchenIngredientShelfLifeValue,
+//             IngredientID: kitchenIngredientIngredientIDValue,
+//             IngredientName: kitchenIngredientIngredientNameValue,
+//             IngredientListID: kitchenIngredientIngredientListIDValue,
+//             Amount: kitchenIngredientAmountValue,
+//             UnitOfMeasurement: kitchenIngredientUnitOfMeasuremenValue,
+//         })
+//     });
 
-    const responseData = await response.json();
-    const messageElement = document.getElementById('updateKitchenIngredientResultMsg');
+//     const responseData = await response.json();
+//     const messageElement = document.getElementById('updateKitchenIngredientResultMsg');
 
-    if (responseData.success) {
-        messageElement.textContent = "Kitchen Ingredient updated successfully!";
-        fetchTableData();
-    } else {
-        messageElement.textContent = "Error updating Kitchen Ingredient!";
-    }
-}
+//     if (responseData.success) {
+//         messageElement.textContent = "Kitchen Ingredient updated successfully!";
+//         fetchTableData();
+//     } else {
+//         messageElement.textContent = "Error updating Kitchen Ingredient!";
+//     }
+// }
 
-async function deleteKitchenIngredient(event) {
-    event.preventDefault();
+// async function deleteKitchenIngredient(event) {
+//     event.preventDefault();
 
-    const kitchenIngredientIngredientIDDelete = Number(document.getElementById('deleteKitchenIngredientIngredientID').value);
-    const kitchenIngredientIngredientListIDDelete = Number(document.getElementById('deleteKitchenIngredientIngredientListID').value);
+//     const kitchenIngredientIngredientIDDelete = Number(document.getElementById('deleteKitchenIngredientIngredientID').value);
+//     const kitchenIngredientIngredientListIDDelete = Number(document.getElementById('deleteKitchenIngredientIngredientListID').value);
 
 
-    const response = await fetch('/delete-kitchen-ingredient', {
-        method: 'DELETE',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            IngredientID: kitchenIngredientIngredientIDDelete,
-            IngredientListID: kitchenIngredientIngredientListIDDelete,
-        })
-    });
+//     const response = await fetch('/delete-kitchen-ingredient', {
+//         method: 'DELETE',
+//         headers: {
+//             'Content-Type': 'application/json'
+//         },
+//         body: JSON.stringify({
+//             IngredientID: kitchenIngredientIngredientIDDelete,
+//             IngredientListID: kitchenIngredientIngredientListIDDelete,
+//         })
+//     });
 
-    const responseData = await response.json();
-    const messageElement = document.getElementById('deleteKitchenIngredientResultMsg');
+//     const responseData = await response.json();
+//     const messageElement = document.getElementById('deleteKitchenIngredientResultMsg');
 
-    if (responseData.success) {
-        messageElement.textContent = "Kitchen Ingredient deleted successfully!";
-        fetchTableData();
-    } else {
-        messageElement.textContent = "Error deleting Kitchen Ingredient!";
-    }
-}
+//     if (responseData.success) {
+//         messageElement.textContent = "Kitchen Ingredient deleted successfully!";
+//         fetchTableData();
+//     } else {
+//         messageElement.textContent = "Error deleting Kitchen Ingredient!";
+//     }
+// }
 
 // AllergyListHasAllergicIngredient
 async function fetchAndDisplayAllergyListHasAllergicIngredient() {
@@ -1237,94 +1238,94 @@ async function fetchAndDisplayAllergyListHasAllergicIngredient() {
 }
 
 // IngredientListID, IngredientID, Severity
-async function insertAllergyListHasAllergicIngredient(event) {
-    event.preventDefault();
+// async function insertAllergyListHasAllergicIngredient(event) {
+//     event.preventDefault();
 
-    const allergyListHasAllergicIngredientIngredientListID = Number(document.getElementById('insertAllergyListHasAllergicIngredientIngredientListID').value);
-    const allergyListHasAllergicIngredientIngredientID = Number(document.getElementById('insertAllergyListHasAllergicIngredientIngredientID').value);
-    const allergyListHasAllergicIngredientSeverity = Number(document.getElementById('insertAllergyListHasAllergicIngredientSeverity').value);
+//     const allergyListHasAllergicIngredientIngredientListID = Number(document.getElementById('insertAllergyListHasAllergicIngredientIngredientListID').value);
+//     const allergyListHasAllergicIngredientIngredientID = Number(document.getElementById('insertAllergyListHasAllergicIngredientIngredientID').value);
+//     const allergyListHasAllergicIngredientSeverity = Number(document.getElementById('insertAllergyListHasAllergicIngredientSeverity').value);
 
 
-    const response = await fetch('/insert-allergy-list-has-allergic-ingredient', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            IngredientListID: allergyListHasAllergicIngredientIngredientListID,
-            IngredientID: allergyListHasAllergicIngredientIngredientID,
-            Severity: allergyListHasAllergicIngredientSeverity, 
-        })
-    });
+//     const response = await fetch('/insert-allergy-list-has-allergic-ingredient', {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/json'
+//         },
+//         body: JSON.stringify({
+//             IngredientListID: allergyListHasAllergicIngredientIngredientListID,
+//             IngredientID: allergyListHasAllergicIngredientIngredientID,
+//             Severity: allergyListHasAllergicIngredientSeverity, 
+//         })
+//     });
 
-    const responseData = await response.json();
-    const messageElement = document.getElementById('insertAllergyListHasAllergicIngredientResultMsg');
+//     const responseData = await response.json();
+//     const messageElement = document.getElementById('insertAllergyListHasAllergicIngredientResultMsg');
 
-    if (responseData.success) {
-        messageElement.textContent = "AllergyListHasAllergicIngredient data inserted successfully!";
-        fetchTableData(); 
-    } else {
-        messageElement.textContent = "Error inserting AllergyListHasAllergicIngredient data!";
-    }
-}
+//     if (responseData.success) {
+//         messageElement.textContent = "AllergyListHasAllergicIngredient data inserted successfully!";
+//         fetchTableData(); 
+//     } else {
+//         messageElement.textContent = "Error inserting AllergyListHasAllergicIngredient data!";
+//     }
+// }
 
-async function updateAllergyListHasAllergicIngredient(event) {
-    event.preventDefault();
+// async function updateAllergyListHasAllergicIngredient(event) {
+//     event.preventDefault();
 
-    const allergyListHasAllergicIngredientIngredientListIDValue = Number(document.getElementById('updateAllergyListHasAllergicIngredientIngredientListID').value);
-    const allergyListHasAllergicIngredientIngredientIDValue = Number(document.getElementById('updateAllergyListHasAllergicIngredientIngredientID').value);
-    const allergyListHasAllergicIngredientSeverityValue = Number(document.getElementById('updateAllergyListHasAllergicIngredientSeverity').value);
+//     const allergyListHasAllergicIngredientIngredientListIDValue = Number(document.getElementById('updateAllergyListHasAllergicIngredientIngredientListID').value);
+//     const allergyListHasAllergicIngredientIngredientIDValue = Number(document.getElementById('updateAllergyListHasAllergicIngredientIngredientID').value);
+//     const allergyListHasAllergicIngredientSeverityValue = Number(document.getElementById('updateAllergyListHasAllergicIngredientSeverity').value);
 
-    const response = await fetch('/update-allergy-list-has-allergic-ingredient', {
-        method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            IngredientListID: allergyListHasAllergicIngredientIngredientListIDValue,
-            IngredientID: allergyListHasAllergicIngredientIngredientIDValue,
-            Severity: allergyListHasAllergicIngredientSeverityValue, 
-        })
-    });
+//     const response = await fetch('/update-allergy-list-has-allergic-ingredient', {
+//         method: 'PATCH',
+//         headers: {
+//             'Content-Type': 'application/json'
+//         },
+//         body: JSON.stringify({
+//             IngredientListID: allergyListHasAllergicIngredientIngredientListIDValue,
+//             IngredientID: allergyListHasAllergicIngredientIngredientIDValue,
+//             Severity: allergyListHasAllergicIngredientSeverityValue, 
+//         })
+//     });
 
-    const responseData = await response.json();
-    const messageElement = document.getElementById('updateAllergyListHasAllergicIngredientResultMsg');
+//     const responseData = await response.json();
+//     const messageElement = document.getElementById('updateAllergyListHasAllergicIngredientResultMsg');
 
-    if (responseData.success) {
-        messageElement.textContent = "AllergyListHasAllergicIngredient updated successfully!";
-        fetchTableData();
-    } else {
-        messageElement.textContent = "Error updating AllergyListHasAllergicIngredient!";
-    }
-}
+//     if (responseData.success) {
+//         messageElement.textContent = "AllergyListHasAllergicIngredient updated successfully!";
+//         fetchTableData();
+//     } else {
+//         messageElement.textContent = "Error updating AllergyListHasAllergicIngredient!";
+//     }
+// }
 
-async function deleteAllergyListHasAllergicIngredient(event) {
-    event.preventDefault();
+// async function deleteAllergyListHasAllergicIngredient(event) {
+//     event.preventDefault();
 
-    const allergyListHasAllergicIngredientIngredientListIDDelete = Number(document.getElementById('deleteAllergyListHasAllergicIngredientIngredientListID').value);
-    const allergyListHasAllergicIngredientIngredientIDDelete = Number(document.getElementById('deleteAllergyListHasAllergicIngredientIngredientID').value);
+//     const allergyListHasAllergicIngredientIngredientListIDDelete = Number(document.getElementById('deleteAllergyListHasAllergicIngredientIngredientListID').value);
+//     const allergyListHasAllergicIngredientIngredientIDDelete = Number(document.getElementById('deleteAllergyListHasAllergicIngredientIngredientID').value);
 
-    const response = await fetch('/delete-kitchen-ingredient', {
-        method: 'DELETE',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            IngredientID: allergyListHasAllergicIngredientIngredientListIDDelete,
-            IngredientListID: allergyListHasAllergicIngredientIngredientIDDelete,
-        })
-    });
+//     const response = await fetch('/delete-kitchen-ingredient', {
+//         method: 'DELETE',
+//         headers: {
+//             'Content-Type': 'application/json'
+//         },
+//         body: JSON.stringify({
+//             IngredientID: allergyListHasAllergicIngredientIngredientListIDDelete,
+//             IngredientListID: allergyListHasAllergicIngredientIngredientIDDelete,
+//         })
+//     });
 
-    const responseData = await response.json();
-    const messageElement = document.getElementById('deleteAllergyListHasAllergicIngredientResultMsg');
+//     const responseData = await response.json();
+//     const messageElement = document.getElementById('deleteAllergyListHasAllergicIngredientResultMsg');
 
-    if (responseData.success) {
-        messageElement.textContent = "AllergyListHasAllergicIngredient deleted successfully!";
-        fetchTableData();
-    } else {
-        messageElement.textContent = "Error deleting AllergyListHasAllergicIngredient!";
-    }
-}
+//     if (responseData.success) {
+//         messageElement.textContent = "AllergyListHasAllergicIngredient deleted successfully!";
+//         fetchTableData();
+//     } else {
+//         messageElement.textContent = "Error deleting AllergyListHasAllergicIngredient!";
+//     }
+// }
 
 
 

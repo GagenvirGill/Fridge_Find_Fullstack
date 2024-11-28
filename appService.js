@@ -82,6 +82,7 @@ async function testOracleConnection() {
 
 
 
+
 // ----------------------------------------------------------
 // Recipe Centric service
 
@@ -960,7 +961,6 @@ async function insertAllergyList(IngredientListID, PrivacyLevel, ListDescription
     }
 }
 
- // Gives me an error - number TODO
 async function updateAllergyList(IngredientListID, newPrivacyLevel, newListDescription, newUsername, newListName) {
     try {
         return await withOracleDB(async (connection) => {
@@ -968,7 +968,18 @@ async function updateAllergyList(IngredientListID, newPrivacyLevel, newListDescr
                 `UPDATE AllergyList 
                  SET PrivacyLevel = :newPrivacyLevel, ListDescription = :newListDescription, Username = :newUsername, ListName = :newListName
                  WHERE IngredientListID = :IngredientListID`,
-                 [IngredientListID, newPrivacyLevel, newListDescription, newUsername, newListName],
+                // `UPDATE AllergyList 
+                //  SET PrivacyLevel = :newPrivacyLevel, ListDescription = :newListDescription, Username = :newUsername
+                //  WHERE IngredientListID = :IngredientListID`,
+                //  [IngredientListID, newPrivacyLevel, newListDescription, newUsername, newListName],
+                // [newPrivacyLevel, newListDescription, newUsername, newListName, IngredientListID],
+                {
+                    newPrivacyLevel: newPrivacyLevel,
+                    newListDescription: newListDescription,
+                    newUsername: newUsername,
+                    newListName: newListName,
+                    IngredientListID: IngredientListID
+                },
                 { autoCommit: true }
             );
 
@@ -1011,63 +1022,63 @@ async function fetchKitchenIngredientFromDb() {
     }
 }
 
-async function insertKitchenIngredient(DatePurchased, ShelfLife, IngredientID, IngredientName, IngredientListID, Amount, UnitOfMeasurement) {
-    try {
-        const formattedDatePurchased = moment(DatePurchased).utcOffset(0).format('YYYY-MM-DD HH:mm:ss');
+// async function insertKitchenIngredient(DatePurchased, ShelfLife, IngredientID, IngredientName, IngredientListID, Amount, UnitOfMeasurement) {
+//     try {
+//         //const formattedDatePurchased = moment(DatePurchased).utcOffset(0).format('YYYY-MM-DD HH:mm:ss');
 
-        return await withOracleDB(async (connection) => {
-            const result = await connection.execute(
-                `INSERT INTO KitchenIngredient(DatePurchased, ShelfLife, IngredientID, IngredientName, IngredientListID, Amount, UnitOfMeasurement) 
-                VALUES (:DatePurchased, :ShelfLife, :IngredientID, :IngredientName, :IngredientListID, :Amount, :UnitOfMeasurement)`,
-                [DatePurchased, ShelfLife, IngredientID, IngredientName, IngredientListID, Amount, UnitOfMeasurement],
-                { autoCommit: true }
-            );
+//         return await withOracleDB(async (connection) => {
+//             const result = await connection.execute(
+//                 `INSERT INTO KitchenIngredient(DatePurchased, ShelfLife, IngredientID, IngredientName, IngredientListID, Amount, UnitOfMeasurement) 
+//                 VALUES (:DatePurchased, :ShelfLife, :IngredientID, :IngredientName, :IngredientListID, :Amount, :UnitOfMeasurement)`,
+//                 [DatePurchased, ShelfLife, IngredientID, IngredientName, IngredientListID, Amount, UnitOfMeasurement],
+//                 { autoCommit: true }
+//             );
 
-            console.log('Inserted Kitchen Ingredient Successfully')
-            return result.rowsAffected && result.rowsAffected > 0;
-        });
-    } catch(error) {
-        console.error('Database error:', error);
-        return false;
-    }
-}
+//             console.log('Inserted Kitchen Ingredient Successfully')
+//             return result.rowsAffected && result.rowsAffected > 0;
+//         });
+//     } catch(error) {
+//         console.error('Database error:', error);
+//         return false;
+//     }
+// }
 
-async function updateKitchenIngredient(newDatePurchased, newShelfLife, IngredientID, newIngredientName, IngredientListID, newAmount, newUnitOfMeasurement) {
-    try {
-        return await withOracleDB(async (connection) => {
-            const result = await connection.execute(
-                `UPDATE KitchenIngredient 
-                 SET DatePurchased = :newDatePurchased, ShelfLife = :newShelfLife, IngredientName = :newIngredientName, Amount = :newAmount, UnitOfMeasurement =: newUnitOfMeasurement
-                 WHERE IngredientID = :IngredientID AND IngredientListID = :IngredientListID`,
-                 [newDatePurchased, newShelfLife, IngredientID, newIngredientName, IngredientListID, newAmount, newUnitOfMeasurement],
-                { autoCommit: true }
-            );
+// async function updateKitchenIngredient(newDatePurchased, newShelfLife, IngredientID, newIngredientName, IngredientListID, newAmount, newUnitOfMeasurement) {
+//     try {
+//         return await withOracleDB(async (connection) => {
+//             const result = await connection.execute(
+//                 `UPDATE KitchenIngredient 
+//                  SET DatePurchased = :newDatePurchased, ShelfLife = :newShelfLife, IngredientName = :newIngredientName, Amount = :newAmount, UnitOfMeasurement =: newUnitOfMeasurement
+//                  WHERE IngredientID = :IngredientID AND IngredientListID = :IngredientListID`,
+//                  [newDatePurchased, newShelfLife, IngredientID, newIngredientName, IngredientListID, newAmount, newUnitOfMeasurement],
+//                 { autoCommit: true }
+//             );
 
-            console.log('Updated Kitchen Ingredient Successfully')
-            return result.rowsAffected && result.rowsAffected > 0;
-        });
-    } catch(error) {
-        console.error('Database error:', error);
-        return false;
-    };
-}
+//             console.log('Updated Kitchen Ingredient Successfully')
+//             return result.rowsAffected && result.rowsAffected > 0;
+//         });
+//     } catch(error) {
+//         console.error('Database error:', error);
+//         return false;
+//     };
+// }
 
-async function deleteKitchenIngredient(IngredientID, IngredientListID) {
-    try {
-        return await withOracleDB(async (connection) => {
-            const result = await connection.execute(
-                'DELETE FROM KitchenIngredient WHERE IngredientID=:IngredientID AND IngredientListID = :IngredientListID',
-                [IngredientID, IngredientListID],
-                { autoCommit: true }
-            );
-            console.log('Deleted KitchenIngredient Successfully')
-            return result.rowsAffected && result.rowsAffected > 0;;
-        });
-    } catch(error) {
-        console.error('Database error:', error);
-        return false;
-    }
-}
+// async function deleteKitchenIngredient(IngredientID, IngredientListID) {
+//     try {
+//         return await withOracleDB(async (connection) => {
+//             const result = await connection.execute(
+//                 'DELETE FROM KitchenIngredient WHERE IngredientID=:IngredientID AND IngredientListID = :IngredientListID',
+//                 [IngredientID, IngredientListID],
+//                 { autoCommit: true }
+//             );
+//             console.log('Deleted KitchenIngredient Successfully')
+//             return result.rowsAffected && result.rowsAffected > 0;;
+//         });
+//     } catch(error) {
+//         console.error('Database error:', error);
+//         return false;
+//     }
+// }
 
 // AllergyListHasAllergicIngredient
 async function fetchAllergyListHasAllergicIngredientFromDb() {
@@ -1083,61 +1094,61 @@ async function fetchAllergyListHasAllergicIngredientFromDb() {
 }
 
 // Error -> invalid number TODO
-async function insertAllergyListHasAllergicIngredient(IngredientListID, IngredientID, Severity) {
-    try {
-        return await withOracleDB(async (connection) => {
-            const result = await connection.execute(
-                `INSERT INTO AllergyListHasAllergicIngredient(IngredientListID, IngredientID, Severity) 
-                VALUES (:IngredientListID, :IngredientID, :Severity)`,
-                [IngredientListID, IngredientID, Severity],
-                { autoCommit: true }
-            );
+// async function insertAllergyListHasAllergicIngredient(IngredientListID, IngredientID, Severity) {
+//     try {
+//         return await withOracleDB(async (connection) => {
+//             const result = await connection.execute(
+//                 `INSERT INTO AllergyListHasAllergicIngredient(IngredientListID, IngredientID, Severity) 
+//                 VALUES (:IngredientListID, :IngredientID, :Severity)`,
+//                 [IngredientListID, IngredientID, Severity],
+//                 { autoCommit: true }
+//             );
 
-            console.log('Inserted Allergy List Has Allergic Ingredient Successfully')
-            return result.rowsAffected && result.rowsAffected > 0;
-        });
-    } catch(error) {
-        console.error('Database error:', error);
-        return false;
-    }
-}
+//             console.log('Inserted Allergy List Has Allergic Ingredient Successfully')
+//             return result.rowsAffected && result.rowsAffected > 0;
+//         });
+//     } catch(error) {
+//         console.error('Database error:', error);
+//         return false;
+//     }
+// }
 
-async function updateAllergyListHasAllergicIngredient(IngredientListID, IngredientID, newSeverity) {
-    try {
-        return await withOracleDB(async (connection) => {
-            const result = await connection.execute(
-                `UPDATE AllergyListHasAllergicIngredient 
-                 SET Severity = :newSeverity
-                 WHERE IngredientID = :IngredientID AND IngredientListID = :IngredientListID`,
-                 [IngredientListID, IngredientID, newSeverity],
-                { autoCommit: true }
-            );
+// async function updateAllergyListHasAllergicIngredient(IngredientListID, IngredientID, newSeverity) {
+//     try {
+//         return await withOracleDB(async (connection) => {
+//             const result = await connection.execute(
+//                 `UPDATE AllergyListHasAllergicIngredient 
+//                  SET Severity = :newSeverity
+//                  WHERE IngredientID = :IngredientID AND IngredientListID = :IngredientListID`,
+//                  [IngredientListID, IngredientID, newSeverity],
+//                 { autoCommit: true }
+//             );
 
-            console.log('Updated AllergyListHasAllergicIngredient Successfully')
-            return result.rowsAffected && result.rowsAffected > 0;
-        });
-    } catch(error) {
-        console.error('Database error:', error);
-        return false;
-    };
-}
+//             console.log('Updated AllergyListHasAllergicIngredient Successfully')
+//             return result.rowsAffected && result.rowsAffected > 0;
+//         });
+//     } catch(error) {
+//         console.error('Database error:', error);
+//         return false;
+//     };
+// }
 
-async function deleteAllergyListHasAllergicIngredient(IngredientID, IngredientListID) {
-    try {
-        return await withOracleDB(async (connection) => {
-            const result = await connection.execute(
-                'DELETE FROM AllergyListHasAllergicIngredient WHERE IngredientID=:IngredientID AND IngredientListID = :IngredientListID',
-                [IngredientID, IngredientListID],
-                { autoCommit: true }
-            );
-            console.log('Deleted AllergyListHasAllergicIngredient Successfully')
-            return result.rowsAffected && result.rowsAffected > 0;;
-        });
-    } catch(error) {
-        console.error('Database error:', error);
-        return false;
-    }
-}
+// async function deleteAllergyListHasAllergicIngredient(IngredientID, IngredientListID) {
+//     try {
+//         return await withOracleDB(async (connection) => {
+//             const result = await connection.execute(
+//                 'DELETE FROM AllergyListHasAllergicIngredient WHERE IngredientID=:IngredientID AND IngredientListID = :IngredientListID',
+//                 [IngredientID, IngredientListID],
+//                 { autoCommit: true }
+//             );
+//             console.log('Deleted AllergyListHasAllergicIngredient Successfully')
+//             return result.rowsAffected && result.rowsAffected > 0;;
+//         });
+//     } catch(error) {
+//         console.error('Database error:', error);
+//         return false;
+//     }
+// }
 
 // ----------------------------------------------------------
 // General service methods
@@ -1334,12 +1345,13 @@ module.exports = {
     updateAllergyList,
     deleteAllergyList,
     fetchKitchenIngredientFromDb,
-    insertKitchenIngredient,
-    updateKitchenIngredient,
-    deleteKitchenIngredient,
+    // insertKitchenIngredient,
+    // updateKitchenIngredient,
+    // deleteKitchenIngredient,
     fetchAllergyListHasAllergicIngredientFromDb,
-    insertAllergyListHasAllergicIngredient,
-    updateAllergyListHasAllergicIngredient,
+    // insertAllergyListHasAllergicIngredient,
+    // updateAllergyListHasAllergicIngredient,
+    // deleteAllergyListHasAllergicIngredient,
 
 
     // General
