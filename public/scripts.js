@@ -68,7 +68,7 @@ async function insertUser(event) {
     event.preventDefault();
 
     const username = document.getElementById('insertUsername').value;
-    const profilePicture = document.getElementById('insertProfilePicture').value;
+    // const profilePicture = document.getElementById('insertProfilePicture').value;
     const email = document.getElementById('insertEmail').value;
     const fullName = document.getElementById('insertFullName').value;
     const privacyLevel = document.getElementById('insertUserPrivacyLevel').value;
@@ -84,7 +84,7 @@ async function insertUser(event) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 Username: username,
-                ProfilePicture: profilePicture || null,
+                // ProfilePicture: profilePicture || null,
                 Email: email,
                 FullName: fullName,
                 DefaultPrivacyLevel: privacyLevel,
@@ -110,7 +110,7 @@ async function updateUser(event) {
     event.preventDefault();
 
     const username = document.getElementById('updateUsername').value;
-    const newProfilePicture = document.getElementById('updateProfilePicture').value;
+    // const newProfilePicture = document.getElementById('updateProfilePicture').value;
     const newEmail = document.getElementById('updateEmail').value;
     const newFullName = document.getElementById('updateFullName').value;
     const newPrivacyLevel = document.getElementById('updateUserPrivacyLevel').value;
@@ -126,7 +126,7 @@ async function updateUser(event) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 Username: username,
-                NewProfilePicture: newProfilePicture,
+                // NewProfilePicture: newProfilePicture,
                 NewEmail: newEmail,
                 NewFullName: newFullName,
                 NewDefaultPrivacyLevel: newPrivacyLevel,

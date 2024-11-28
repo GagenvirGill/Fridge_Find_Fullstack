@@ -89,15 +89,15 @@ async function fetchUserFromDb() {
     });
 }
 
-async function insertUser(Username, ProfilePicture, Email, FullName, DefaultPrivacyLevel) {
+async function insertUser(Username, Email, FullName, DefaultPrivacyLevel) {
     if (!Username || !Email || !FullName) {
         throw new Error('Required fields (Username, Email, FullName) are missing');
     }
 
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(
-            `INSERT INTO AppUser(Username, ProfilePicture, Email, FullName, DefaultPrivacyLevel) VALUES (:Username, :ProfilePicture, :Email, :FullName, :DefaultPrivacyLevel)`,
-            [Username, ProfilePicture || null, Email, FullName, DefaultPrivacyLevel || 'Private'],
+            `INSERT INTO AppUser(Username, Email, FullName, DefaultPrivacyLevel) VALUES (:Username, :Email, :FullName, :DefaultPrivacyLevel)`,
+            [Username, Email, FullName, DefaultPrivacyLevel || 'Private'],
             { autoCommit: true }
         );
 
@@ -128,7 +128,7 @@ async function deleteUser(Username) {
     });
 }
 
-async function updateUser(Username, NewProfilePicture, NewEmail, NewFullName, NewDefaultPrivacyLevel) {
+async function updateUser(Username, NewEmail, NewFullName, NewDefaultPrivacyLevel) {
     const isUsernameValid = await validateUsername(Username);
 
     if (!isUsernameValid) {
@@ -138,10 +138,6 @@ async function updateUser(Username, NewProfilePicture, NewEmail, NewFullName, Ne
     let queryParams = [];
     let querySetClauses = [];
 
-    if (NewProfilePicture != "") {
-        querySetClauses.push(`ProfilePicture =: NewProfilePicture`);
-        queryParams.push(NewProfilePicture);
-    }
     if (NewEmail != "") {
         querySetClauses.push(`Email =: NewEmail`);
         queryParams.push(NewEmail);
@@ -202,11 +198,11 @@ async function viewUsersWhoAreFriendsWithEveryone() {
                  FROM AppUser a
                  WHERE a.Username != u.Username
                    AND NOT EXISTS (
-                       SELECT 1
-                       FROM Friends f
-                       WHERE (f.Username1 = u.Username AND f.Username2 = a.Username)
-                          OR (f.Username1 = a.Username AND f.Username2 = u.Username)
-                   )
+                     SELECT 1
+                     FROM Friends f
+                     WHERE (f.Username1 = u.Username AND f.Username2 = a.Username)
+                        OR (f.Username1 = a.Username AND f.Username2 = u.Username)
+                 )
              )`
         );
         return result.rows;
@@ -457,10 +453,10 @@ async function fetchRecipeIngredientsForRecipeFromDb(RecipeID) {
 
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(`
-            SELECT ri.* 
-            FROM RecipeIngredient ri 
-            JOIN Recipe r ON r.RecipeID = ri.RecipeID 
-            WHERE ri.RecipeID=:RecipeID`,
+                    SELECT ri.*
+                    FROM RecipeIngredient ri
+                             JOIN Recipe r ON r.RecipeID = ri.RecipeID
+                    WHERE ri.RecipeID=:RecipeID`,
             [intRecipeID]
         );
         return result.rows;
@@ -479,9 +475,9 @@ async function fetchRecipesName(RecipeID) {
 
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(`
-            SELECT RecipeName
-            FROM Recipe
-            WHERE RecipeID=:RecipeID`,
+                    SELECT RecipeName
+                    FROM Recipe
+                    WHERE RecipeID=:RecipeID`,
             [intRecipeID]
         );
         return result.rows;
@@ -586,13 +582,13 @@ module.exports = {
     viewUsersWithPublicPrivacy,
     viewUsersWhoAreFriendsWithEveryone,
     areTheyFriends,
-    // fetchFriendshipsFromDb,
     insertFriend,
     deleteFriend,
+    // fetchFriendshipsFromDb,
+
     // fetchNotificationForExpiringIngredients,
     // fetchNotificationDetails,
     // deleteNotification,
-
 
     // Recipe Centric
     fetchRecipeFromDb,

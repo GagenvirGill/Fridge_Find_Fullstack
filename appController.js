@@ -30,11 +30,11 @@ router.get('/users', async (req, res) => {
 });
 
 router.post('/insert-user', async (req, res) => {
-    const { Username, ProfilePicture, Email, FullName, DefaultPrivacyLevel } = req.body;
+    const { Username, Email, FullName, DefaultPrivacyLevel } = req.body;
     if (!Username || !Email || !FullName) {
         return res.status(400).json({ success: false, message: "Missing required fields: Username, Email, or FullName" });
     }
-    const insertResult = await appService.insertUser(Username, ProfilePicture, Email, FullName, DefaultPrivacyLevel);
+    const insertResult = await appService.insertUser(Username, Email, FullName, DefaultPrivacyLevel);
     if (insertResult) {
         res.json({ success: true });
     } else {
@@ -49,12 +49,12 @@ router.delete('/delete-user', async (req, res) => {
 });
 
 router.patch('/update-user', async (req, res) => {
-    const { Username, NewProfilePicture, NewEmail, NewFullName, NewDefaultPrivacyLevel } = req.body;
+    const { Username, NewEmail, NewFullName, NewDefaultPrivacyLevel } = req.body;
     if (!Username) {
         return res.status(400).json({ success: false, message: "Username is required for update." });
     }
     try {
-        const updateResult = await appService.updateUser(Username, NewProfilePicture, NewEmail, NewFullName, NewDefaultPrivacyLevel);
+        const updateResult = await appService.updateUser(Username, NewEmail, NewFullName, NewDefaultPrivacyLevel);
         if (updateResult) {
             res.json({ success: true });
         } else {
