@@ -163,7 +163,6 @@ CREATE TABLE RecipeListHasRecipe (
                                      FOREIGN KEY (RecipeListID) REFERENCES RecipeList(RecipeListID) ON DELETE CASCADE
 );
 
-
 -- Insert Sample Data
 -- INSERT INTO AppUser (Username, ProfilePicture, Email, FullName, DefaultPrivacyLevel) VALUES ('Alice', EMPTY_BLOB(), 'alice@gmail.com', 'Alice Person', 'Private');
 -- INSERT INTO AppUser (Username, ProfilePicture, Email, FullName, DefaultPrivacyLevel) VALUES ('Charlie', HEXTORAW('54657374'), 'charlie@gmail.com', 'Charlie Person', 'Public');
