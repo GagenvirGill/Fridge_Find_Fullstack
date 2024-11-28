@@ -67,7 +67,7 @@ async function fetchAndDisplayUsers() {
 async function insertUser(event) {
     event.preventDefault();
 
-    const username = document.getElementById('insertUsername').value;
+    const username = document.getElementById('insertNewUsername').value;
     // const profilePicture = document.getElementById('insertProfilePicture').value;
     const email = document.getElementById('insertEmail').value;
     const fullName = document.getElementById('insertFullName').value;
