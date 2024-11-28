@@ -1009,48 +1009,128 @@ async function deleteAllergyList(IngredientListID) {
     }
 }
 
-async function projectAllergyList(userInput) {
-    try {
-        return await withOracleDB(async (connection) => {
-            const query = `SELECT ${userInput} FROM AllergyList`;
+async function fetchAllergyListByProjectFromDb(userInput) {
+    return await withOracleDB(async (connection) => {
+        const formattedColumns = userInput.map(column => `"${column}"`).join(', ');
 
-            const result = await connection.execute(query);
-            console.log('Projection successful:', result.rows);
+        const query = `
+            SELECT ${formattedColumns}
+            FROM AllergyList
+        `;
 
-            return result.rows; 
-        });
-    } catch (error) {
+        const result = await connection.execute(query);
+
+        console.log("Query Result:", result.rows); 
+
+        const formattedData = result.rows.map(row =>
+            Object.fromEntries(result.metaData.map((col, i) => [col.name, row[i]]))
+        );
+
+        console.log('Projection successful:', formattedData);
+        return { success: true, data: formattedData };  
+    }).catch((error) => {
         console.error('Database error:', error);
-        throw new Error('Error performing projection query.');
-    }
+        return { success: false, data: [] };
+    });
 }
 
 
-async function groupByAllergyList(userInputGroupBy, userInputAggregation) {
-    try {
-        return await withOracleDB(async (connection) => {
-            const query = `SELECT ${userInputGroupBy}, ${userInputAggregation}(${userInputGroupBy}) AS c 
-                           FROM AllergyList 
-                           GROUP BY ${userInputGroupBy}`;
-            const result = await connection.execute(query);
-            console.log('Group By successful:', result.rows);
 
-            return result.rows; 
-        });
-    } catch (error) {
-        console.error('Database error:', error);
-        throw new Error('Error performing group by query.');
-    }
-}
+// async function fetchPrivacyLevelCounts() {
+//     try {
+//         return await withOracleDB(async (connection) => {
+//             // Query to count PrivacyLevel and group by it
+//             const query = `
+//                 SELECT PrivacyLevel, COUNT(*) as count
+//                 FROM AllergyList
+//                 GROUP BY PrivacyLevel
+//             `;
+//             const result = await connection.execute(query);
+//             // Return the rows in the correct format
+//             return result.rows.map(row => ({
+//                 PrivacyLevel: row[0],    // Assuming first column is PrivacyLevel
+//                 PrivacyLevelCount: row[1] // Assuming second column is the count
+//             }));
+//         });
+//     } catch (error) {
+//         console.error('Database error:', error);
+//         return [];
+//     }
+// }
+
+
+
+
+
+
+
+
+
+
+// async function fetchAllergyListByProjectFromDb(userInput) {
+//     return await withOracleDB(async (connection) => {
+//         // NOTE: Do not need to check that the categories exist as we dynamically display 
+//         //       all existing categories to the user in the select bar
+//         //       so therefore all categories submitted to this method, are guaranteed to exist
+
+//         // let formattedValues = userInput.map((category, index) => `:Category${index}`).join(', ');
+//         const formattedColumns = userInput.join(', ');
+
+//         const query = `
+//             SELECT ${formattedColumns}
+//             FROM AllergyList
+//         `;
+
+//         const result = await connection.execute(query);
+
+//         console.log('Fetched Projected AllergyList Successfully');
+//         return { success: true, data: result.rows };
+//     }).catch((error) => {
+//         console.error('Database error:', error);
+//         return { success: false, data: [] };
+//     });
+// }
+
+
+// async function groupByAllergyList(userInputGroupBy, userInputAggregation) {
+//     try {
+//         return await withOracleDB(async (connection) => {
+//             const query = `SELECT ${userInputGroupBy}, ${userInputAggregation}(${userInputGroupBy}) AS c 
+//                            FROM AllergyList 
+//                            GROUP BY ${userInputGroupBy}`;
+//             const result = await connection.execute(query);
+//             console.log('Group By successful:', result.rows);
+
+//             return result.rows; 
+//         });
+//     } catch (error) {
+//         console.error('Database error:', error);
+//         throw new Error('Error performing group by query.');
+//     }
+// }
 
 
 
 
 // KitchenIngredient
-async function fetchKitchenIngredientFromDb() {
+// async function fetchKitchenIngredientFromDb() {
+//     try {
+//         return await withOracleDB(async (connection) => {
+//             const result = await connection.execute('SELECT * FROM KitchenIngredient');
+//             return result.rows;
+//         });
+//     } catch(error) {
+//         console.error('Database error:', error);
+//         return [];
+//     }
+// }
+
+
+// AllergyListHasAllergicIngredient
+async function fetchAllergyListHasAllergicIngredientFromDb() {
     try {
         return await withOracleDB(async (connection) => {
-            const result = await connection.execute('SELECT * FROM KitchenIngredient');
+            const result = await connection.execute('SELECT * FROM AllergyListHasAllergicIngredient');
             return result.rows;
         });
     } catch(error) {
@@ -1059,13 +1139,36 @@ async function fetchKitchenIngredientFromDb() {
     }
 }
 
-// 
 
+// async function fetchRecipesByCategoryFromDb(Categories) {
+//     return await withOracleDB(async (connection) => {
+//         // NOTE: Do not need to check that the categories exist as we dynamically display 
+//         //       all existing categories to the user in the select bar
+//         //       so therefore all categories submitted to this method, are guaranteed to exist
+//         const bindVariables = {};
 
+//         let formattedValues = Categories.map((category, index) => `:Category${index}`).join(', ');
 
+//         Categories.forEach((category, index) => {
+//             bindVariables[`Category${index}`] = category;
+//         });
 
+//         const query = `
+//             SELECT rhc.CategoryName, r.*
+//             FROM Recipe r
+//             JOIN RecipeHasCategory rhc ON r.RecipeID = rhc.RecipeID
+//             WHERE rhc.CategoryName IN (${formattedValues})
+//         `;
 
+//         const result = await connection.execute(query, bindVariables);
 
+//         console.log('Fetched Projected AllergyList Successfully');
+//         return { success: true, data: result.rows };
+//     }).catch((error) => {
+//         console.error('Database error:', error);
+//         return { success: false, data: [] };
+//     });
+// }
 
 
 
@@ -1127,19 +1230,6 @@ async function fetchKitchenIngredientFromDb() {
 //         return false;
 //     }
 // }
-
-// AllergyListHasAllergicIngredient
-async function fetchAllergyListHasAllergicIngredientFromDb() {
-    try {
-        return await withOracleDB(async (connection) => {
-            const result = await connection.execute('SELECT * FROM AllergyListHasAllergicIngredient');
-            return result.rows;
-        });
-    } catch(error) {
-        console.error('Database error:', error);
-        return [];
-    }
-}
 
 // Error -> invalid number TODO
 // async function insertAllergyListHasAllergicIngredient(IngredientListID, IngredientID, Severity) {
@@ -1392,11 +1482,12 @@ module.exports = {
     insertAllergyList,
     updateAllergyList,
     deleteAllergyList,
-    projectAllergyList,
-    groupByAllergyList,
+    fetchAllergyListByProjectFromDb,
+    // fetchPrivacyLevelCounts,
+    // groupByAllergyList,
 
 
-    fetchKitchenIngredientFromDb,
+    // fetchKitchenIngredientFromDb,
     // insertKitchenIngredient,
     // updateKitchenIngredient,
     // deleteKitchenIngredient,

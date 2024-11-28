@@ -303,32 +303,78 @@ router.post("/project-allergy-list", async (req, res) => {
     }
 });
 
-router.post('/group-allergy-list', async (req, res) => {
-    const { userInputGroupBy, userInputAggregation } = req.body;
+// app.post('/group-privacy-level-counts', async (req, res) => {
+//     try {
+//         const result = await fetchPrivacyLevelCounts();
+//         if (result && result.length > 0) {
+//             // If data is found, return success with data
+//             res.json({ success: true, data: result });
+//         } else {
+//             // If no data is found, return an error message
+//             res.status(400).json({ success: false, error: 'No data found' });
+//         }
+//     } catch (error) {
+//         console.error('Database error:', error);
+//         res.status(500).json({ success: false, error: 'Database query error' });
+//     }
+// });
 
-    if (!userInputGroupBy || !userInputAggregation) {
-        return res.status(400).json({ error: 'User Input is required.' });
-    }
 
-    const validAggregations = ['MAX', 'MIN', 'AVG', 'SUM'];  // Add more as needed
-    if (!validAggregations.includes(userInputAggregation)) {
-        return res.status(400).json({ error: `Invalid aggregation function` });
-    }
 
-    try {
-        const groupByElement = await appService.groupByAllergyList(userInputGroupBy, userInputAggregation);
-        res.json(groupByElement);
-    } catch (error) {
-        res.status(500).json({ error: 'Error grouping Allergy List.' });
-    }
+
+// AllergyListHasAllergicIngredient
+router.get('/allergy-list-has-allergic-ingredient', async (req, res) => {
+    const tableContent = await appService.fetchAllergyListHasAllergicIngredientFromDb();
+    res.json({ data: tableContent });
 });
 
 
+// KitchenInventory
+
+// KitchenIngredientPerishableDate
 
 
+// router.post("/insert-allergy-list-has-allergic-ingredient", async (req, res) => {
+//     const { IngredientListID, IngredientID, Severity } = req.body;
+//     try {
+//          const insertResult = await appService.insertAllergicIngredient(IngredientListID, IngredientID, Severity);
+//          if (insertResult) {
+//              res.json({ success: true });
+//          } else {
+//              res.status(500).json({ success: false });
+//          }
+//      } catch (error) { 
+//          res.status(500).json({ success: false, error: error.message });
+//      }
+//  });
 
+//  router.patch("/update-allergy-list-has-allergic-ingredient", async (req, res) => {
+//     const { IngredientListID, IngredientID, Severity } = req.body;
+//     try {
+//         const updateResult = await appService.updateKitchenIngredient(IngredientListID, IngredientID, Severity);
+//         if (updateResult) {
+//             res.json({ success: true });
+//         } else {
+//             res.status(500).json({ success: false });
+//         }
+//     } catch (error) {
+//         res.status(500).json({ success: false, error: error.message });
+//     }
+// });
 
-
+// router.delete("/delete-allergy-list-has-allergic-ingredient", async (req, res) => {
+//     const { IngredientListID, IngredientID } = req.body;
+//     try {
+//         const deleteResult = await appService.deleteAllergyList(IngredientListID, IngredientID);
+//         if (deleteResult) {
+//             res.json({ success: true });
+//         } else {
+//             res.status(500).json({ success: false });
+//         }
+//     } catch (error) {
+//         res.status(500).json({ success: false, error: error.message });
+//     }
+// });
 
 // KitchenIngredient
 // router.get('/kitchen-ingredient', async (req, res) => {
@@ -379,62 +425,6 @@ router.post('/group-allergy-list', async (req, res) => {
 //         res.status(500).json({ success: false, error: error.message });
 //     }
 // });
-
-// AllergyListHasAllergicIngredient
-router.get('/allergy-list-has-allergic-ingredient', async (req, res) => {
-    const tableContent = await appService.fetchAllergyListHasAllergicIngredientFromDb();
-    res.json({ data: tableContent });
-});
-
-// router.post("/insert-allergy-list-has-allergic-ingredient", async (req, res) => {
-//     const { IngredientListID, IngredientID, Severity } = req.body;
-//     try {
-//          const insertResult = await appService.insertAllergicIngredient(IngredientListID, IngredientID, Severity);
-//          if (insertResult) {
-//              res.json({ success: true });
-//          } else {
-//              res.status(500).json({ success: false });
-//          }
-//      } catch (error) { 
-//          res.status(500).json({ success: false, error: error.message });
-//      }
-//  });
-
-//  router.patch("/update-allergy-list-has-allergic-ingredient", async (req, res) => {
-//     const { IngredientListID, IngredientID, Severity } = req.body;
-//     try {
-//         const updateResult = await appService.updateKitchenIngredient(IngredientListID, IngredientID, Severity);
-//         if (updateResult) {
-//             res.json({ success: true });
-//         } else {
-//             res.status(500).json({ success: false });
-//         }
-//     } catch (error) {
-//         res.status(500).json({ success: false, error: error.message });
-//     }
-// });
-
-// router.delete("/delete-allergy-list-has-allergic-ingredient", async (req, res) => {
-//     const { IngredientListID, IngredientID } = req.body;
-//     try {
-//         const deleteResult = await appService.deleteAllergyList(IngredientListID, IngredientID);
-//         if (deleteResult) {
-//             res.json({ success: true });
-//         } else {
-//             res.status(500).json({ success: false });
-//         }
-//     } catch (error) {
-//         res.status(500).json({ success: false, error: error.message });
-//     }
-// });
-
-
-// KitchenInventory
-
-// KitchenIngredientPerishableDate
-
-
-
 
 
 

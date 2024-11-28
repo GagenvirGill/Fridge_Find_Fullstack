@@ -498,29 +498,115 @@
     </form>
     <div id="deleteAllergyListResultMsg"></div>
 
-    <h3>Project Allergy List Element</h3>
+    <!-- <h3>Project Allergy List Element</h3>
     <form id="projectAllergyList">
         Projection Element: 
         <input type="text" id="projectAllergyListUserInput" placeholder="Enter Projection Element" required> <br><br>
-        <!-- <select id="groupByAllergyListUserInput">
+        <select id="groupByAllergyListUserInput">
             <option value="IngredientListID">IngredientListID</option>
             <option value="PrivacyLevel">PrivacyLevel</option>
             <option value="ListDescription">ListDescription</option>
             <option value="Username">Username</option>
             <option value="ListName">ListName</option>
-        </select> -->
+        </select>
         <button type="submit">Project</button> <br>
     </form>
-    <div id="projectAllergyListResultMsg"></div>
+    <div id="projectAllergyListResultMsg"></div> -->
 
-
-    <h3>Filter an Allergy List with Group By Aggregation</h3>
-    <form id="groupByAllergyList">
-        <input type="text" id="groupByAllergyListUserInput" placeholder="Input Group By Element" required> <br><br>
-        <input type="text" id="groupByAllergyListAggregation" placeholder="Input Aggregation Type (Upper Case Only)" required> <br><br>
-        <button type="submit">Group</button> <br>
+    <h3>Project Allergy List Element</h3>
+    <form id="projectAllergyListForm">
+        <label for="projectAllergyList">Filter the Recipes by the following Categories (Hold shift to select multiple):</label><br><br>
+        <select name="projectAllergyList" id="projectAllergyList" multiple>
+            <option value="IngredientListID">IngredientListID</option>
+            <option value="PrivacyLevel">PrivacyLevel</option>
+            <option value="ListDescription">ListDescription</option>
+            <option value="Username">Username</option>
+            <option value="ListName">ListName</option>
+        </select>
+        <br><br>
+        <div id="projectAllergyListResultMsg"></div>
+        <br><br>
+        <button type="submit">Filter</button>
     </form>
-    <div id="groupByAllergyListResultMsg"></div>
+    <table id="projectAllergyListTable" border="1">
+        <thead>
+            <!-- Dynamic headers will be injected here -->
+        </thead>
+        <tbody>
+            <!-- Dynamic rows will be injected here -->
+        </tbody>
+    </table>
+
+    <!-- <h3>Privacy Level Aggregation</h3>
+    <form id="projectPrivacyLevelForm">
+        Find the Count of all Privacy Levels in Allergy List:
+        <br><br>
+        <button type="button" id="aggregationButton">Do Aggregation</button>
+        <br><br>
+        <div id="privacyLevelCountResultMsg"></div>
+        <br><br>
+        <table id="privacyLevelCountTable" border="1">
+            <thead>
+
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+    </form> -->
+
+    
+
+
+    <!-- <h3>Project Allergy List Element</h3>
+    <form id="projectAllergyList">
+        <label for="allergyListProject"> Filter the Recipes by the following Categories (Hold shift to select multiple):</label> <br><br>
+        <select name="projectAllergyList" id="projectAllergyList" multiple> 
+        </select> 
+        <div id="projectAllergyListResultMsg"></div> <br><br>
+
+        <button type="submit"> Filter </button> <br>
+    </form>
+    <div id="projectAllergyListResultMsg"></div>
+    <table id="projectAllergyListTable" border="1">
+        <thead>
+            <tr>
+                <th>IngredientListID</th>
+                <th>PrivacyLevel</th>
+                <th>ListDescription</th>
+                <th>Username</th>
+                <th>ListName</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table> -->
+
+    <!-- <h3>Show and Filter Recipes by Category</h3>
+    <form id="filterRecipesForm">
+        <label for="filterRecipes"> Filter the Recipes by the following Categories (Hold shift to select multiple):</label> <br><br>
+        <select name="filterRecipesCategories" id="filterRecipesCategories" multiple> 
+        </select> 
+        <div id="filterRecipesByCategoryFormResultMsg"></div> <br><br>
+
+        <button type="submit"> Filter </button> <br>
+    </form>
+    <div id="filterRecipesByCategoryTableResultMsg"></div>
+    <table id="filteredRecipeTable" border="1">
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Recipe ID</th>
+                <th>Recipe Name</th>
+                <th>Privacy Level</th>
+                <th>Username</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table> -->
+
+
 
 
     <!-- <h3>Filter a Allergy List with Group By Aggregation </h3>
