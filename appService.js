@@ -1009,6 +1009,43 @@ async function deleteAllergyList(IngredientListID) {
     }
 }
 
+async function projectAllergyList(userInput) {
+    try {
+        return await withOracleDB(async (connection) => {
+            const query = `SELECT ${userInput} FROM AllergyList`;
+
+            const result = await connection.execute(query);
+            console.log('Projection successful:', result.rows);
+
+            return result.rows; 
+        });
+    } catch (error) {
+        console.error('Database error:', error);
+        throw new Error('Error performing projection query.');
+    }
+}
+
+
+async function groupByAllergyList(userInputGroupBy, userInputAggregation) {
+    try {
+        return await withOracleDB(async (connection) => {
+            const query = `SELECT ${userInputGroupBy}, ${userInputAggregation}(${userInputGroupBy}) AS c 
+                           FROM AllergyList 
+                           GROUP BY ${userInputGroupBy}`;
+            const result = await connection.execute(query);
+            console.log('Group By successful:', result.rows);
+
+            return result.rows; 
+        });
+    } catch (error) {
+        console.error('Database error:', error);
+        throw new Error('Error performing group by query.');
+    }
+}
+
+
+
+
 // KitchenIngredient
 async function fetchKitchenIngredientFromDb() {
     try {
@@ -1021,6 +1058,17 @@ async function fetchKitchenIngredientFromDb() {
         return [];
     }
 }
+
+// 
+
+
+
+
+
+
+
+
+
 
 // async function insertKitchenIngredient(DatePurchased, ShelfLife, IngredientID, IngredientName, IngredientListID, Amount, UnitOfMeasurement) {
 //     try {
@@ -1344,6 +1392,10 @@ module.exports = {
     insertAllergyList,
     updateAllergyList,
     deleteAllergyList,
+    projectAllergyList,
+    groupByAllergyList,
+
+
     fetchKitchenIngredientFromDb,
     // insertKitchenIngredient,
     // updateKitchenIngredient,

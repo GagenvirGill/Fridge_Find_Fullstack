@@ -1059,6 +1059,133 @@ async function deleteAllergyList(event) {
 }
 
 
+async function projectAllergyList(event) {
+    event.preventDefault();
+
+    const projectionAllergyListValue = document.getElementById('projectAllergyListUserInput').value;
+
+    const response = await fetch('/project-allergy-list', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            userInput: projectionAllergyListValue, // HERE
+        }),
+    });
+
+    const responseData = await response.json();
+    const messageElement = document.getElementById('projectAllergyListResultMsg');
+
+    if (response.ok) {
+        messageElement.textContent = "AllergyList projected successfully!";
+        const resultHTML = `<pre>${JSON.stringify(responseData, null, 2)}</pre>`;
+        messageElement.innerHTML = resultHTML;
+    } else {
+        console.error('Error fetching projection:', error);
+        const messageElement = document.getElementById('projectAllergyListResultMsg');
+        messageElement.textContent = `Unexpected error: ${error.message}`;
+    }
+}
+
+async function groupByAllergyList(event) {
+    event.preventDefault();
+
+    // Get values directly from the form elements
+    const groupByAllergyListValue = document.getElementById('groupByAllergyListUserInput').value;
+    const groupByAllergyListAggregation = document.getElementById('groupByAllergyListAggregation').value;
+
+    const response = await fetch('/group-allergy-list', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            userInputGroupBy: groupByAllergyListValue,
+            userInputAggregation: groupByAllergyListAggregation,
+        }),
+    });
+
+    const responseData = await response.json();
+    const messageElement = document.getElementById('groupByAllergyListResultMsg');
+
+    if (response.ok) {
+        messageElement.textContent = "AllergyList grouped successfully!";
+        const resultHTML = `<pre>${JSON.stringify(responseData, null, 2)}</pre>`;
+        messageElement.innerHTML = resultHTML;
+    } else {
+        console.error('Error fetching group by result:', responseData.error);
+        messageElement.textContent = `Unexpected error: ${responseData.error}`;
+    }
+}
+
+
+// async function groupByAllergyList(event) {
+//     event.preventDefault();
+
+//     const groupByAllergyListValue = document.getElementById('groupByAllergyListUserInput').value;
+//     const groupByAllergyListAggregation = document.getElementById('groupByAllergyListAggregation').value;
+
+//     const response = await fetch('/group-allergy-list', {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify({
+//             userInputGroupBy: groupByAllergyListValue,
+//             userInputAggregation: groupByAllergyListAggregation,
+//         }),
+//     });
+
+//     const responseData = await response.json();
+//     const messageElement = document.getElementById('groupByAllergyListResultMsg');
+
+//     if (response.ok) {
+//         messageElement.textContent = "AllergyList grouped successfully!";
+//         const resultHTML = `<pre>${JSON.stringify(responseData, null, 2)}</pre>`;
+//         messageElement.innerHTML = resultHTML;
+//     } else {
+//         console.error('Error fetching group by result:', responseData.error);
+//         messageElement.textContent = `Unexpected error: ${responseData.error}`;
+//     }
+// }
+
+
+// async function groupByAllergyList(event) {
+//     event.preventDefault();
+
+//     const groupByAllergyListValue = document.getElementById('groupByAllergyListUserInputElement').value;
+//     const groupByAllergyListAggregation = document.getElementById('groupByAllergyListUserInputAggregation').value;
+
+//     const response = await fetch('/group-allergy-list', {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify({
+//             userInputGroupBy: groupByAllergyListValue, // HERE
+//             userInputAggregation: groupByAllergyListAggregation,
+//         }),
+//     });
+
+//     const responseData = await response.json();
+//     const messageElement = document.getElementById('groupByAllergyListResultMsg');
+
+//     if (response.ok) {
+//         messageElement.textContent = "AllergyList grouped successfully!";
+//         const resultHTML = `<pre>${JSON.stringify(responseData, null, 2)}</pre>`;
+//         messageElement.innerHTML = resultHTML;
+//     } else {
+//         console.error('Error fetching projection:', error);
+//         const messageElement = document.getElementById('groupByAllergyListResultMsg');
+//         messageElement.textContent = `Unexpected error: ${error.message}`;
+//     }
+// }
+
+
+
+
+
 // KitchenIngredient
 async function fetchAndDisplayKitchenIngredient() {
     const response = await fetch('/kitchen-ingredient', {
@@ -1083,6 +1210,7 @@ async function fetchAndDisplayKitchenIngredient() {
         });
     });
 }
+
 
 
 // // kitchenIngredient
@@ -1396,13 +1524,16 @@ window.onload = function () {
     document.getElementById("updateAllergyList").addEventListener("submit", updateAllergyList);
     document.getElementById("deleteAllergyList").addEventListener("submit", deleteAllergyList);
 
-    document.getElementById("insertKitchenIngredient").addEventListener("submit", insertKitchenIngredient);
-    document.getElementById("updateKitchenIngredient").addEventListener("submit", updateKitchenIngredient);
-    document.getElementById("deleteKitchenIngredient").addEventListener("submit", deleteKitchenIngredient);
+    document.getElementById("projectAllergyList").addEventListener("submit", projectAllergyList);
+    document.getElementById("groupByAllergyList").addEventListener("submit", groupByAllergyList);
 
-    document.getElementById("insertAllergyListHasAllergicIngredient").addEventListener("submit", insertAllergyListHasAllergicIngredient);
-    document.getElementById("updateAllergyListHasAllergicIngredient").addEventListener("submit", updateAllergyListHasAllergicIngredient);
-    document.getElementById("deleteAllergyListHasAllergicIngredient").addEventListener("submit", deleteAllergyListHasAllergicIngredient);
+    // document.getElementById("insertKitchenIngredient").addEventListener("submit", insertKitchenIngredient);
+    // document.getElementById("updateKitchenIngredient").addEventListener("submit", updateKitchenIngredient);
+    // document.getElementById("deleteKitchenIngredient").addEventListener("submit", deleteKitchenIngredient);
+
+    // document.getElementById("insertAllergyListHasAllergicIngredient").addEventListener("submit", insertAllergyListHasAllergicIngredient);
+    // document.getElementById("updateAllergyListHasAllergicIngredient").addEventListener("submit", updateAllergyListHasAllergicIngredient);
+    // document.getElementById("deleteAllergyListHasAllergicIngredient").addEventListener("submit", deleteAllergyListHasAllergicIngredient);
 
 
 

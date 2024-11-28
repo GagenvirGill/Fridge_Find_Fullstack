@@ -498,6 +498,64 @@
     </form>
     <div id="deleteAllergyListResultMsg"></div>
 
+    <h3>Project Allergy List Element</h3>
+    <form id="projectAllergyList">
+        Projection Element: 
+        <input type="text" id="projectAllergyListUserInput" placeholder="Enter Projection Element" required> <br><br>
+        <!-- <select id="groupByAllergyListUserInput">
+            <option value="IngredientListID">IngredientListID</option>
+            <option value="PrivacyLevel">PrivacyLevel</option>
+            <option value="ListDescription">ListDescription</option>
+            <option value="Username">Username</option>
+            <option value="ListName">ListName</option>
+        </select> -->
+        <button type="submit">Project</button> <br>
+    </form>
+    <div id="projectAllergyListResultMsg"></div>
+
+
+    <h3>Filter an Allergy List with Group By Aggregation</h3>
+    <form id="groupByAllergyList">
+        <input type="text" id="groupByAllergyListUserInput" placeholder="Input Group By Element" required> <br><br>
+        <input type="text" id="groupByAllergyListAggregation" placeholder="Input Aggregation Type (Upper Case Only)" required> <br><br>
+        <button type="submit">Group</button> <br>
+    </form>
+    <div id="groupByAllergyListResultMsg"></div>
+
+
+    <!-- <h3>Filter a Allergy List with Group By Aggregation </h3>
+    <form id="groupByAllergyList">
+        <input type="text" id="groupByAllergyListUserInput" placeholder="Input Group By Element" required> <br><br>
+        <input type="text" id="groupByAllergyListAggregation" placeholder="Input Aggregation Type" required> <br><br>
+        Group By Element:
+        <select id="groupByAllergyListUserInput">
+            <option value="IngredientListID">IngredientListID</option>
+            <option value="PrivacyLevel">PrivacyLevel</option>
+            <option value="ListDescription">ListDescription</option>
+            <option value="Username">Username</option>
+            <option value="ListName">ListName</option>
+        </select>
+        Aggregation Type:
+        <select id="groupByAllergyListAggregation">
+            <option value="Min">Min</option>
+            <option value="Max">Max</option>
+            <option value="Average">Average</option>
+            <option value="Count">Count</option>
+        </select>
+        <button type="submit">Group</button> <br>
+    </form>
+    <div id="groupByAllergyListResultMsg"></div> -->
+
+    <!-- <h3>Filter a Allergy List with Having Aggregation </h3>
+    <form id="havingAllergyList">
+        Having Element: 
+        <input type="text" id="" placeholder="" required> <br><br>
+
+        <button type="submit"> Filter </button> <br>
+    </form>
+    <div id="havingAllergyListResultMsg"></div> -->
+
+
     <h3> Show Kitchen Ingredient List</h3>
     <table id="kitcheningredient" border="1">
         <thead>

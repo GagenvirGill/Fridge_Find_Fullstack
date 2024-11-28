@@ -259,7 +259,6 @@ router.post("/insert-allergy-list", async (req, res) => {
      }
  });
 
- // Gives me an error - number TODO
 router.patch("/update-allergy-list", async (req, res) => {
     const { IngredientListID, PrivacyLevel, ListDescription, Username, ListName } = req.body;
     try {
@@ -288,6 +287,48 @@ router.delete("/delete-allergy-list", async (req, res) => {
         res.status(500).json({ success: false, error: error.message });
     }
 });
+
+router.post("/project-allergy-list", async (req, res) => {
+    const { userInput } = req.body;
+
+    if (!userInput) {
+        return res.status(400).json({ error: "User Input is required." });
+    }
+
+    try {
+        const projectedElement = await appService.projectAllergyList(userInput);
+        res.json(projectedElement);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+router.post('/group-allergy-list', async (req, res) => {
+    const { userInputGroupBy, userInputAggregation } = req.body;
+
+    if (!userInputGroupBy || !userInputAggregation) {
+        return res.status(400).json({ error: 'User Input is required.' });
+    }
+
+    const validAggregations = ['MAX', 'MIN', 'AVG', 'SUM'];  // Add more as needed
+    if (!validAggregations.includes(userInputAggregation)) {
+        return res.status(400).json({ error: `Invalid aggregation function` });
+    }
+
+    try {
+        const groupByElement = await appService.groupByAllergyList(userInputGroupBy, userInputAggregation);
+        res.json(groupByElement);
+    } catch (error) {
+        res.status(500).json({ error: 'Error grouping Allergy List.' });
+    }
+});
+
+
+
+
+
+
+
 
 // KitchenIngredient
 // router.get('/kitchen-ingredient', async (req, res) => {
