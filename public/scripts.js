@@ -94,7 +94,7 @@ async function insertUser(event) {
 
         if (responseData.success) {
             messageElement.textContent = 'User inserted successfully!';
-            await fetchAndDisplayUsers();
+            fetchTableData();
         } else {
             messageElement.textContent = 'Error inserting user.';
         }
@@ -134,7 +134,7 @@ async function updateUser(event) {
 
         if (responseData.success) {
             messageElement.textContent = 'User updated successfully!';
-            fetchAndDisplayUsers();
+            fetchTableData();
         } else {
             messageElement.textContent = 'Error updating user.';
         }
@@ -155,13 +155,12 @@ async function deleteUser(event) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ Username: username }),
         });
-
         const responseData = await response.json();
         const messageElement = document.getElementById('deleteUserResultMsg');
 
         if (responseData.success) {
             messageElement.textContent = 'User deleted successfully!';
-            fetchAndDisplayUsers();
+            fetchTableData();
         } else {
             messageElement.textContent = 'Error deleting user.';
         }
@@ -221,96 +220,96 @@ async function fetchAndDisplayUsersWhoAreFriendsWithEveryone() {
     }
 }
 
-async function insertFriend(event) {
-    event.preventDefault();
+// async function insertFriend(event) {
+//     event.preventDefault();
 
-    const username1 = document.getElementById('insertFriendUsername1').value;
-    const username2 = document.getElementById('insertFriendUsername2').value;
+//     const username1 = document.getElementById('insertFriendUsername1').value;
+//     const username2 = document.getElementById('insertFriendUsername2').value;
 
-    if (!username1 || !username2) {
-        alert('Both usernames are required to add a friend!');
-        return;
-    }
+//     if (!username1 || !username2) {
+//         alert('Both usernames are required to add a friend!');
+//         return;
+//     }
 
-    try {
-        const response = await fetch('/insert-friend', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username1, username2 }),
-        });
+//     try {
+//         const response = await fetch('/insert-friend', {
+//             method: 'POST',
+//             headers: { 'Content-Type': 'application/json' },
+//             body: JSON.stringify({ username1, username2 }),
+//         });
 
-        const responseData = await response.json();
-        const messageElement = document.getElementById('insertFriendResultMsg');
+//         const responseData = await response.json();
+//         const messageElement = document.getElementById('insertFriendResultMsg');
 
-        if (responseData.success) {
-            messageElement.textContent = 'Friend added successfully!';
-        } else {
-            messageElement.textContent = 'Error adding friend.';
-        }
-    } catch (error) {
-        console.error('Error inserting friend:', error);
-        alert('Error inserting friend.');
-    }
-}
+//         if (responseData.success) {
+//             messageElement.textContent = 'Friend added successfully!';
+//         } else {
+//             messageElement.textContent = 'Error adding friend.';
+//         }
+//     } catch (error) {
+//         console.error('Error inserting friend:', error);
+//         alert('Error inserting friend.');
+//     }
+// }
 
-async function deleteFriend(event) {
-    event.preventDefault();
+// async function deleteFriend(event) {
+//     event.preventDefault();
 
-    const username1 = document.getElementById('deleteFriendUsername1').value;
-    const username2 = document.getElementById('deleteFriendUsername2').value;
+//     const username1 = document.getElementById('deleteFriendUsername1').value;
+//     const username2 = document.getElementById('deleteFriendUsername2').value;
 
-    if (!username1 || !username2) {
-        alert('Both usernames are required to delete a friend!');
-        return;
-    }
+//     if (!username1 || !username2) {
+//         alert('Both usernames are required to delete a friend!');
+//         return;
+//     }
 
-    try {
-        const response = await fetch('/delete-friend', {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username1, username2 }),
-        });
+//     try {
+//         const response = await fetch('/delete-friend', {
+//             method: 'DELETE',
+//             headers: { 'Content-Type': 'application/json' },
+//             body: JSON.stringify({ username1, username2 }),
+//         });
 
-        const responseData = await response.json();
-        const messageElement = document.getElementById('deleteFriendResultMsg');
+//         const responseData = await response.json();
+//         const messageElement = document.getElementById('deleteFriendResultMsg');
 
-        if (responseData.success) {
-            messageElement.textContent = 'Friend deleted successfully!';
-        } else {
-            messageElement.textContent = 'Error deleting friend.';
-        }
-    } catch (error) {
-        console.error('Error deleting friend:', error);
-        alert('Error deleting friend.');
-    }
-}
+//         if (responseData.success) {
+//             messageElement.textContent = 'Friend deleted successfully!';
+//         } else {
+//             messageElement.textContent = 'Error deleting friend.';
+//         }
+//     } catch (error) {
+//         console.error('Error deleting friend:', error);
+//         alert('Error deleting friend.');
+//     }
+// }
 
-async function areTheyFriends(event) {
-    event.preventDefault();
+// async function areTheyFriends(event) {
+//     event.preventDefault();
 
-    const username1 = document.getElementById('checkFriendsUsername1').value;
-    const username2 = document.getElementById('checkFriendsUsername2').value;
+//     const username1 = document.getElementById('checkFriendsUsername1').value;
+//     const username2 = document.getElementById('checkFriendsUsername2').value;
 
-    if (!username1 || !username2) {
-        alert('Both usernames are required to check friendship!');
-        return;
-    }
+//     if (!username1 || !username2) {
+//         alert('Both usernames are required to check friendship!');
+//         return;
+//     }
 
-    try {
-        const response = await fetch(`/are-they-friends?username1=${username1}&username2=${username2}`, {
-            method: 'GET',
-        });
+//     try {
+//         const response = await fetch(`/are-they-friends?username1=${username1}&username2=${username2}`, {
+//             method: 'GET',
+//         });
 
-        const responseData = await response.json();
-        const messageElement = document.getElementById('checkFriendsResultMsg');
-        messageElement.textContent = responseData.areFriends
-            ? `${username1} and ${username2} are friends.`
-            : `${username1} and ${username2} are not friends.`;
-    } catch (error) {
-        console.error('Error checking friendship:', error);
-        alert('Error checking friendship.');
-    }
-}
+//         const responseData = await response.json();
+//         const messageElement = document.getElementById('checkFriendsResultMsg');
+//         messageElement.textContent = responseData.areFriends
+//             ? `${username1} and ${username2} are friends.`
+//             : `${username1} and ${username2} are not friends.`;
+//     } catch (error) {
+//         console.error('Error checking friendship:', error);
+//         alert('Error checking friendship.');
+//     }
+// }
 
 // ----------------------------------------------------------
 // Recipe Centric methods
@@ -350,7 +349,7 @@ async function fetchAndDisplayRecipes() {
 async function fetchAndDisplaySimpleOrComplicatedRecipes(event) {
     event.preventDefault();
 
-    const difficultySelection = document.getElementById('difficulty');
+    const difficultySelection = document.getElementById('SimpleOrComplicatedRecipesFormSelect');
     const difficultyValue = difficultySelection.value;
     const tableElement = document.getElementById('simpleOrComplicatedRecipesTable');
     const tableBody = tableElement.querySelector('tbody');
@@ -364,8 +363,6 @@ async function fetchAndDisplaySimpleOrComplicatedRecipes(event) {
             Difficulty: difficultyValue
         })
     });
-
-    simpleOrComplicatedRecipesResultMsg
 
     const responseData = await response.json();
     const filteredRecipes = responseData.data;
@@ -1465,9 +1462,10 @@ window.onload = function () {
     document.getElementById('updateUserForm').addEventListener('submit', updateUser);
     document.getElementById('deleteUserForm').addEventListener('submit', deleteUser);
 
-    document.getElementById('insertFriendForm').addEventListener('submit', insertFriend);
-    document.getElementById('deleteFriendForm').addEventListener('submit', deleteFriend);
-    document.getElementById('areTheyFriendsForm').addEventListener('submit', areTheyFriends);
+    // document.getElementById('insertFriendForm').addEventListener('submit', insertFriend);
+    // document.getElementById('deleteFriendForm').addEventListener('submit', deleteFriend);
+    // document.getElementById('areTheyFriendsForm').addEventListener('submit', areTheyFriends);
+    document.getElementById('findWhosFriendsWithEveryoneButton').addEventListener('click', fetchAndDisplayUsersWhoAreFriendsWithEveryone);
 
     // recipe centric
     document.getElementById("insertRecipe").addEventListener("submit", insertRecipe);
@@ -1493,7 +1491,7 @@ window.onload = function () {
     document.getElementById("deleteRecipeList").addEventListener("submit", deleteRecipeList);
     document.getElementById("insertRecipeToRecipeList").addEventListener("submit", insertRecipeToRecipeList);
     document.getElementById("deleteRecipeFromRecipeList").addEventListener("submit", deleteRecipeFromRecipeList);
-    document.getElementById("simpleOrComplicatedRecipes").addEventListener("submit", fetchAndDisplaySimpleOrComplicatedRecipes);
+    document.getElementById("SimpleOrComplicatedRecipesForm").addEventListener("submit", fetchAndDisplaySimpleOrComplicatedRecipes);
 
     // ingredient centric
     document.getElementById("insertAllergicIngredient").addEventListener("submit", insertAllergicIngredient);
@@ -1516,7 +1514,6 @@ function fetchTableData() {
     // User Centric
     fetchAndDisplayUsers();
     fetchAndDisplayPublicUsers();
-    fetchAndDisplayUsersWhoAreFriendsWithEveryone();
 
     // Recipe Centric
     fetchAndDisplayCategories();

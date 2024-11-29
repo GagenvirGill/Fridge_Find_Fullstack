@@ -121,7 +121,7 @@ async function deleteUser(Username) {
             { autoCommit: true }
         );
         console.log('Deleted AppUser Successfully')
-        return result.rowsAffected && result.rowsAffected > 0;;
+        return { success: result.rowsAffected && result.rowsAffected > 0 };
     }).catch((error) => {
         console.error('Database error:', error);
         return false;
@@ -1120,7 +1120,7 @@ async function fetchAllergyListFromDb() {
             const result = await connection.execute('SELECT * FROM AllergyList');
             return result.rows;
         });
-    } catch(error) {
+    } catch (error) {
         console.error('Database error:', error);
         return [];
     }
@@ -1140,7 +1140,7 @@ async function insertAllergyList(IngredientListID, PrivacyLevel, ListDescription
             console.log('Inserted AllergyList Successfully')
             return result.rowsAffected && result.rowsAffected > 0;
         });
-    } catch(error) {
+    } catch (error) {
         console.error('Database error:', error);
         return false;
     }
@@ -1166,7 +1166,7 @@ async function updateAllergyList(IngredientListID, newPrivacyLevel, newListDescr
             console.log('Updated AllergyList Successfully')
             return result.rowsAffected && result.rowsAffected > 0;
         });
-    } catch(error) {
+    } catch (error) {
         console.error('Database error:', error);
         return false;
     };
@@ -1183,7 +1183,7 @@ async function deleteAllergyList(IngredientListID) {
             console.log('Deleted AllergyList Successfully')
             return result.rowsAffected && result.rowsAffected > 0;;
         });
-    } catch(error) {
+    } catch (error) {
         console.error('Database error:', error);
         return false;
     }
@@ -1227,7 +1227,7 @@ async function fetchAllergyListHasAllergicIngredientFromDb() {
             const result = await connection.execute('SELECT * FROM AllergyListHasAllergicIngredient');
             return result.rows;
         });
-    } catch(error) {
+    } catch (error) {
         console.error('Database error:', error);
         return [];
     }
@@ -1394,7 +1394,7 @@ module.exports = {
     insertFriend,
     deleteFriend,
 
-// Recipe Centric
+    // Recipe Centric
     fetchRecipeFromDb,
     fetchSimpleOrComplicatedRecipesFromDb,
     fetchCategoryFromDb,

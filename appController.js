@@ -86,11 +86,11 @@ router.get('/friends-with-everyone', async (req, res) => {
         if (usersWhoAreFriendsWithEveryone.length > 0) {
             res.json({ success: true, data: usersWhoAreFriendsWithEveryone });
         } else {
-            res.status(404).json({ success: false, message: "No users who are friends with everyone found." });
+            res.status(404).json({ success: false, message: "No users who are friends with everyone found.", data: [] });
         }
     } catch (error) {
         console.error('Error fetching users who are friends with everyone:', error);
-        res.status(500).json({ success: false, message: "Error fetching users who are friends with everyone." });
+        res.status(500).json({ success: false, message: "Error fetching users who are friends with everyone.", data: [] });
     }
 });
 
@@ -470,16 +470,16 @@ router.get('/allergy-list', async (req, res) => {
 router.post("/insert-allergy-list", async (req, res) => {
     const { IngredientListID, PrivacyLevel, ListDescription, Username, ListName } = req.body;
     try {
-         const insertResult = await appService.insertAllergyList(IngredientListID, PrivacyLevel, ListDescription, Username, ListName);
-         if (insertResult) {
-             res.json({ success: true });
-         } else {
-             res.status(500).json({ success: false });
-         }
-     } catch (error) { 
-         res.status(500).json({ success: false, error: error.message });
-     }
- });
+        const insertResult = await appService.insertAllergyList(IngredientListID, PrivacyLevel, ListDescription, Username, ListName);
+        if (insertResult) {
+            res.json({ success: true });
+        } else {
+            res.status(500).json({ success: false });
+        }
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
 
 router.patch("/update-allergy-list", async (req, res) => {
     const { IngredientListID, PrivacyLevel, ListDescription, Username, ListName } = req.body;
@@ -544,8 +544,8 @@ router.get('/count-privacy', async (req, res) => {
 
 router.get('/having-allergy-list', async (req, res) => {
     try {
-        const havingCounts = await appService.havingAllergyList();  
-        
+        const havingCounts = await appService.havingAllergyList();
+
         if (havingCounts) {
             res.json({ success: true, data: havingCounts });
         } else {
@@ -562,6 +562,7 @@ router.get('/having-allergy-list', async (req, res) => {
 // General endpoints
 
 router.post("/initiate-tables", async (req, res) => {
+    console.log('a');
     const initiateResult = await appService.initiateTables();
     if (initiateResult) {
         res.json({ success: true });

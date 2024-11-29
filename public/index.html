@@ -105,7 +105,8 @@
     </tbody>
 </table>
 
-<h3>Show Users Who Are Friends with Everyone</h3>
+<h3>Find Users Who Are Friends with Everyone</h3>
+<button id="findWhosFriendsWithEveryoneButton"> Search </button> <br>
 <table id="fetchUsersWhoAreFriendsWithEveryone" border="1">
     <thead>
     <tr>
@@ -127,7 +128,7 @@
     </thead>
     <tbody>
     </tbody>
-</table> -->
+</table>
 
 <h3>Insert Friend</h3>
 <form id="insertFriendForm">
@@ -169,7 +170,7 @@
 <h3>Show Notifications for Expiring Ingredients</h3>
 <div>
     Username: <input type="text" id="showUsersNotifications" placeholder="Enter Username" required maxlength="50">
-    <!-- <button onclick="fetchAndDisplayNotifications()">Show Notifications</button> -->
+    --><!-- <button onclick="fetchAndDisplayNotifications()">Show Notifications</button> --><!--
     <button> Show Notifications (WIP)</button>
 </div>
 <br>
@@ -201,7 +202,7 @@
         </thead>
         <tbody id="notificationDetailsBody"></tbody>
     </table>
-</div>
+</div> -->
 
 
 <br><hr><br> <!-- ========================================================================= -->
@@ -222,12 +223,13 @@
     </tbody>
 </table>
 
-    <h3> Create a new Allergic Ingredient </h3>
-    <form id="insertAllergicIngredient">
-        Ingredient ID: <input type="number" id="insertAllergicIngredientID" placeholder="Enter Allergic Ingredient ID" required> <br><br>
-        Ingredient Name: <input type="text" id="insertAllergicIngredientName" placeholder="Enter Allergic Ingredient Name" maxlength="50"> <br><br>
-        </select> <br><br>
-
+<h3>Get All Simple/Complicated Recipes</h3>
+<form id="SimpleOrComplicatedRecipesForm">
+    <select id="SimpleOrComplicatedRecipesFormSelect">
+        <option value="Simple">Simple</option>
+        <option value="Complicated">Complicated</option>
+    </select> <br>
+    
     <button type="submit"> Get Simple/Complicated Recipes </button> <br>
 </form>
 <div id="simpleOrComplicatedRecipesResultMsg"></div>
