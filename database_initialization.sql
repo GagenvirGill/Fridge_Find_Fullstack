@@ -181,6 +181,23 @@ INSERT INTO Friends (Username1, Username2, DateAndTimeCreated) VALUES ('Alice', 
 INSERT INTO Friends (Username1, Username2, DateAndTimeCreated) VALUES ('Charlie', 'Jason', TIMESTAMP '2022-01-16 11:30:00');
 INSERT INTO Friends (Username1, Username2, DateAndTimeCreated) VALUES ('Bob', 'Kevin', TIMESTAMP '2023-01-17 12:15:00');
 INSERT INTO Friends (Username1, Username2, DateAndTimeCreated) VALUES ('Kevin', 'Jason', TIMESTAMP '2020-01-18 13:45:00');
+INSERT INTO Friends (Username1, Username2, DateAndTimeCreated) VALUES ('Ricky', 'Alice', TIMESTAMP '2024-11-29 08:23:45');
+INSERT INTO Friends (Username1, Username2, DateAndTimeCreated) VALUES ('Ricky', 'Charlie', TIMESTAMP '2024-11-29 14:12:10');
+INSERT INTO Friends (Username1, Username2, DateAndTimeCreated) VALUES ('Ricky', 'Bob', TIMESTAMP '2024-11-29 09:35:22');
+INSERT INTO Friends (Username1, Username2, DateAndTimeCreated) VALUES ('Ricky', 'Kevin', TIMESTAMP '2024-11-29 17:08:55');
+INSERT INTO Friends (Username1, Username2, DateAndTimeCreated) VALUES ('Ricky', 'Jason', TIMESTAMP '2024-11-29 11:42:33');
+INSERT INTO Friends (Username1, Username2, DateAndTimeCreated) VALUES ('Ricky', 'Sam', TIMESTAMP '2024-11-29 10:01:17');
+INSERT INTO Friends (Username1, Username2, DateAndTimeCreated) VALUES ('Ricky', 'Leo', TIMESTAMP '2024-11-29 15:50:47');
+INSERT INTO Friends (Username1, Username2, DateAndTimeCreated) VALUES ('Ricky', 'Tony', TIMESTAMP '2024-11-29 16:24:58');
+INSERT INTO Friends (Username1, Username2, DateAndTimeCreated) VALUES ('Ricky', 'Max', TIMESTAMP '2024-11-29 13:09:12');
+INSERT INTO Friends (Username1, Username2, DateAndTimeCreated) VALUES ('Max', 'Alice', TIMESTAMP '2024-11-29 07:15:32');
+INSERT INTO Friends (Username1, Username2, DateAndTimeCreated) VALUES ('Max', 'Charlie', TIMESTAMP '2024-11-29 12:50:23');
+INSERT INTO Friends (Username1, Username2, DateAndTimeCreated) VALUES ('Max', 'Bob', TIMESTAMP '2024-11-29 10:05:11');
+INSERT INTO Friends (Username1, Username2, DateAndTimeCreated) VALUES ('Max', 'Kevin', TIMESTAMP '2024-11-29 16:30:44');
+INSERT INTO Friends (Username1, Username2, DateAndTimeCreated) VALUES ('Max', 'Jason', TIMESTAMP '2024-11-29 09:22:58');
+INSERT INTO Friends (Username1, Username2, DateAndTimeCreated) VALUES ('Max', 'Sam', TIMESTAMP '2024-11-29 11:40:33');
+INSERT INTO Friends (Username1, Username2, DateAndTimeCreated) VALUES ('Max', 'Leo', TIMESTAMP '2024-11-29 14:00:09');
+INSERT INTO Friends (Username1, Username2, DateAndTimeCreated) VALUES ('Max', 'Tony', TIMESTAMP '2024-11-29 15:53:27');
 
 INSERT INTO NotificationMessage (Username, DateAndTimeSent, MessageText) VALUES ('Alice', TIMESTAMP '2024-05-19 10:00:03', 'Your potatoes expire in 7 days');
 INSERT INTO NotificationMessage (Username, DateAndTimeSent, MessageText) VALUES ('Alice', TIMESTAMP '2024-05-19 10:00:04', 'Your lettuce expire in 7 days');
@@ -203,6 +220,12 @@ INSERT INTO AllergyList (IngredientListID, PrivacyLevel, ListDescription, Userna
 INSERT INTO AllergyList (IngredientListID, PrivacyLevel, ListDescription, Username, ListName) VALUES (8, 'Public', 'Childbirth Allergies', 'Tony', 'Tony Allergies');
 INSERT INTO AllergyList (IngredientListID, PrivacyLevel, ListDescription, Username, ListName) VALUES (9, 'Private', 'Childbirth Allergies', 'Max', 'Max Allergies');
 INSERT INTO AllergyList (IngredientListID, PrivacyLevel, ListDescription, Username, ListName) VALUES (10, 'Friends Only', 'Childbirth Allergies', 'Ricky', 'Ricky Allergies');
+INSERT INTO AllergyList (IngredientListID, PrivacyLevel, ListDescription, Username, ListName) VALUES (11, 'Private', 'Partners Allergies', 'Tony', 'Tonys Partners Allergies');
+INSERT INTO AllergyList (IngredientListID, PrivacyLevel, ListDescription, Username, ListName) VALUES (12, 'Private', 'Sons Allergies', 'Tony', 'Tonys Sons Allergies');
+INSERT INTO AllergyList (IngredientListID, PrivacyLevel, ListDescription, Username, ListName) VALUES (13, 'Private', 'Daughters Allergies', 'Tony', 'Tonys Daughters Allergies');
+INSERT INTO AllergyList (IngredientListID, PrivacyLevel, ListDescription, Username, ListName) VALUES (14, 'Public', 'Partners Allergies', 'Charlie', 'Charlies Partners Allergies');
+INSERT INTO AllergyList (IngredientListID, PrivacyLevel, ListDescription, Username, ListName) VALUES (15, 'Public', 'Sons Allergies', 'Charlie', 'Charlies Sons Allergies');
+INSERT INTO AllergyList (IngredientListID, PrivacyLevel, ListDescription, Username, ListName) VALUES (16, 'Public', 'Daughters Allergies', 'Charlie', 'Charlies Daughters Allergies');
 
 INSERT INTO AllergicIngredient (IngredientID, IngredientName) VALUES (1, 'Peanuts');
 INSERT INTO AllergicIngredient (IngredientID, IngredientName) VALUES (2, 'Shellfish');
@@ -217,6 +240,17 @@ INSERT INTO AllergyListHasAllergicIngredient (IngredientListID, IngredientID, Se
 INSERT INTO AllergyListHasAllergicIngredient (IngredientListID, IngredientID, Severity) VALUES (3, 4, 8);
 INSERT INTO AllergyListHasAllergicIngredient (IngredientListID, IngredientID, Severity) VALUES (3, 5, 1);
 INSERT INTO AllergyListHasAllergicIngredient (IngredientListID, IngredientID, Severity) VALUES (3, 2, 10);
+INSERT INTO AllergyListHasAllergicIngredient (IngredientListID, IngredientID, Severity) VALUES (11, 1, 10);
+INSERT INTO AllergyListHasAllergicIngredient (IngredientListID, IngredientID, Severity) VALUES (12, 2, 10);
+INSERT INTO AllergyListHasAllergicIngredient (IngredientListID, IngredientID, Severity) VALUES (13, 3, 10);
+INSERT INTO AllergyListHasAllergicIngredient (IngredientListID, IngredientID, Severity) VALUES (14, 4, 10);
+INSERT INTO AllergyListHasAllergicIngredient (IngredientListID, IngredientID, Severity) VALUES (15, 5, 10);
+INSERT INTO AllergyListHasAllergicIngredient (IngredientListID, IngredientID, Severity) VALUES (16, 1, 10);
+INSERT INTO AllergyListHasAllergicIngredient (IngredientListID, IngredientID, Severity) VALUES (16, 2, 10);
+INSERT INTO AllergyListHasAllergicIngredient (IngredientListID, IngredientID, Severity) VALUES (16, 3, 10);
+INSERT INTO AllergyListHasAllergicIngredient (IngredientListID, IngredientID, Severity) VALUES (16, 4, 10);
+INSERT INTO AllergyListHasAllergicIngredient (IngredientListID, IngredientID, Severity) VALUES (16, 5, 10);
+
 
 INSERT INTO KitchenInventory (IngredientListID, PrivacyLevel, ExpiryDateThreshold, Username, DateAndTimeLastUpdated, ListName) VALUES (6, 'Private', 5, 'Charlie', TIMESTAMP '2024-09-09 11:02:03', 'Charlies First House');
 INSERT INTO KitchenInventory (IngredientListID, PrivacyLevel, ExpiryDateThreshold, Username, DateAndTimeLastUpdated, ListName) VALUES (7, 'Private', 2, 'Charlie', TIMESTAMP '2024-09-09 01:05:03', 'Charlies Second House');

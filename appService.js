@@ -344,6 +344,7 @@ async function fetchRecipesByCategoryFromDb(Categories) {
             JOIN RecipeHasCategory rhc ON r.RecipeID = rhc.RecipeID
             WHERE rhc.CategoryName IN (${formattedValues})
         `;
+
         const result = await connection.execute(query, bindVariables);
         console.log('Fetched Filtered Recipes Successfully');
         return { success: true, data: result.rows };
@@ -1204,8 +1205,6 @@ async function fetchAllergyListByProjectFromDb(userInput) {
             return { success: true, data: [] };
         }
 
-        console.log("Query Result:", result.rows);
-
         const formattedData = result.rows.map(row =>
             Object.fromEntries(result.metaData.map((col, i) => [col.name, row[i]]))
         );
@@ -1229,6 +1228,38 @@ async function fetchAllergyListHasAllergicIngredientFromDb() {
         console.error('Database error:', error);
         return [];
     }
+}
+
+async function fetchAllergyListPrivacyLevelCounts() {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute('SELECT PrivacyLevel, COUNT(*) AS PrivacyLevelCount FROM AllergyList GROUP BY PrivacyLevel');
+
+        console.log('Fetched Allergy List Privacy Levels Successfully');
+        console.log(result.rows);
+        return { success: true, data: result.rows };
+    }).catch((error) => {
+        console.error('Database error:', error);
+        return { success: false, data: [] };
+    });
+}
+
+async function fetchNumAllergiesPerUserHaving() {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(`
+            SELECT al.Username, COUNT(DISTINCT alhai.IngredientID) AS NumberOfAllergies 
+            FROM AllergyList al 
+            JOIN AllergyListHasAllergicIngredient alhai ON al.IngredientListID = alhai.IngredientListID
+            GROUP BY al.Username
+            HAVING COUNT(DISTINCT alhai.IngredientID) > 0`
+        );
+
+        console.log('Fetched Num Allergies Per User > 1');
+        console.log(result.rows);
+        return { success: true, data: result.rows };
+    }).catch((error) => {
+        console.error('Database error:', error);
+        return { success: false, data: [] };
+    });
 }
 
 // ----------------------------------------------------------
@@ -1433,6 +1464,8 @@ module.exports = {
     deleteAllergyList,
     fetchAllergyListByProjectFromDb,
     fetchAllergyListHasAllergicIngredientFromDb,
+    fetchAllergyListPrivacyLevelCounts,
+    fetchNumAllergiesPerUserHaving,
 
     // General
     validateUsername,

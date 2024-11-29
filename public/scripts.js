@@ -1204,27 +1204,27 @@ async function deleteAllergicIngredient(event) {
 
 // AllergyList
 async function fetchAndDisplayAllergyList() {
-    // const response = await fetch('/allergy-list', {
-    //     method: 'GET'
-    // });
+    const response = await fetch('/allergy-list', {
+        method: 'GET'
+    });
 
-    // const responseData = await response.json();
-    // const allergyListContent = responseData.data;
+    const responseData = await response.json();
+    const allergyListContent = responseData.data;
 
-    // const tableElement = document.getElementById('allergylist'); // from index.html tag
-    // const tableBody = tableElement.querySelector('tbody');
+    const tableElement = document.getElementById('allergylist'); // from index.html tag
+    const tableBody = tableElement.querySelector('tbody');
 
-    // if (tableBody) {
-    //     tableBody.innerHTML = '';
-    // }
+    if (tableBody) {
+        tableBody.innerHTML = '';
+    }
 
-    // allergyListContent.forEach(allergylist => {
-    //     const row = tableBody.insertRow();
-    //     allergylist.forEach((field, index) => {
-    //         const cell = row.insertCell(index);
-    //         cell.textContent = field;
-    //     });
-    // });
+    allergyListContent.forEach(allergylist => {
+        const row = tableBody.insertRow();
+        allergylist.forEach((field, index) => {
+            const cell = row.insertCell(index);
+            cell.textContent = field;
+        });
+    });
 }
 
 // IngredientListID, PrivacyLevel, ListDescription, Username, ListName
@@ -1328,81 +1328,157 @@ async function deleteAllergyList(event) {
 async function projectAllergyList(event) {
     event.preventDefault();
 
-    // const userInputSelectBar = document.getElementById('projectAllergyList');
-    // const tableElement = document.getElementById('projectAllergyListTable');
-    // const tableHead = tableElement.querySelector('thead');
-    // const tableBody = tableElement.querySelector('tbody');
-    // const messageElement = document.getElementById('projectAllergyListResultMsg');
+    const userInputSelectBar = document.getElementById('projectAllergyListSelectBar');
+    const tableElement = document.getElementById('projectAllergyListTable');
+    const tableHead = tableElement.querySelector('thead');
+    const tableBody = tableElement.querySelector('tbody');
+    const messageElement = document.getElementById('projectAllergyListResultMsg');
 
-    // const selectedCategories = Array.from(userInputSelectBar.selectedOptions).map(option => `"${option.value}"`);
+    const selectedCategories = Array.from(userInputSelectBar.selectedOptions).map(option => `"${option.value}"`);
 
-    // // case where user didn't select no column and click submit.
-    // if (selectedCategories.length === 0) {
-    //     messageElement.textContent = "No columns selected for projection.";
-    //     tableHead.innerHTML = '';
-    //     tableBody.innerHTML = '';
-    //     return;
-    // }
+    // case where user didn't select no column and click submit.
+    if (selectedCategories.length === 0) {
+        messageElement.textContent = "No columns selected for projection.";
+        tableHead.innerHTML = '';
+        tableBody.innerHTML = '';
+        return;
+    }
 
-    // try {
-    //     const response = await fetch('/project-allergy-list', {
-    //         method: 'POST',
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //         },
-    //         body: JSON.stringify({
-    //             userInput: selectedCategories,
-    //         }),
-    //     });
+    try {
+        const response = await fetch('/project-allergy-list', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                userInput: selectedCategories,
+            }),
+        });
 
-    //     const responseData = await response.json();
-    //     const projectedAllergyList = responseData.data;
+        const responseData = await response.json();
+        const projectedAllergyList = responseData.data;
 
-    //     tableHead.innerHTML = '';
-    //     tableBody.innerHTML = '';
+        tableHead.innerHTML = '';
+        tableBody.innerHTML = '';
 
-    //     if (response.ok && projectedAllergyList && projectedAllergyList.length > 0) {
-    //         messageElement.textContent = "AllergyList projected successfully!";
+        if (response.ok && projectedAllergyList && projectedAllergyList.length > 0) {
+            messageElement.textContent = "AllergyList Columns changed successfully!";
 
-    //         const headerRow = document.createElement('tr');
-    //         selectedCategories.forEach(category => {
-    //             const th = document.createElement('th');
-    //             th.textContent = category;
-    //             headerRow.appendChild(th);
-    //         });
-    //         tableHead.appendChild(headerRow);
+            const headerRow = document.createElement('tr');
+            selectedCategories.forEach(category => {
+                const th = document.createElement('th');
+                th.textContent = category;
+                headerRow.appendChild(th);
+            });
+            tableHead.appendChild(headerRow);
 
-    //         projectedAllergyList.forEach(row => {
-    //             const tableRow = document.createElement('tr');
-    //             selectedCategories.forEach(category => {
-    //                 const cleanedCategory = category.replace(/"/g, "").toUpperCase();
-    //                 const td = document.createElement("td");
+            projectedAllergyList.forEach(row => {
+                const tableRow = document.createElement('tr');
+                selectedCategories.forEach(category => {
+                    const cleanedCategory = category.replace(/"/g, "").toUpperCase();
+                    const td = document.createElement("td");
 
-    //                 if (row.hasOwnProperty(cleanedCategory)) {
-    //                     td.textContent = row[cleanedCategory];
-    //                 } else {
-    //                     console.warn(`Key "${cleanedCategory}" not found in row:`, row);
-    //                     td.textContent = "N/A";
-    //                 }
+                    if (row.hasOwnProperty(cleanedCategory)) {
+                        td.textContent = row[cleanedCategory];
+                    } else {
+                        console.warn(`Key "${cleanedCategory}" not found in row:`, row);
+                        td.textContent = "N/A";
+                    }
 
-    //                 tableRow.appendChild(td);
-    //             });
-    //             tableBody.appendChild(tableRow);
-    //         });
+                    tableRow.appendChild(td);
+                });
+                tableBody.appendChild(tableRow);
+            });
 
-    //         console.log("Projected Allergy List:", projectedAllergyList);
-    //         console.log("Selected Categories:", selectedCategories);
-    //         fetchTableData();
+            console.log("Projected Allergy List:", projectedAllergyList);
+            console.log("Selected Categories:", selectedCategories);
+            fetchTableData();
 
-    //     } else if (response.ok && (!projectedAllergyList || projectedAllergyList.length === 0)) {
-    //         messageElement.textContent = `No AllergyList found for the selected columns.`;
-    //     } else {
-    //         messageElement.textContent = `Error: ${responseData.error}`;
-    //     }
-    // } catch (error) {
-    //     console.error('Error fetching projection:', error);
-    //     messageElement.textContent = `Unexpected error: ${error.message}`;
-    // }
+        } else if (response.ok && (!projectedAllergyList || projectedAllergyList.length === 0)) {
+            messageElement.textContent = `No AllergyList found for the selected columns.`;
+        } else {
+            messageElement.textContent = `Error: ${responseData.error}`;
+        }
+    } catch (error) {
+        console.error('Error fetching projection:', error);
+        messageElement.textContent = `Unexpected error: ${error.message}`;
+    }
+}
+
+async function fetchAndDisplayAllergyListPrivacyLevels(event) {
+    event.preventDefault();
+
+    const response = await fetch('/allergy-list-group-by-privacy', {
+        method: 'GET'
+    });
+
+    const responseData = await response.json();
+    const tableValues = responseData.data;
+
+    const tableElement = document.getElementById('fetchGroupByAllergyList');
+    const tableBody = tableElement.querySelector('tbody');
+    const tableHead = tableElement.querySelector('thead');
+    const messageElement = document.getElementById('groupByAllergyListResultMsg');
+
+    if (tableHead) {
+        tableHead.innerHTML = '';
+    }
+
+    if (tableBody) {
+        tableBody.innerHTML = '';
+    }
+
+    if (responseData.success) {
+        messageElement.textContent = `Successfully Counted and retreived all Allergy List Privacy Level values`;
+    } else {
+        messageElement.textContent = `An unexpected error occured while counting all Allergy List Privacy Level values`;
+    }
+
+    tableValues.forEach(valuePair => {
+        const row = tableBody.insertRow();
+        valuePair.forEach((field, index) => {
+            const cell = row.insertCell(index);
+            cell.textContent = field;
+        });
+    });
+}
+
+async function fetchAndDisplayNumAllergiesPerUser(event) {
+    event.preventDefault();
+
+    const response = await fetch('/num-allergies-per-user-having', {
+        method: 'GET'
+    });
+
+    const responseData = await response.json();
+    const tableValues = responseData.data;
+
+    const tableElement = document.getElementById('fetchHavingAllergyList');
+    const tableBody = tableElement.querySelector('tbody');
+    const tableHead = tableElement.querySelector('thead');
+    const messageElement = document.getElementById('havingAllergyListResultMsg');
+
+    if (tableHead) {
+        tableHead.innerHTML = '';
+    }
+
+    if (tableBody) {
+        tableBody.innerHTML = '';
+    }
+
+    if (responseData.success) {
+        messageElement.textContent = `Successfully Counted and retreived the Number of Allergies for each User that has one`;
+    } else {
+        messageElement.textContent = `An unexpected error occured while counting the number of allergies for each user`;
+    }
+
+    tableValues.forEach(valuePair => {
+        const row = tableBody.insertRow();
+        valuePair.forEach((field, index) => {
+            const cell = row.insertCell(index);
+            cell.textContent = field;
+        });
+    });
 }
 
 // AllergyListHasAllergicIngredient
@@ -1484,7 +1560,7 @@ window.onload = function () {
     document.getElementById("deleteCategory").addEventListener("submit", deleteCategory);
     document.getElementById("insertRecipeToCategory").addEventListener("submit", insertRecipeIntoCategory);
     document.getElementById("deleteRecipeFromCategory").addEventListener("submit", deleteRecipeFromCategory);
-    document.getElementById("filterRecipesForm").addEventListener("submit", fetchAndDisplayFilteredRecipes);
+    //document.getElementById("filterRecipesForm").addEventListener("submit", fetchAndDisplayFilteredRecipes);
     document.getElementById("filterByRecipeListForm").addEventListener("submit", fetchAndDisplayRecipesByRecipeList);
     document.getElementById("insertRecipeList").addEventListener("submit", insertRecipeList);
     document.getElementById("updateRecipeList").addEventListener("submit", updateRecipeList);
@@ -1502,10 +1578,23 @@ window.onload = function () {
     // document.getElementById("updateAllergyList").addEventListener("submit", updateAllergyList);
     // document.getElementById("deleteAllergyList").addEventListener("submit", deleteAllergyList);
 
-    // document.getElementById("projectAllergyListForm").addEventListener("submit", projectAllergyList);
-
+    document.getElementById("projectAllergyListForm").addEventListener("submit", projectAllergyList);
+    document.getElementById("groupByAllergyListForm").addEventListener("submit", fetchAndDisplayAllergyListPrivacyLevels);
+    document.getElementById("havingAllergyListForm").addEventListener("submit", fetchAndDisplayNumAllergiesPerUser);
     // general
     document.getElementById("resetTables").addEventListener("click", resetTables);
+    document.querySelectorAll('.toggle-header').forEach(header => {
+        header.addEventListener('click', () => {
+            const collapsible = header.nextElementSibling;
+            if (collapsible && collapsible.classList.contains('collapsible')) {
+                if (collapsible.style.display === 'block') {
+                    collapsible.style.display = 'none';
+                } else {
+                    collapsible.style.display = 'block';
+                }
+            }
+        });
+    });
 };
 
 // General function to refresh the displayed table data.
@@ -1522,6 +1611,6 @@ function fetchTableData() {
 
     // Ingredient Centric
     // fetchAndDisplayAllergicIngredient();
-    // fetchAndDisplayAllergyList();
+    fetchAndDisplayAllergyList();
     // fetchAndDisplayAllergyListHasAllergicIngredient();
 }

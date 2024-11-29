@@ -557,6 +557,16 @@ router.get('/having-allergy-list', async (req, res) => {
     }
 });
 
+router.get('/allergy-list-group-by-privacy', async (req, res) => {
+    const returnValue = await appService.fetchAllergyListPrivacyLevelCounts();
+    res.json(returnValue);
+});
+
+router.get('/num-allergies-per-user-having', async (req, res) => {
+    const returnValue = await appService.fetchNumAllergiesPerUserHaving();
+    res.json(returnValue);
+});
+
 
 // ----------------------------------------------------------
 // General endpoints

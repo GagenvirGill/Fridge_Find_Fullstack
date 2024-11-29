@@ -23,7 +23,8 @@ table {
     border-radius: 5px;
 }
 
-th, td {
+th,
+td {
     padding: 12px 15px;
     border-bottom: 1px solid #ddd;
 }
@@ -63,7 +64,8 @@ button:active {
 }
 
 /* INPUT STYLES */
-input, textarea {
+input,
+textarea {
     width: 100%;
     padding: 10px 15px;
     font-size: 16px;
@@ -75,7 +77,8 @@ input, textarea {
     margin-bottom: 10px;
 }
 
-input::placeholder, textarea::placeholder {
+input::placeholder,
+textarea::placeholder {
     color: #aaa;
 }
 
@@ -83,4 +86,19 @@ input::placeholder, textarea::placeholder {
 .loading-gif {
     height: 1em;
     vertical-align: middle;
+}
+
+.collapsible {
+    display: none;
+}
+
+.toggle-header {
+    cursor: pointer;
+    background-color: #f9f9f9;
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+.toggle-header:hover {
+    background-color: #e0e0e0;
 }
