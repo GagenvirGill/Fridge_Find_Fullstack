@@ -1390,9 +1390,9 @@ module.exports = {
     updateUser,
     viewUsersWithPublicPrivacy,
     viewUsersWhoAreFriendsWithEveryone,
-    areTheyFriends,
-    insertFriend,
-    deleteFriend,
+    // areTheyFriends,
+    // insertFriend,
+    // deleteFriend,
 
     // Recipe Centric
     fetchRecipeFromDb,

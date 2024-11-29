@@ -417,7 +417,7 @@ async function fetchAndDisplayFilteredRecipes(event) {
     const categoriesSelectBar = document.getElementById('filterRecipesCategories');
     const tableElement = document.getElementById('filteredRecipeTable');
     const tableBody = tableElement.querySelector('tbody');
-    const selectedCategories = Array.from(userInputSelectBar.selectedOptions).map(option => option.value.toUpperCase());
+    const selectedCategories = Array.from(categoriesSelectBar.selectedOptions).map(option => option.value.toUpperCase());
 
     const response = await fetch('/filtered-recipes-by-category', {
         method: 'POST',
@@ -1519,7 +1519,6 @@ function fetchTableData() {
     fetchAndDisplayCategories();
     fetchAndDisplayRecipeLists();
     fetchAndDisplayRecipes();
-    fetchAndDisplayFilteredRecipes();
 
     // Ingredient Centric
     fetchAndDisplayAllergicIngredient();

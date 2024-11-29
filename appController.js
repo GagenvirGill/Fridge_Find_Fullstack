@@ -252,7 +252,6 @@ router.get('/all-recipes', async (req, res) => {
 router.post('/simple-or-complicated-recipes', async (req, res) => {
     const { Difficulty } = req.body;
     const returnValue = await appService.fetchSimpleOrComplicatedRecipesFromDb(Difficulty);
-    console.log(returnValue);
     res.json(returnValue);
 });
 
