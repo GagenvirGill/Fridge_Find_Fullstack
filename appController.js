@@ -320,6 +320,51 @@ router.get('/count-privacy', async (req, res) => {
     }
 });
 
+router.get('/having-allergy-list', async (req, res) => {
+    // try {
+    //     const privacyLevelCounts = await appService.countPrivacyLevels();
+
+    //     if (privacyLevelCounts && privacyLevelCounts.length > 0) {
+    //         res.json({ success: true, data: privacyLevelCounts });
+    //     } else {
+    //         res.status(404).json({ success: false, message: "No privacy level counts found." });
+    //     }
+    // } catch (error) {
+    //     console.error('Error fetching privacy level counts:', error);
+    //     res.status(500).json({ success: false, message: "Error fetching privacy level counts." });
+    // }
+    try {
+        console.log("hi")
+        const havingCounts = await appService.havingAllergyList();  
+        
+        if (havingCounts) {
+            res.json({ success: true, data: havingCounts });
+        } else {
+            res.status(404).json({ success: false, message: "No data found for the query." });
+        }
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        res.status(500).json({ success: false, message: "Error fetching data from the database." });
+    }
+});
+
+
+
+// router.get('/having-allergy-list', async (req, res) => {
+//     try {
+//         const havingCounts = await appService.havingKevin();
+
+//         if (havingCounts && havingCounts.length > 0) {
+//             res.json({ success: true, data: havingCounts });
+//         } else {
+//             res.status(404).json({ success: false, message: "Having query Success." });
+//         }
+//     } catch (error) {
+//         console.error('Error fetching Kevin:', error);
+//         res.status(500).json({ success: false, message: "Error fetching having query." });
+//     }
+// });
+
 
 // ----------------------------------------------------------
 // General endpoints

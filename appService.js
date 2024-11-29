@@ -1038,19 +1038,51 @@ async function fetchAllergyListByProjectFromDb(userInput) {
 
 async function countPrivacyLevels() {
     try {
-        console.log("countPrivacyLevels")
         return await withOracleDB(async (connection) => {
             const result = await connection.execute(
                 'SELECT PrivacyLevel, COUNT(*) as PrivacyLevelCount FROM AllergyList GROUP BY PrivacyLevel',
                 []
             );
-            return result.rows; // Return the rows containing the counts
+            return result.rows; 
         });
     } catch (error) {
         console.error('Database error:', error);
-        throw error; // Let the route handler manage the error
+        throw error; 
     }
 }
+
+async function havingAllergyList() {
+    try {
+        return await withOracleDB(async (connection) => {
+            
+            const result = await connection.execute(
+                'SELECT Username, COUNT(IngredientListID) AS TotalLists FROM AllergyList GROUP BY Username HAVING COUNT(IngredientListID) > 0',
+                // 'SELECT PrivacyLevel, COUNT(*) as PrivacyLevelCount FROM AllergyList GROUP BY PrivacyLevel',
+                []
+            );
+            return result.rows; 
+        });
+    } catch (error) {
+        console.error('Database error:', error);
+        throw error; 
+    }
+}
+
+
+// async function havingAllergyList() {
+//     try {
+//         return await withOracleDB(async (connection) => {
+//             const result = await connection.execute(
+//                 'SELECT Username, COUNT(IngredientListID) AS TotalLists FROM AllergyList GROUP BY Username HAVING COUNT(IngredientListID) > 2;',
+//                 []
+//             );
+//             return result.rows; 
+//         });
+//     } catch (error) {
+//         console.error('Database error:', error);
+//         throw error; 
+//     }
+// }
 
 
 
@@ -1250,6 +1282,7 @@ module.exports = {
     deleteAllergyList,
     fetchAllergyListByProjectFromDb,
     countPrivacyLevels,
+    havingAllergyList,
 
 
     // General
