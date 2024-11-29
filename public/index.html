@@ -498,49 +498,9 @@
     </form>
     <div id="deleteAllergyListResultMsg"></div>
 
-    <!-- <h3>Project Allergy List Element</h3>
-    <form id="projectAllergyList">
-        Projection Element: 
-        <input type="text" id="projectAllergyListUserInput" placeholder="Enter Projection Element" required> <br><br>
-        <select id="groupByAllergyListUserInput">
-            <option value="IngredientListID">IngredientListID</option>
-            <option value="PrivacyLevel">PrivacyLevel</option>
-            <option value="ListDescription">ListDescription</option>
-            <option value="Username">Username</option>
-            <option value="ListName">ListName</option>
-        </select>
-        <button type="submit">Project</button> <br>
-    </form>
-    <div id="projectAllergyListResultMsg"></div> -->
-
-    <h3>Project Allergy List Element</h3>
-    <form id="projectAllergyListForm">
-        <label for="projectAllergyList">Filter the Recipes by the following Categories (Hold shift to select multiple):</label><br><br>
-        <select name="projectAllergyList" id="projectAllergyList" multiple>
-            <option value="IngredientListID">IngredientListID</option>
-            <option value="PrivacyLevel">PrivacyLevel</option>
-            <option value="ListDescription">ListDescription</option>
-            <option value="Username">Username</option>
-            <option value="ListName">ListName</option>
-        </select>
-        <br><br>
-        <div id="projectAllergyListResultMsg"></div>
-        <br><br>
-        <button type="submit">Filter</button>
-    </form>
-    <table id="projectAllergyListTable" border="1">
-        <thead>
-            <!-- Dynamic headers will be injected here -->
-        </thead>
-        <tbody>
-            <!-- Dynamic rows will be injected here -->
-        </tbody>
-    </table>
-
-
     <h3>Group AllergyList </h3>
     <form id="privacyCountAllergyListForm">
-        <label for="projectAllergyList">Count the number of Privacy Levels in AllergyList:</label><br><br>
+        <label for="projectAllergyList">Count the Number of Privacy Levels in AllergyList:</label><br><br>
         <div id="projectAllergyListResultMsg"></div>
         <br><br>
         <button type="button">Count</button> <!-- Changed type to 'button' -->
@@ -559,7 +519,7 @@
 
     <h3>Having Allergy List</h3>
     <form id="havingAllergyListForm">
-        <label for="havingAllergyListLabel">Get Usernames Having More Than 2 Ingredient Lists:</label><br><br>
+        <label for="havingAllergyListLabel">Get Usernames Having at least 1 Allergy Lists:</label><br><br>
         <div id="havingAllergyListResultMsg"></div>
         <br><br>
         <button type="button" id="havingAllergyListButton">Count</button>
@@ -575,26 +535,6 @@
         <tbody>
         </tbody>
     </table>
-
-
-    <!-- <h3>Having AllergyList </h3>
-    <form id="havingAllergyListForm">
-        <label for="havingAllergyListList">Get Usernames Having More Than 2 Ingredient Lists:</label><br><br>
-        <div id="havingAllergyListResultMsg"></div>
-        <br><br>
-        <button type="button">Count</button> 
-    </form>
-    
-    <table id="fetchHavingAllergyList" border="1">
-        <thead>
-            <tr>
-                <th>Username</th>
-                <th>Total Lists</th>
-            </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table> -->
 
   
     <br><hr><br> <!-- ========================================================================= -->

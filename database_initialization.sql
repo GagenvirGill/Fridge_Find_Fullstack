@@ -168,9 +168,14 @@ CREATE TABLE RecipeListHasRecipe (
 -- Insert Sample Data
 INSERT INTO AppUser (Username, ProfilePicture, Email, FullName, DefaultPrivacyLevel) VALUES ('Alice', EMPTY_BLOB(), 'alice@gmail.com', 'Alice Person', 'Private');
 INSERT INTO AppUser (Username, ProfilePicture, Email, FullName, DefaultPrivacyLevel) VALUES ('Charlie', HEXTORAW('54657374'), 'charlie@gmail.com', 'Charlie Person', 'Public');
-INSERT INTO AppUser (Username, ProfilePicture, Email, FullName, DefaultPrivacyLevel) VALUES ('Bob', EMPTY_BLOB(), 'bob@gmail.com', 'Bob Person', 'Friends Only');
-INSERT INTO AppUser (Username, ProfilePicture, Email, FullName, DefaultPrivacyLevel) VALUES ('Kevin', HEXTORAW('496D616765'), 'kevin@gmail.com', 'Kevin Person', 'Private');
+INSERT INTO AppUser (Username, ProfilePicture, Email, FullName, DefaultPrivacyLevel) VALUES ('Bob', EMPTY_BLOB(), 'bob@gmail.com', 'Bob Person', 'Private');
+INSERT INTO AppUser (Username, ProfilePicture, Email, FullName, DefaultPrivacyLevel) VALUES ('Kevin', HEXTORAW('496D616765'), 'kevin@gmail.com', 'Kevin Person', 'Public');
 INSERT INTO AppUser (Username, ProfilePicture, Email, FullName, DefaultPrivacyLevel) VALUES ('Jason', HEXTORAW('48656C6C6F'), 'jason@gmail.com', 'Jason Person', 'Friends Only');
+INSERT INTO AppUser (Username, ProfilePicture, Email, FullName, DefaultPrivacyLevel) VALUES ('Sam', EMPTY_BLOB(), 'sam@gmail.com', 'Sam Person', 'Public');
+INSERT INTO AppUser (Username, ProfilePicture, Email, FullName, DefaultPrivacyLevel) VALUES ('Leo', HEXTORAW('54657374'), 'leo@gmail.com', 'Leo Person', 'Friends Only');
+INSERT INTO AppUser (Username, ProfilePicture, Email, FullName, DefaultPrivacyLevel) VALUES ('Tony', EMPTY_BLOB(), 'tony@gmail.com', 'Tony Person', 'Public');
+INSERT INTO AppUser (Username, ProfilePicture, Email, FullName, DefaultPrivacyLevel) VALUES ('Max', HEXTORAW('496D616765'), 'max@gmail.com', 'Max Person', 'Private');
+INSERT INTO AppUser (Username, ProfilePicture, Email, FullName, DefaultPrivacyLevel) VALUES ('Ricky', HEXTORAW('48656C6C6F'), 'ricky@gmail.com', 'Ricky Person', 'Friends Only');
 
 INSERT INTO Friends (Username1, Username2, DateAndTimeCreated) VALUES ('Alice', 'Charlie', TIMESTAMP '2024-01-15 10:00:00');
 INSERT INTO Friends (Username1, Username2, DateAndTimeCreated) VALUES ('Charlie', 'Bob', TIMESTAMP '2022-01-16 11:30:00');
@@ -190,11 +195,16 @@ INSERT INTO Notifications (NotificationID, DateAndTimeSent, Username) VALUES (3,
 INSERT INTO Notifications (NotificationID, DateAndTimeSent, Username) VALUES (4, TIMESTAMP '2024-05-19 10:00:06', 'Alice');
 INSERT INTO Notifications (NotificationID, DateAndTimeSent, Username) VALUES (5, TIMESTAMP '2024-9-19 01:00:03', 'Charlie');
 
-INSERT INTO AllergyList (IngredientListID, PrivacyLevel, ListDescription, Username, ListName) VALUES (1, 'Private', 'These are the allergies that Alice has', 'Alice', 'Alices Allergies');
-INSERT INTO AllergyList (IngredientListID, PrivacyLevel, ListDescription, Username, ListName) VALUES (2, 'Public', 'These are the allergies that Charlie has', 'Charlie', 'Charlies Allergies');
-INSERT INTO AllergyList (IngredientListID, PrivacyLevel, ListDescription, Username, ListName) VALUES (3, 'Public', 'These are the allergies that James has', 'James', 'James Allergies');
-INSERT INTO AllergyList (IngredientListID, PrivacyLevel, ListDescription, Username, ListName) VALUES (4, 'Public', 'These are the allergies that Kevin has', 'Kevin', 'Kevins Allergies');
-INSERT INTO AllergyList (IngredientListID, PrivacyLevel, ListDescription, Username, ListName) VALUES (5, 'Friends Only', 'These are the allergies that Jason has', 'Jason', 'Jasons Allergies');
+INSERT INTO AllergyList (IngredientListID, PrivacyLevel, ListDescription, Username, ListName) VALUES (1, 'Private', 'Childbirth Allergies', 'Alice', 'Alices Allergies');
+INSERT INTO AllergyList (IngredientListID, PrivacyLevel, ListDescription, Username, ListName) VALUES (2, 'Public', 'Childbirth Allergies', 'Charlie', 'Charlies Allergies');
+INSERT INTO AllergyList (IngredientListID, PrivacyLevel, ListDescription, Username, ListName) VALUES (3, 'Private', 'Childbirth Allergies', 'Bob', 'Bob Allergies');
+INSERT INTO AllergyList (IngredientListID, PrivacyLevel, ListDescription, Username, ListName) VALUES (4, 'Public', 'Childbirth Allergies', 'Kevin', 'Kevins Allergies');
+INSERT INTO AllergyList (IngredientListID, PrivacyLevel, ListDescription, Username, ListName) VALUES (5, 'Friends Only', 'Childbirth Allergies', 'Jason', 'Jasons Allergies');
+INSERT INTO AllergyList (IngredientListID, PrivacyLevel, ListDescription, Username, ListName) VALUES (6, 'Public', 'Childbirth Allergies', 'Sam', 'Sam Allergies');
+INSERT INTO AllergyList (IngredientListID, PrivacyLevel, ListDescription, Username, ListName) VALUES (7, 'Friends Only', 'Childbirth Allergies', 'Leo', 'Leo Allergies');
+INSERT INTO AllergyList (IngredientListID, PrivacyLevel, ListDescription, Username, ListName) VALUES (8, 'Public', 'Childbirth Allergies', 'Tony', 'Tony Allergies');
+INSERT INTO AllergyList (IngredientListID, PrivacyLevel, ListDescription, Username, ListName) VALUES (9, 'Private', 'Childbirth Allergies', 'Max', 'Max Allergies');
+INSERT INTO AllergyList (IngredientListID, PrivacyLevel, ListDescription, Username, ListName) VALUES (10, 'Friends Only', 'Childbirth Allergies', 'Ricky', 'Ricky Allergies');
 
 INSERT INTO AllergicIngredient (IngredientID, IngredientName) VALUES (1, 'Peanuts');
 INSERT INTO AllergicIngredient (IngredientID, IngredientName) VALUES (2, 'Shellfish');

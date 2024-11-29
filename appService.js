@@ -968,11 +968,6 @@ async function updateAllergyList(IngredientListID, newPrivacyLevel, newListDescr
                 `UPDATE AllergyList 
                  SET PrivacyLevel = :newPrivacyLevel, ListDescription = :newListDescription, Username = :newUsername, ListName = :newListName
                  WHERE IngredientListID = :IngredientListID`,
-                // `UPDATE AllergyList 
-                //  SET PrivacyLevel = :newPrivacyLevel, ListDescription = :newListDescription, Username = :newUsername
-                //  WHERE IngredientListID = :IngredientListID`,
-                //  [IngredientListID, newPrivacyLevel, newListDescription, newUsername, newListName],
-                // [newPrivacyLevel, newListDescription, newUsername, newListName, IngredientListID],
                 {
                     newPrivacyLevel: newPrivacyLevel,
                     newListDescription: newListDescription,
@@ -1010,31 +1005,31 @@ async function deleteAllergyList(IngredientListID) {
 }
 
 
-async function fetchAllergyListByProjectFromDb(userInput) {
-    return await withOracleDB(async (connection) => {
-        const formattedColumns = userInput.map(column => `"${column}"`).join(', ');
+// async function fetchAllergyListByProjectFromDb(userInput) {
+//     return await withOracleDB(async (connection) => {
+//         const formattedColumns = userInput.map(column => `"${column}"`).join(', ');
 
-        const query = `
-            SELECT ${formattedColumns}
-            FROM AllergyList
-        `;
+//         const query = `
+//             SELECT ${formattedColumns}
+//             FROM AllergyList
+//         `;
 
 
-        const result = await connection.execute(query);
+//         const result = await connection.execute(query);
 
-        console.log("Query Result:", result.rows); 
+//         console.log("Query Result:", result.rows); 
 
-        const formattedData = result.rows.map(row =>
-            Object.fromEntries(result.metaData.map((col, i) => [col.name, row[i]]))
-        );
+//         const formattedData = result.rows.map(row =>
+//             Object.fromEntries(result.metaData.map((col, i) => [col.name, row[i]]))
+//         );
 
-        console.log('Projection successful:', formattedData);
-        return { success: true, data: formattedData };  
-    }).catch((error) => {
-        console.error('Database error:', error);
-        return { success: false, data: [] };
-    });
-}
+//         console.log('Projection successful:', formattedData);
+//         return { success: true, data: formattedData };  
+//     }).catch((error) => {
+//         console.error('Database error:', error);
+//         return { success: false, data: [] };
+//     });
+// }
 
 async function countPrivacyLevels() {
     try {
@@ -1057,7 +1052,6 @@ async function havingAllergyList() {
             
             const result = await connection.execute(
                 'SELECT Username, COUNT(IngredientListID) AS TotalLists FROM AllergyList GROUP BY Username HAVING COUNT(IngredientListID) > 0',
-                // 'SELECT PrivacyLevel, COUNT(*) as PrivacyLevelCount FROM AllergyList GROUP BY PrivacyLevel',
                 []
             );
             return result.rows; 
@@ -1067,22 +1061,6 @@ async function havingAllergyList() {
         throw error; 
     }
 }
-
-
-// async function havingAllergyList() {
-//     try {
-//         return await withOracleDB(async (connection) => {
-//             const result = await connection.execute(
-//                 'SELECT Username, COUNT(IngredientListID) AS TotalLists FROM AllergyList GROUP BY Username HAVING COUNT(IngredientListID) > 2;',
-//                 []
-//             );
-//             return result.rows; 
-//         });
-//     } catch (error) {
-//         console.error('Database error:', error);
-//         throw error; 
-//     }
-// }
 
 
 
@@ -1280,7 +1258,6 @@ module.exports = {
     insertAllergyList,
     updateAllergyList,
     deleteAllergyList,
-    fetchAllergyListByProjectFromDb,
     countPrivacyLevels,
     havingAllergyList,
 
