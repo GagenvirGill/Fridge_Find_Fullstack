@@ -562,7 +562,6 @@ router.get('/having-allergy-list', async (req, res) => {
 // General endpoints
 
 router.post("/initiate-tables", async (req, res) => {
-    console.log('a');
     const initiateResult = await appService.initiateTables();
     if (initiateResult) {
         res.json({ success: true });
