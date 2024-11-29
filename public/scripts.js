@@ -68,7 +68,6 @@ async function insertUser(event) {
     event.preventDefault();
 
     const username = document.getElementById('insertNewUsername').value;
-    // const profilePicture = document.getElementById('insertProfilePicture').value;
     const email = document.getElementById('insertEmail').value;
     const fullName = document.getElementById('insertFullName').value;
     const privacyLevel = document.getElementById('insertUserPrivacyLevel').value;
@@ -84,7 +83,6 @@ async function insertUser(event) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 Username: username,
-                // ProfilePicture: profilePicture || null,
                 Email: email,
                 FullName: fullName,
                 DefaultPrivacyLevel: privacyLevel,
@@ -110,7 +108,6 @@ async function updateUser(event) {
     event.preventDefault();
 
     const username = document.getElementById('updateUsername').value;
-    // const newProfilePicture = document.getElementById('updateProfilePicture').value;
     const newEmail = document.getElementById('updateEmail').value;
     const newFullName = document.getElementById('updateFullName').value;
     const newPrivacyLevel = document.getElementById('updateUserPrivacyLevel').value;
@@ -126,7 +123,6 @@ async function updateUser(event) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 Username: username,
-                // NewProfilePicture: newProfilePicture,
                 NewEmail: newEmail,
                 NewFullName: newFullName,
                 NewDefaultPrivacyLevel: newPrivacyLevel,
@@ -225,32 +221,6 @@ async function fetchAndDisplayUsersWhoAreFriendsWithEveryone() {
     }
 }
 
-// async function fetchAndDisplayFriendships() {
-//     const tableElement = document.getElementById('friendships');
-//     const tableBody = tableElement.querySelector('tbody');
-
-//     try {
-//         const response = await fetch('/friendships', { method: 'GET' });
-//         const responseData = await response.json();
-//         const friendships = responseData.data;
-
-//         if (tableBody) {
-//             tableBody.innerHTML = '';
-//         }
-
-//         friendships.forEach(friendship => {
-//             const row = tableBody.insertRow();
-//             friendship.forEach((field, index) => {
-//                 const cell = row.insertCell(index);
-//                 cell.textContent = field;
-//             });
-//         });
-//     } catch (error) {
-//         console.error('Error fetching friendships:', error);
-//         alert('Error fetching friendships.');
-//     }
-// }
-
 async function insertFriend(event) {
     event.preventDefault();
 
@@ -341,89 +311,6 @@ async function areTheyFriends(event) {
         alert('Error checking friendship.');
     }
 }
-
-// Working in progress!!
-// async function fetchAndDisplayNotifications() {
-//     const username = document.getElementById('showUsersNotifications').value;
-//     if (!username) {
-//         alert('Please enter a username.');
-//         return;
-//     }
-
-//     const response = await fetch(`/notifications?username=${username}`);
-//     const data = await response.json();
-//     console.log("API Response Data:", data);
-//     console.log("Notification Array:", data.data);
-//     data.data.forEach((notification, index) => {
-//         console.log(`Notification ${index + 1}:`, notification);
-//     });
-
-
-//     if (data.success) {
-//         const tableBody = document.getElementById('notificationsList').querySelector('tbody');
-//         tableBody.innerHTML = '';
-//         document.getElementById('notificationsUsername').style.display = 'block';
-//         document.getElementById('currentUsername').textContent = username;
-//         document.getElementById('notificationsList').style.display = 'table';
-
-//         data.data.forEach(notification => {
-//             const row = tableBody.insertRow();
-//             row.insertCell(0).textContent = notification[0] || 'N/A'; // NotificationID
-//             row.insertCell(1).textContent = notification[1] || 'N/A'; // DateAndTimeSent
-//             row.insertCell(2).textContent = notification[3] || 0;     // ExpiringCount
-
-//             const showButton = row.insertCell(3).appendChild(document.createElement('button'));
-//             showButton.textContent = 'Show';
-//             showButton.onclick = () => fetchNotificationDetails(notification[0]);
-
-//             const deleteButton = row.insertCell(4).appendChild(document.createElement('button'));
-//             deleteButton.textContent = 'Delete';
-//             deleteButton.onclick = () => deleteNotification(notification[0]);
-//         });
-
-//     } else {
-//         alert('Error fetching notifications.');
-//     }
-// }
-
-// async function fetchNotificationDetails(notificationID) {
-//     const response = await fetch(`/notifications/details?notificationID=${notificationID}`);
-//     const data = await response.json();
-
-//     if (data.success) {
-//         const tableBody = document.getElementById('notificationDetailsBody');
-//         tableBody.innerHTML = '';
-//         document.getElementById('notificationDetails').style.display = 'block';
-//         document.getElementById('detailsNotificationID').textContent = notificationID;
-
-//         data.data.forEach(detail => {
-//             const row = tableBody.insertRow();
-//             row.insertCell(0).textContent = detail.ListName;
-//             row.insertCell(1).textContent = detail.IngredientName;
-//             row.insertCell(2).textContent = detail.Amount;
-//             row.insertCell(3).textContent = detail.UnitOfMeasurement;
-//             row.insertCell(4).textContent = detail.ExpiryDate;
-//         });
-//     } else {
-//         alert('Error fetching notification details.');
-//     }
-// }
-
-// async function deleteNotification(notificationID) {
-//     const response = await fetch('/notifications', {
-//         method: 'DELETE',
-//         headers: { 'Content-Type': 'application/json' },
-//         body: JSON.stringify({ notificationID }),
-//     });
-
-//     const data = await response.json();
-//     if (data.success) {
-//         alert('Notification deleted successfully.');
-//         fetchAndDisplayNotifications();
-//     } else {
-//         alert('Error deleting notification.');
-//     }
-// }
 
 // ----------------------------------------------------------
 // Recipe Centric methods
@@ -533,8 +420,7 @@ async function fetchAndDisplayFilteredRecipes(event) {
     const categoriesSelectBar = document.getElementById('filterRecipesCategories');
     const tableElement = document.getElementById('filteredRecipeTable');
     const tableBody = tableElement.querySelector('tbody');
-
-    const selectedCategories = Array.from(categoriesSelectBar.selectedOptions).map(option => option.value);
+    const selectedCategories = Array.from(userInputSelectBar.selectedOptions).map(option => option.value.toUpperCase());
 
     const response = await fetch('/filtered-recipes-by-category', {
         method: 'POST',
@@ -1210,7 +1096,7 @@ async function deleteRecipeFromRecipeList(event) {
 // ----------------------------------------------------------
 // Ingredient Centric methods
 
-// Display all Allergic Ingredients
+// AllergicIngredient
 async function fetchAndDisplayAllergicIngredient() {
     const response = await fetch('/allergic-ingredient', {
         method: 'GET'
@@ -1235,9 +1121,6 @@ async function fetchAndDisplayAllergicIngredient() {
     });
 }
 
-
-
-// Inserts new records into the recipe table.
 async function insertAllergicIngredient(event) {
     event.preventDefault();
 
@@ -1322,8 +1205,233 @@ async function deleteAllergicIngredient(event) {
 }
 
 
+// AllergyList
+async function fetchAndDisplayAllergyList() {
+    const response = await fetch('/allergy-list', {
+        method: 'GET'
+    });
+
+    const responseData = await response.json();
+    const allergyListContent = responseData.data;
+
+    const tableElement = document.getElementById('allergylist'); // from index.html tag
+    const tableBody = tableElement.querySelector('tbody');
+
+    if (tableBody) {
+        tableBody.innerHTML = '';
+    }
+
+    allergyListContent.forEach(allergylist => {
+        const row = tableBody.insertRow();
+        allergylist.forEach((field, index) => {
+            const cell = row.insertCell(index);
+            cell.textContent = field;
+        });
+    });
+}
+
+// IngredientListID, PrivacyLevel, ListDescription, Username, ListName
+async function insertAllergyList(event) {
+    event.preventDefault();
+
+    const allergyListIngredientListID = Number(document.getElementById('insertAllergyListIngredientListID').value);
+    const allergyListPrivacyLevel = document.getElementById('insertAllergyListPrivacyLevel').value;
+    const allergyListListDescription = document.getElementById('insertAllergyListListDescription').value;
+    const allergyListUsername = document.getElementById('insertAllergyListUsername').value;
+    const allergyListName = document.getElementById('insertAllergyListName').value;
 
 
+    const response = await fetch('/insert-allergy-list', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            IngredientListID: allergyListIngredientListID,
+            PrivacyLevel: allergyListPrivacyLevel,
+            ListDescription: allergyListListDescription,
+            Username: allergyListUsername,
+            ListName: allergyListName,
+        })
+    });
+
+    const responseData = await response.json();
+    const messageElement = document.getElementById('insertAllergyListResultMsg');
+
+    if (responseData.success) {
+        messageElement.textContent = "Allergic Ingredient data inserted successfully!";
+        fetchTableData();
+    } else {
+        messageElement.textContent = "Error inserting Allergic Ingredient data!";
+    }
+}
+
+// Gives me an error - number TODO
+// IngredientListID, PrivacyLevel, ListDescription, Username, ListName
+async function updateAllergyList(event) {
+    event.preventDefault();
+
+    const allergyListIngredientListIDValue = Number(document.getElementById('updateAllergyListIngredientListID').value);
+    const allergyListPrivacyLevelValue = document.getElementById('updateAllergyListPrivacyLevel').value;
+    const allergyListListDescriptionValue = document.getElementById('updateAllergyListListDescription').value;
+    const allergyListUsernameValue = document.getElementById('updateAllergyListUsername').value;
+    const allergyListNameValue = document.getElementById('updateAllergyListName').value;
+
+    const response = await fetch('/update-allergy-list', {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            IngredientListID: allergyListIngredientListIDValue,
+            PrivacyLevel: allergyListPrivacyLevelValue,
+            ListDescription: allergyListListDescriptionValue,
+            Username: allergyListUsernameValue,
+            ListName: allergyListNameValue,
+        })
+    });
+
+    const responseData = await response.json();
+    const messageElement = document.getElementById('updateAllergyListResultMsg');
+
+    if (responseData.success) {
+        messageElement.textContent = "Allergy List updated successfully!";
+        fetchTableData();
+    } else {
+        messageElement.textContent = "Error updating Allergy List!";
+    }
+}
+
+async function deleteAllergyList(event) {
+    event.preventDefault();
+
+    const allergyListIDDelete = Number(document.getElementById('deleteAllergyListIngredientListID').value);
+
+    const response = await fetch('/delete-allergy-list', {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            IngredientListID: allergyListIDDelete,
+        })
+    });
+
+    const responseData = await response.json();
+    const messageElement = document.getElementById('deleteAllergyListResultMsg');
+
+    if (responseData.success) {
+        messageElement.textContent = "AllergyList deleted successfully!";
+        fetchTableData();
+    } else {
+        messageElement.textContent = "Error deleting AllergyList!";
+    }
+}
+
+async function projectAllergyList(event) {
+    event.preventDefault();
+
+    const userInputSelectBar = document.getElementById('projectAllergyList');
+    const tableElement = document.getElementById('projectAllergyListTable');
+    const tableHead = tableElement.querySelector('thead');
+    const tableBody = tableElement.querySelector('tbody');
+    const messageElement = document.getElementById('projectAllergyListResultMsg');
+
+    const selectedCategories = Array.from(userInputSelectBar.selectedOptions).map(option => `"${option.value}"`);
+
+    // case where user didn't select no column and click submit.
+    if (selectedCategories.length === 0) {
+        messageElement.textContent = "No columns selected for projection.";
+        tableHead.innerHTML = '';
+        tableBody.innerHTML = '';
+        return;
+    }
+
+    try {
+        const response = await fetch('/project-allergy-list', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                userInput: selectedCategories,
+            }),
+        });
+
+        const responseData = await response.json();
+        const projectedAllergyList = responseData.data;
+
+        tableHead.innerHTML = '';
+        tableBody.innerHTML = '';
+
+        if (response.ok && projectedAllergyList && projectedAllergyList.length > 0) {
+            messageElement.textContent = "AllergyList projected successfully!";
+
+            const headerRow = document.createElement('tr');
+            selectedCategories.forEach(category => {
+                const th = document.createElement('th');
+                th.textContent = category;
+                headerRow.appendChild(th);
+            });
+            tableHead.appendChild(headerRow);
+
+            projectedAllergyList.forEach(row => {
+                const tableRow = document.createElement('tr');
+                selectedCategories.forEach(category => {
+                    const cleanedCategory = category.replace(/"/g, "").toUpperCase();
+                    const td = document.createElement("td");
+
+                    if (row.hasOwnProperty(cleanedCategory)) {
+                        td.textContent = row[cleanedCategory];
+                    } else {
+                        console.warn(`Key "${cleanedCategory}" not found in row:`, row);
+                        td.textContent = "N/A";
+                    }
+
+                    tableRow.appendChild(td);
+                });
+                tableBody.appendChild(tableRow);
+            });
+
+            console.log("Projected Allergy List:", projectedAllergyList);
+            console.log("Selected Categories:", selectedCategories);
+            fetchTableData();
+
+        } else if (response.ok && (!projectedAllergyList || projectedAllergyList.length === 0)) {
+            messageElement.textContent = `No AllergyList found for the selected columns.`;
+        } else {
+            messageElement.textContent = `Error: ${responseData.error}`;
+        }
+    } catch (error) {
+        console.error('Error fetching projection:', error);
+        messageElement.textContent = `Unexpected error: ${error.message}`;
+    }
+}
+
+// AllergyListHasAllergicIngredient
+async function fetchAndDisplayAllergyListHasAllergicIngredient() {
+    const response = await fetch('/allergy-list-has-allergic-ingredient', {
+        method: 'GET'
+    });
+
+    const responseData = await response.json();
+    const allergyListHasAllergicIngredientContent = responseData.data;
+
+    const tableElement = document.getElementById('allergylisthasallergicingredient'); // from index.html tag
+    const tableBody = tableElement.querySelector('tbody');
+
+    if (tableBody) {
+        tableBody.innerHTML = '';
+    }
+
+    allergyListHasAllergicIngredientContent.forEach(allergylisthasallergicingredient => {
+        const row = tableBody.insertRow();
+        allergylisthasallergicingredient.forEach((field, index) => {
+            const cell = row.insertCell(index);
+            cell.textContent = field;
+        });
+    });
+}
 
 // ----------------------------------------------------------
 // General Methods
@@ -1344,16 +1452,13 @@ async function resetTables() {
     }
 }
 
+
 // ---------------------------------------------------------------
 // Initializes the webpage functionalities.
 // Add or remove event listeners based on the desired functionalities.
 window.onload = function () {
     checkDbConnection();
     fetchTableData();
-    // document.getElementById("resetDemotable").addEventListener("click", resetDemotable);
-    // document.getElementById("insertDemotable").addEventListener("submit", insertDemotable);
-    // document.getElementById("updataNameDemotable").addEventListener("submit", updateNameDemotable);
-    // document.getElementById("countDemotable").addEventListener("click", countDemotable);
 
     // user centric
     document.getElementById('insertUserForm').addEventListener('submit', insertUser);
@@ -1363,16 +1468,6 @@ window.onload = function () {
     document.getElementById('insertFriendForm').addEventListener('submit', insertFriend);
     document.getElementById('deleteFriendForm').addEventListener('submit', deleteFriend);
     document.getElementById('areTheyFriendsForm').addEventListener('submit', areTheyFriends);
-
-    // document.getElementById('fetchNotificationMessagesBtn').addEventListener('click', fetchAndDisplayNotificationMessages);
-    // document.getElementById('insertNotificationMessageForm').addEventListener('submit', insertNotificationMessage);
-    // document.getElementById('deleteNotificationMessageForm').addEventListener('submit', deleteNotificationMessage);
-    //
-    // document.getElementById('fetchNotificationsBtn').addEventListener('click', fetchAndDisplayNotifications);
-    // document.getElementById('insertNotificationForm').addEventListener('submit', insertNotification);
-    // document.getElementById('deleteNotificationForm').addEventListener('submit', deleteNotification);
-
-    // recipe centric
 
     // recipe centric
     document.getElementById("insertRecipe").addEventListener("submit", insertRecipe);
@@ -1405,6 +1500,12 @@ window.onload = function () {
     document.getElementById("updateAllergicIngredient").addEventListener("submit", updateAllergicIngredient);
     document.getElementById("deleteAllergicIngredient").addEventListener("submit", deleteAllergicIngredient);
 
+    document.getElementById("insertAllergyList").addEventListener("submit", insertAllergyList);
+    document.getElementById("updateAllergyList").addEventListener("submit", updateAllergyList);
+    document.getElementById("deleteAllergyList").addEventListener("submit", deleteAllergyList);
+
+    document.getElementById("projectAllergyListForm").addEventListener("submit", projectAllergyList);
+
     // general
     document.getElementById("resetTables").addEventListener("click", resetTables);
 };
@@ -1416,15 +1517,15 @@ function fetchTableData() {
     fetchAndDisplayUsers();
     fetchAndDisplayPublicUsers();
     fetchAndDisplayUsersWhoAreFriendsWithEveryone();
-    // fetchAndDisplayFriendships();
-    // fetchAndDisplayNotifications();
 
     // Recipe Centric
     fetchAndDisplayCategories();
     fetchAndDisplayRecipeLists();
     fetchAndDisplayRecipes();
     fetchAndDisplayFilteredRecipes();
+
     // Ingredient Centric
     fetchAndDisplayAllergicIngredient();
-
+    fetchAndDisplayAllergyList();
+    fetchAndDisplayAllergyListHasAllergicIngredient();
 }

@@ -212,30 +212,6 @@ async function viewUsersWhoAreFriendsWithEveryone() {
     });
 }
 
-// async function fetchFriends(username) {
-//     return await withOracleDB(async (connection) => {
-//         const result = await connection.execute(
-//             `SELECT * FROM Friends WHERE Username1 = :username OR Username2 = :username`,
-//             [username]
-//         );
-//
-//         return result.rows;
-//     }).catch((error) => {
-//         console.error('Error fetching friends:', error);
-//         return [];
-//     });
-// }
-
-// async function fetchFriendshipsFromDb() {
-//     return await withOracleDB(async (connection) => {
-//         const result = await connection.execute('SELECT * FROM Friends');
-//         return result.rows;
-//     }).catch((error) => {
-//         console.error('Error fetching friends:', error);
-//         return [];
-//     });
-// }
-
 async function insertFriend(username1, username2) {
     if (!username1 || !username2) {
         throw new Error("Both 'username1' and 'username2' are required.");
@@ -291,73 +267,6 @@ async function areTheyFriends(username1, username2) {
         return false;
     });
 }
-
-// Working in progress!!
-// async function fetchNotificationForExpiringIngredients(username) {
-//     return await withOracleDB(async (connection) => {
-//         const query = `
-//             SELECT
-//                 n.NotificationID,
-//                 n.DateAndTimeSent,
-//                 n.Username,
-//                 COUNT(*) AS ExpiringCount
-//             FROM
-//                 Notifications n
-//             INNER JOIN NotificationMessage nm
-//                 ON n.Username = nm.Username
-//                 AND n.DateAndTimeSent = nm.DateAndTimeSent
-//             WHERE
-//                 n.Username = :username
-//             GROUP BY n.NotificationID, n.DateAndTimeSent
-//             ORDER BY n.DateAndTimeSent DESC`;
-
-//         const result = await connection.execute(query, [username]);
-//         return result.rows;
-//         // return result.rows.map(row => ({
-//         //     NotificationID: row[0],
-//         //     DateAndTimeSent: row[1],
-//         //     Username: row[2],
-//         //     ExpiringCount: row[3]
-//         // }));
-//     });
-// }
-
-// async function fetchNotificationDetails(notificationID) {
-//     return await withOracleDB(async (connection) => {
-//         const query = `
-//             SELECT
-//                 kinv.ListName,
-//                 ki.IngredientName,
-//                 ki.Amount,
-//                 ki.UnitOfMeasurement,
-//                 kid.ExpiryDate
-//             FROM
-//                 Notifications n
-//             INNER JOIN NotificationMessage nm
-//                 ON n.NotificationID = :notificationID
-//             INNER JOIN KitchenInventory kinv
-//                 ON kinv.Username = nm.Username
-//             INNER JOIN KitchenIngredient ki
-//                 ON kinv.IngredientListID = ki.IngredientListID
-//             INNER JOIN KitchenIngredientPerishableDate kid
-//                 ON ki.DatePurchased = kid.DatePurchased
-//                 AND ki.ShelfLife = kid.ShelfLife
-//             WHERE
-//                 n.NotificationID = :notificationID`;
-
-//         const result = await connection.execute(query, [notificationID]);
-//         return result.rows;
-//     });
-// }
-
-// async function deleteNotification(notificationID) {
-//     return await withOracleDB(async (connection) => {
-//         const query = `
-//             DELETE FROM Notifications
-//             WHERE NotificationID = :notificationID`;
-//         await connection.execute(query, [notificationID]);
-//     });
-// }
 
 // ----------------------------------------------------------
 // Recipe Centric service
@@ -418,7 +327,7 @@ async function fetchCategoryFromDb() {
 
 async function fetchRecipesByCategoryFromDb(Categories) {
     return await withOracleDB(async (connection) => {
-        // NOTE: Do not need to check that the categories exist as we dynamically display 
+        // NOTE: Do not need to check that the categories exist as we dynamically display
         //       all existing categories to the user in the select bar
         //       so therefore all categories submitted to this method, are guaranteed to exist
         const bindVariables = {};
@@ -460,7 +369,7 @@ async function fetchRecipeListFromDb() {
 
 async function fetchRecipesByRecipeListFromDb(RecipeListID) {
     return await withOracleDB(async (connection) => {
-        // NOTE: Do not need to check that the RecipeListID exists as we dynamically display 
+        // NOTE: Do not need to check that the RecipeListID exists as we dynamically display
         //       all existing RecipeLists to the user in the select bar
         //       so therefore all RecipeListIDs that are submitted to this method, are guaranteed to exist
 
@@ -959,7 +868,7 @@ async function deleteRecipeFromCategory(RecipeID, CategoryName) {
 }
 
 async function fetchRecipeList(RecipeListID) {
-    // NOTE: Do not need to check that the RecipeListID exists as we dynamically display 
+    // NOTE: Do not need to check that the RecipeListID exists as we dynamically display
     //       all existing RecipeLists to the user in the select bar
     //       so therefore all RecipeListIDs that are submitted to this method, are guaranteed to exist
     const intRecipeListID = parseInt(RecipeListID, 10);
@@ -1136,6 +1045,7 @@ async function deleteRecipeFromRecipeList(RecipeID, RecipeListID) {
 // ----------------------------------------------------------
 // Ingredient Centric service
 
+// AllergicIngredient
 async function fetchAllergicIngredientFromDb() {
     try {
         return await withOracleDB(async (connection) => {
@@ -1166,7 +1076,6 @@ async function insertAllergicIngredient(IngredientID, IngredientName) {
     }
 }
 
-// ERROR - TODO
 async function updateAllergicIngredient(IngredientID, newIngredientName) {
     try {
         return await withOracleDB(async (connection) => {
@@ -1204,22 +1113,125 @@ async function deleteAllergicIngredient(IngredientID) {
     }
 }
 
-// async function deleteRecipeIngredient(RecipeIngredientID, RecipeID) {
-//     return await withOracleDB(async (connection) => {
-//         const result = await connection.execute(
-//             'DELETE FROM RecipeIngredient WHERE IngredientID=:RecipeIngredientID AND RecipeID=:RecipeID',
-//             [RecipeIngredientID, RecipeID],
-//             { autoCommit: true }
-//         );
-//         console.log('Deleted Recipe Ingredient Successfully');
-//         return result.rowsAffected && result.rowsAffected > 0;;
-//     }).catch((error) => {
-//         console.error('Database error:', error);
-//         return false;
-//     });
-// }
+// AllergyList
+async function fetchAllergyListFromDb() {
+    try {
+        return await withOracleDB(async (connection) => {
+            const result = await connection.execute('SELECT * FROM AllergyList');
+            return result.rows;
+        });
+    } catch(error) {
+        console.error('Database error:', error);
+        return [];
+    }
+}
 
+// IngredientListID, PrivacyLevel, ListDescription, Username, ListName
+async function insertAllergyList(IngredientListID, PrivacyLevel, ListDescription, Username, ListName) {
+    try {
+        return await withOracleDB(async (connection) => {
+            const result = await connection.execute(
+                `INSERT INTO AllergyList(IngredientListID, PrivacyLevel, ListDescription, Username, ListName) 
+                VALUES (:IngredientListID, :PrivacyLevel, :ListDescription, :Username, :ListName)`,
+                [IngredientListID, PrivacyLevel, ListDescription, Username, ListName],
+                { autoCommit: true }
+            );
 
+            console.log('Inserted AllergyList Successfully')
+            return result.rowsAffected && result.rowsAffected > 0;
+        });
+    } catch(error) {
+        console.error('Database error:', error);
+        return false;
+    }
+}
+
+async function updateAllergyList(IngredientListID, newPrivacyLevel, newListDescription, newUsername, newListName) {
+    try {
+        return await withOracleDB(async (connection) => {
+            const result = await connection.execute(
+                `UPDATE AllergyList 
+                 SET PrivacyLevel = :newPrivacyLevel, ListDescription = :newListDescription, Username = :newUsername, ListName = :newListName
+                 WHERE IngredientListID = :IngredientListID`,
+                {
+                    newPrivacyLevel: newPrivacyLevel,
+                    newListDescription: newListDescription,
+                    newUsername: newUsername,
+                    newListName: newListName,
+                    IngredientListID: IngredientListID
+                },
+                { autoCommit: true }
+            );
+
+            console.log('Updated AllergyList Successfully')
+            return result.rowsAffected && result.rowsAffected > 0;
+        });
+    } catch(error) {
+        console.error('Database error:', error);
+        return false;
+    };
+}
+
+async function deleteAllergyList(IngredientListID) {
+    try {
+        return await withOracleDB(async (connection) => {
+            const result = await connection.execute(
+                'DELETE FROM AllergyList WHERE IngredientListID=:IngredientListID',
+                [IngredientListID],
+                { autoCommit: true }
+            );
+            console.log('Deleted AllergyList Successfully')
+            return result.rowsAffected && result.rowsAffected > 0;;
+        });
+    } catch(error) {
+        console.error('Database error:', error);
+        return false;
+    }
+}
+
+async function fetchAllergyListByProjectFromDb(userInput) {
+    return await withOracleDB(async (connection) => {
+        // const formattedColumns = userInput.map(column => `"${column}"`).join(', ');
+        const formattedColumns = userInput.map(column => column.toUpperCase()).join(', ');
+
+        const query = `
+            SELECT ${formattedColumns}
+            FROM AllergyList
+        `;
+
+        const result = await connection.execute(query);
+
+        //Added
+        if (!result.rows || result.rows.length === 0) {
+            return { success: true, data: [] };
+        }
+
+        console.log("Query Result:", result.rows);
+
+        const formattedData = result.rows.map(row =>
+            Object.fromEntries(result.metaData.map((col, i) => [col.name, row[i]]))
+        );
+
+        console.log('Projection successful:', formattedData);
+        return { success: true, data: formattedData };
+    }).catch((error) => {
+        console.error('Database error:', error);
+        return { success: false, data: [] };
+    });
+}
+
+// AllergyListHasAllergicIngredient
+async function fetchAllergyListHasAllergicIngredientFromDb() {
+    try {
+        return await withOracleDB(async (connection) => {
+            const result = await connection.execute('SELECT * FROM AllergyListHasAllergicIngredient');
+            return result.rows;
+        });
+    } catch(error) {
+        console.error('Database error:', error);
+        return [];
+    }
+}
 
 // ----------------------------------------------------------
 // General service methods
@@ -1265,7 +1277,6 @@ async function validateRecipeIngredientID(RecipeIngredientID, RecipeID) {
         return result.rows[0][0] > 0;
     }).catch((error) => {
         console.error('Database error:', error);
-        return false;
     });
 }
 
@@ -1382,11 +1393,6 @@ module.exports = {
     areTheyFriends,
     insertFriend,
     deleteFriend,
-    // fetchFriendshipsFromDb,
-
-    // fetchNotificationForExpiringIngredients,
-    // fetchNotificationDetails,
-    // deleteNotification,
 
 // Recipe Centric
     fetchRecipeFromDb,
@@ -1423,7 +1429,12 @@ module.exports = {
     insertAllergicIngredient,
     updateAllergicIngredient,
     deleteAllergicIngredient,
-
+    fetchAllergyListFromDb,
+    insertAllergyList,
+    updateAllergyList,
+    deleteAllergyList,
+    fetchAllergyListByProjectFromDb,
+    fetchAllergyListHasAllergicIngredientFromDb,
 
     // General
     validateUsername,
