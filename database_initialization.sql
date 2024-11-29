@@ -23,157 +23,156 @@ COMMIT;
 
 -- Create Tables
 CREATE TABLE AppUser (
-                         Username VARCHAR2(50) PRIMARY KEY,
-    -- ProfilePicture BLOB,
-                         Email VARCHAR2(100) NOT NULL UNIQUE,
-                         FullName VARCHAR2(50) NOT NULL,
-                         DefaultPrivacyLevel VARCHAR2(20) DEFAULT 'Private' CHECK (DefaultPrivacyLevel IN ('Private', 'Public', 'Friends Only'))
+    Username VARCHAR2(50) PRIMARY KEY,
+    Email VARCHAR2(100) NOT NULL UNIQUE,
+    FullName VARCHAR2(50) NOT NULL,
+    DefaultPrivacyLevel VARCHAR2(20) DEFAULT 'Private' CHECK (DefaultPrivacyLevel IN ('Private', 'Public', 'Friends Only'))
 );
 
 CREATE TABLE Friends (
-                         Username1 VARCHAR2(50),
-                         Username2 VARCHAR2(50),
-                         DateAndTimeCreated TIMESTAMP NOT NULL,
-                         PRIMARY KEY (Username1, Username2),
-                         FOREIGN KEY (Username1) REFERENCES AppUser(Username),
-                         FOREIGN KEY (Username2) REFERENCES AppUser(Username)
+    Username1 VARCHAR2(50),
+    Username2 VARCHAR2(50),
+    DateAndTimeCreated TIMESTAMP NOT NULL,
+    PRIMARY KEY (Username1, Username2),
+    FOREIGN KEY (Username1) REFERENCES AppUser(Username) ON DELETE CASCADE,
+    FOREIGN KEY (Username2) REFERENCES AppUser(Username) ON DELETE CASCADE
 );
 
 CREATE TABLE NotificationMessage (
-                                     Username VARCHAR2(50),
-                                     DateAndTimeSent TIMESTAMP NOT NULL,
-                                     MessageText VARCHAR2(250) NOT NULL,
-                                     PRIMARY KEY (Username, DateAndTimeSent),
-                                     FOREIGN KEY (Username) REFERENCES AppUser(Username)
+    Username VARCHAR2(50),
+    DateAndTimeSent TIMESTAMP NOT NULL,
+    MessageText VARCHAR2(250) NOT NULL,
+    PRIMARY KEY (Username, DateAndTimeSent),
+    FOREIGN KEY (Username) REFERENCES AppUser(Username) ON DELETE CASCADE
 );
 
 CREATE TABLE Notifications (
-                               NotificationID NUMBER PRIMARY KEY,
-                               DateAndTimeSent TIMESTAMP NOT NULL,
-                               Username VARCHAR2(50) NOT NULL,
-                               FOREIGN KEY (Username, DateAndTimeSent) REFERENCES NotificationMessage(Username, DateAndTimeSent) ON DELETE CASCADE
+    NotificationID NUMBER PRIMARY KEY,
+    DateAndTimeSent TIMESTAMP NOT NULL,
+    Username VARCHAR2(50) NOT NULL,
+    FOREIGN KEY (Username, DateAndTimeSent) REFERENCES NotificationMessage(Username, DateAndTimeSent) ON DELETE CASCADE
 );
 
 CREATE TABLE AllergyList (
-                             IngredientListID NUMBER PRIMARY KEY,
-                             PrivacyLevel VARCHAR2(20) DEFAULT 'Private' CHECK (PrivacyLevel IN ('Private', 'Public', 'Friends Only')),
-                             ListDescription VARCHAR2(250),
-                             Username VARCHAR2(50) NOT NULL,
-                             ListName VARCHAR2(50) DEFAULT 'Untitled Allergy List',
-                             FOREIGN KEY (Username) REFERENCES AppUser(Username)
+    IngredientListID NUMBER PRIMARY KEY,
+    PrivacyLevel VARCHAR2(20) DEFAULT 'Private' CHECK (PrivacyLevel IN ('Private', 'Public', 'Friends Only')),
+    ListDescription VARCHAR2(250),
+    Username VARCHAR2(50) NOT NULL,
+    ListName VARCHAR2(50) DEFAULT 'Untitled Allergy List',
+    FOREIGN KEY (Username) REFERENCES AppUser(Username) ON DELETE CASCADE
 );
 
 CREATE TABLE AllergicIngredient (
-                                    IngredientID NUMBER PRIMARY KEY,
-                                    IngredientName VARCHAR2(50) NOT NULL
+    IngredientID NUMBER PRIMARY KEY,
+    IngredientName VARCHAR2(50) NOT NULL
 );
 
 CREATE TABLE AllergyListHasAllergicIngredient (
-                                                  IngredientListID NUMBER,
-                                                  IngredientID NUMBER,
-                                                  Severity NUMBER DEFAULT 10 CHECK (Severity >= 1 AND Severity <= 10),
-                                                  PRIMARY KEY (IngredientListID, IngredientID),
-                                                  FOREIGN KEY (IngredientListID) REFERENCES AllergyList(IngredientListID),
-                                                  FOREIGN KEY (IngredientID) REFERENCES AllergicIngredient(IngredientID)
+    IngredientListID NUMBER,
+    IngredientID NUMBER,
+    Severity NUMBER DEFAULT 10 CHECK (Severity >= 1 AND Severity <= 10),
+    PRIMARY KEY (IngredientListID, IngredientID),
+    FOREIGN KEY (IngredientListID) REFERENCES AllergyList(IngredientListID) ON DELETE CASCADE,
+    FOREIGN KEY (IngredientID) REFERENCES AllergicIngredient(IngredientID) ON DELETE CASCADE
 );
 
 CREATE TABLE KitchenInventory (
-                                  IngredientListID NUMBER PRIMARY KEY,
-                                  PrivacyLevel VARCHAR2(20) DEFAULT 'Private' CHECK (PrivacyLevel IN ('Private', 'Public', 'Friends Only')),
-                                  ExpiryDateThreshold NUMBER,
-                                  Username VARCHAR2(50) NOT NULL,
-                                  DateAndTimeLastUpdated TIMESTAMP,
-                                  ListName VARCHAR2(50) DEFAULT 'Untitled Kitchen Inventory',
-                                  FOREIGN KEY (Username) REFERENCES AppUser(Username)
+    IngredientListID NUMBER PRIMARY KEY,
+    PrivacyLevel VARCHAR2(20) DEFAULT 'Private' CHECK (PrivacyLevel IN ('Private', 'Public', 'Friends Only')),
+    ExpiryDateThreshold NUMBER,
+    Username VARCHAR2(50) NOT NULL,
+    DateAndTimeLastUpdated TIMESTAMP,
+    ListName VARCHAR2(50) DEFAULT 'Untitled Kitchen Inventory',
+    FOREIGN KEY (Username) REFERENCES AppUser(Username) ON DELETE CASCADE
 );
 
 CREATE TABLE KitchenIngredientPerishableDate (
-                                                 DatePurchased TIMESTAMP,
-                                                 ShelfLife NUMBER,
-                                                 ExpiryDate TIMESTAMP,
-                                                 PRIMARY KEY (DatePurchased, ShelfLife)
+    DatePurchased TIMESTAMP,
+    ShelfLife NUMBER,
+    ExpiryDate TIMESTAMP,
+    PRIMARY KEY (DatePurchased, ShelfLife)
 );
 
 CREATE TABLE KitchenIngredient (
-                                   DatePurchased TIMESTAMP,
-                                   ShelfLife NUMBER,
-                                   IngredientID NUMBER PRIMARY KEY,
-                                   IngredientName VARCHAR2(50) NOT NULL,
-                                   IngredientListID NUMBER NOT NULL,
-                                   Amount NUMBER NOT NULL CHECK (Amount > 0),
-                                   UnitOfMeasurement VARCHAR2(20) NOT NULL CHECK (UnitOfMeasurement IN ('piece', 'milliliters', 'liters', 'ounces', 'cups', 'grams', 'pounds', 'kilograms', 'tablespoons',
-                                                                                                        'teaspoons')),
-                                   FOREIGN KEY (IngredientListID) REFERENCES KitchenInventory(IngredientListID),
-                                   FOREIGN KEY (DatePurchased, ShelfLife) REFERENCES KitchenIngredientPerishableDate(DatePurchased, ShelfLife)
+    DatePurchased TIMESTAMP,
+    ShelfLife NUMBER,
+    IngredientID NUMBER PRIMARY KEY,
+    IngredientName VARCHAR2(50) NOT NULL,
+    IngredientListID NUMBER NOT NULL,
+    Amount NUMBER NOT NULL CHECK (Amount > 0),
+    UnitOfMeasurement VARCHAR2(20) NOT NULL CHECK (UnitOfMeasurement IN ('piece', 'milliliters', 'liters', 'ounces', 'cups', 'grams', 'pounds', 'kilograms', 'tablespoons',
+                                                                        'teaspoons')),
+    FOREIGN KEY (IngredientListID) REFERENCES KitchenInventory(IngredientListID) ON DELETE CASCADE,
+    FOREIGN KEY (DatePurchased, ShelfLife) REFERENCES KitchenIngredientPerishableDate(DatePurchased, ShelfLife) ON DELETE CASCADE
 );
 
 CREATE TABLE Recipe (
-                        RecipeID NUMBER PRIMARY KEY,
-                        RecipeName VARCHAR2(50) DEFAULT 'Untitled Recipe',
-                        PrivacyLevel VARCHAR2(20) DEFAULT 'Private' CHECK (PrivacyLevel IN ('Private', 'Public', 'Friends Only')),
-                        Username VARCHAR2(50) NOT NULL,
-                        FOREIGN KEY (Username) REFERENCES AppUser(Username)
+    RecipeID NUMBER PRIMARY KEY,
+    RecipeName VARCHAR2(50) DEFAULT 'Untitled Recipe',
+    PrivacyLevel VARCHAR2(20) DEFAULT 'Private' CHECK (PrivacyLevel IN ('Private', 'Public', 'Friends Only')),
+    Username VARCHAR2(50) NOT NULL,
+    FOREIGN KEY (Username) REFERENCES AppUser(Username) ON DELETE CASCADE
 );
 
 CREATE TABLE RecipeIngredient (
-                                  IngredientID NUMBER,
-                                  IngredientName VARCHAR2(50) NOT NULL,
-                                  RecipeID NUMBER NOT NULL,
-                                  Amount NUMBER NOT NULL CHECK (Amount > 0),
-                                  UnitOfMeasurement VARCHAR2(20) NOT NULL CHECK (UnitOfMeasurement IN ('piece', 'milliliters', 'liters', 'ounces', 'cups', 'grams', 'pounds', 'kilograms', 'tablespoons',
-                                                                                                       'teaspoons')),
-                                  PRIMARY KEY (IngredientID, RecipeID),
-                                  FOREIGN KEY (RecipeID) REFERENCES Recipe(RecipeID) ON DELETE CASCADE
+    IngredientID NUMBER,
+    IngredientName VARCHAR2(50) NOT NULL,
+    RecipeID NUMBER NOT NULL,
+    Amount NUMBER NOT NULL CHECK (Amount > 0),
+    UnitOfMeasurement VARCHAR2(20) NOT NULL CHECK (UnitOfMeasurement IN ('piece', 'milliliters', 'liters', 'ounces', 'cups', 'grams', 'pounds', 'kilograms', 'tablespoons',
+                                                                        'teaspoons')),
+    PRIMARY KEY (IngredientID, RecipeID),
+    FOREIGN KEY (RecipeID) REFERENCES Recipe(RecipeID) ON DELETE CASCADE
 );
 
 CREATE TABLE RecipeStep (
-                            RecipeID NUMBER,
-                            StepNumber NUMBER,
-                            StepInformation VARCHAR2(250) NOT NULL,
-                            PRIMARY KEY (RecipeID, StepNumber),
-                            FOREIGN KEY (RecipeID) REFERENCES Recipe(RecipeID) ON DELETE CASCADE
+    RecipeID NUMBER,
+    StepNumber NUMBER,
+    StepInformation VARCHAR2(250) NOT NULL,
+    PRIMARY KEY (RecipeID, StepNumber),
+    FOREIGN KEY (RecipeID) REFERENCES Recipe(RecipeID) ON DELETE CASCADE
 );
 
 CREATE TABLE Category (
-                          CategoryName VARCHAR2(50) PRIMARY KEY,
-                          CategoryDescription VARCHAR2(100)
+    CategoryName VARCHAR2(50) PRIMARY KEY,
+    CategoryDescription VARCHAR2(100)
 );
 
 CREATE TABLE RecipeHasCategory (
-                                   RecipeID NUMBER,
-                                   CategoryName VARCHAR2(50),
-                                   PRIMARY KEY (RecipeID, CategoryName),
-                                   FOREIGN KEY (RecipeID) REFERENCES Recipe(RecipeID) ON DELETE CASCADE,
-                                   FOREIGN KEY (CategoryName) REFERENCES Category(CategoryName) ON DELETE CASCADE
+    RecipeID NUMBER,
+    CategoryName VARCHAR2(50),
+    PRIMARY KEY (RecipeID, CategoryName),
+    FOREIGN KEY (RecipeID) REFERENCES Recipe(RecipeID) ON DELETE CASCADE,
+    FOREIGN KEY (CategoryName) REFERENCES Category(CategoryName) ON DELETE CASCADE
 );
 
 CREATE TABLE RecipeList (
-                            RecipeListID NUMBER PRIMARY KEY,
-                            RecipeListName VARCHAR2(50) DEFAULT 'Untitled Recipe List',
-                            PrivacyLevel VARCHAR2(20) DEFAULT 'Private' CHECK (PrivacyLevel IN ('Private', 'Public', 'Friends Only')),
-                            Username VARCHAR2(50) NOT NULL,
-                            FOREIGN KEY (Username) REFERENCES AppUser(Username)
+    RecipeListID NUMBER PRIMARY KEY,
+    RecipeListName VARCHAR2(50) DEFAULT 'Untitled Recipe List',
+    PrivacyLevel VARCHAR2(20) DEFAULT 'Private' CHECK (PrivacyLevel IN ('Private', 'Public', 'Friends Only')),
+    Username VARCHAR2(50) NOT NULL,
+    FOREIGN KEY (Username) REFERENCES AppUser(Username) ON DELETE CASCADE
 );
 
 CREATE TABLE RecipeListHasRecipe (
-                                     RecipeListID NUMBER,
-                                     RecipeID NUMBER,
-                                     PRIMARY KEY (RecipeListID, RecipeID),
-                                     FOREIGN KEY (RecipeID) REFERENCES Recipe(RecipeID) ON DELETE CASCADE,
-                                     FOREIGN KEY (RecipeListID) REFERENCES RecipeList(RecipeListID) ON DELETE CASCADE
+    RecipeListID NUMBER,
+    RecipeID NUMBER,
+    PRIMARY KEY (RecipeListID, RecipeID),
+    FOREIGN KEY (RecipeID) REFERENCES Recipe(RecipeID) ON DELETE CASCADE,
+    FOREIGN KEY (RecipeListID) REFERENCES RecipeList(RecipeListID) ON DELETE CASCADE
 );
 
 -- Insert Sample Data
-INSERT INTO AppUser (Username, ProfilePicture, Email, FullName, DefaultPrivacyLevel) VALUES ('Alice', EMPTY_BLOB(), 'alice@gmail.com', 'Alice Person', 'Private');
-INSERT INTO AppUser (Username, ProfilePicture, Email, FullName, DefaultPrivacyLevel) VALUES ('Charlie', HEXTORAW('54657374'), 'charlie@gmail.com', 'Charlie Person', 'Public');
-INSERT INTO AppUser (Username, ProfilePicture, Email, FullName, DefaultPrivacyLevel) VALUES ('Bob', EMPTY_BLOB(), 'bob@gmail.com', 'Bob Person', 'Private');
-INSERT INTO AppUser (Username, ProfilePicture, Email, FullName, DefaultPrivacyLevel) VALUES ('Kevin', HEXTORAW('496D616765'), 'kevin@gmail.com', 'Kevin Person', 'Public');
-INSERT INTO AppUser (Username, ProfilePicture, Email, FullName, DefaultPrivacyLevel) VALUES ('Jason', HEXTORAW('48656C6C6F'), 'jason@gmail.com', 'Jason Person', 'Friends Only');
-INSERT INTO AppUser (Username, ProfilePicture, Email, FullName, DefaultPrivacyLevel) VALUES ('Sam', EMPTY_BLOB(), 'sam@gmail.com', 'Sam Person', 'Public');
-INSERT INTO AppUser (Username, ProfilePicture, Email, FullName, DefaultPrivacyLevel) VALUES ('Leo', HEXTORAW('54657374'), 'leo@gmail.com', 'Leo Person', 'Friends Only');
-INSERT INTO AppUser (Username, ProfilePicture, Email, FullName, DefaultPrivacyLevel) VALUES ('Tony', EMPTY_BLOB(), 'tony@gmail.com', 'Tony Person', 'Public');
-INSERT INTO AppUser (Username, ProfilePicture, Email, FullName, DefaultPrivacyLevel) VALUES ('Max', HEXTORAW('496D616765'), 'max@gmail.com', 'Max Person', 'Private');
-INSERT INTO AppUser (Username, ProfilePicture, Email, FullName, DefaultPrivacyLevel) VALUES ('Ricky', HEXTORAW('48656C6C6F'), 'ricky@gmail.com', 'Ricky Person', 'Friends Only');
+INSERT INTO AppUser (Username, Email, FullName, DefaultPrivacyLevel) VALUES ('Alice', 'alice@gmail.com', 'Alice Person', 'Private');
+INSERT INTO AppUser (Username, Email, FullName, DefaultPrivacyLevel) VALUES ('Charlie', 'charlie@gmail.com', 'Charlie Person', 'Public');
+INSERT INTO AppUser (Username, Email, FullName, DefaultPrivacyLevel) VALUES ('Bob', 'bob@gmail.com', 'Bob Person', 'Private');
+INSERT INTO AppUser (Username, Email, FullName, DefaultPrivacyLevel) VALUES ('Kevin', 'kevin@gmail.com', 'Kevin Person', 'Public');
+INSERT INTO AppUser (Username, Email, FullName, DefaultPrivacyLevel) VALUES ('Jason', 'jason@gmail.com', 'Jason Person', 'Friends Only');
+INSERT INTO AppUser (Username, Email, FullName, DefaultPrivacyLevel) VALUES ('Sam', 'sam@gmail.com', 'Sam Person', 'Public');
+INSERT INTO AppUser (Username, Email, FullName, DefaultPrivacyLevel) VALUES ('Leo', 'leo@gmail.com', 'Leo Person', 'Friends Only');
+INSERT INTO AppUser (Username, Email, FullName, DefaultPrivacyLevel) VALUES ('Tony', 'tony@gmail.com', 'Tony Person', 'Public');
+INSERT INTO AppUser (Username, Email, FullName, DefaultPrivacyLevel) VALUES ('Max', 'max@gmail.com', 'Max Person', 'Private');
+INSERT INTO AppUser (Username, Email, FullName, DefaultPrivacyLevel) VALUES ('Ricky', 'ricky@gmail.com', 'Ricky Person', 'Friends Only');
 
 INSERT INTO Friends (Username1, Username2, DateAndTimeCreated) VALUES ('Alice', 'Charlie', TIMESTAMP '2024-01-15 10:00:00');
 INSERT INTO Friends (Username1, Username2, DateAndTimeCreated) VALUES ('Alice', 'Bob', TIMESTAMP '2024-01-15 11:00:00');
@@ -183,17 +182,16 @@ INSERT INTO Friends (Username1, Username2, DateAndTimeCreated) VALUES ('Charlie'
 INSERT INTO Friends (Username1, Username2, DateAndTimeCreated) VALUES ('Bob', 'Kevin', TIMESTAMP '2023-01-17 12:15:00');
 INSERT INTO Friends (Username1, Username2, DateAndTimeCreated) VALUES ('Kevin', 'Jason', TIMESTAMP '2020-01-18 13:45:00');
 
--- INSERT INTO NotificationMessage (Username, DateAndTimeSent, MessageText) VALUES ('Alice', TIMESTAMP '2024-05-19 10:00:03', 'Your potatoes expire in 7 days');
--- INSERT INTO NotificationMessage (Username, DateAndTimeSent, MessageText) VALUES ('Alice', TIMESTAMP '2024-05-19 10:00:04', 'Your lettuce expire in 7 days');
--- INSERT INTO NotificationMessage (Username, DateAndTimeSent, MessageText) VALUES ('Alice', TIMESTAMP '2024-05-19 10:00:05', 'Your rice expire in 7 days');
--- INSERT INTO NotificationMessage (Username, DateAndTimeSent, MessageText) VALUES ('Alice', TIMESTAMP '2024-05-19 10:00:06', 'Your apples expire in 7 days');
--- INSERT INTO NotificationMessage (Username, DateAndTimeSent, MessageText) VALUES ('Charlie', TIMESTAMP '2024-9-19 01:00:03', 'Your chicken expires in 3 days');
+INSERT INTO NotificationMessage (Username, DateAndTimeSent, MessageText) VALUES ('Alice', TIMESTAMP '2024-05-19 10:00:03', 'Your potatoes expire in 7 days');
+INSERT INTO NotificationMessage (Username, DateAndTimeSent, MessageText) VALUES ('Alice', TIMESTAMP '2024-05-19 10:00:04', 'Your lettuce expire in 7 days');
+INSERT INTO NotificationMessage (Username, DateAndTimeSent, MessageText) VALUES ('Alice', TIMESTAMP '2024-05-19 10:00:05', 'Your rice expire in 7 days');INSERT INTO NotificationMessage (Username, DateAndTimeSent, MessageText) VALUES ('Alice', TIMESTAMP '2024-05-19 10:00:06', 'Your apples expire in 7 days');
+INSERT INTO NotificationMessage (Username, DateAndTimeSent, MessageText) VALUES ('Charlie', TIMESTAMP '2024-9-19 01:00:03', 'Your chicken expires in 3 days');
 
--- INSERT INTO Notifications (NotificationID, DateAndTimeSent, Username) VALUES (1, TIMESTAMP '2024-05-19 10:00:03', 'Alice');
--- INSERT INTO Notifications (NotificationID, DateAndTimeSent, Username) VALUES (2, TIMESTAMP '2024-05-19 10:00:04', 'Alice');
--- INSERT INTO Notifications (NotificationID, DateAndTimeSent, Username) VALUES (3, TIMESTAMP '2024-05-19 10:00:05', 'Alice');
--- INSERT INTO Notifications (NotificationID, DateAndTimeSent, Username) VALUES (4, TIMESTAMP '2024-05-19 10:00:06', 'Alice');
--- INSERT INTO Notifications (NotificationID, DateAndTimeSent, Username) VALUES (5, TIMESTAMP '2024-9-19 01:00:03', 'Charlie');
+INSERT INTO Notifications (NotificationID, DateAndTimeSent, Username) VALUES (1, TIMESTAMP '2024-05-19 10:00:03', 'Alice');
+INSERT INTO Notifications (NotificationID, DateAndTimeSent, Username) VALUES (2, TIMESTAMP '2024-05-19 10:00:04', 'Alice');
+INSERT INTO Notifications (NotificationID, DateAndTimeSent, Username) VALUES (3, TIMESTAMP '2024-05-19 10:00:05', 'Alice');
+INSERT INTO Notifications (NotificationID, DateAndTimeSent, Username) VALUES (4, TIMESTAMP '2024-05-19 10:00:06', 'Alice');
+INSERT INTO Notifications (NotificationID, DateAndTimeSent, Username) VALUES (5, TIMESTAMP '2024-9-19 01:00:03', 'Charlie');
 
 INSERT INTO AllergyList (IngredientListID, PrivacyLevel, ListDescription, Username, ListName) VALUES (1, 'Private', 'Childbirth Allergies', 'Alice', 'Alices Allergies');
 INSERT INTO AllergyList (IngredientListID, PrivacyLevel, ListDescription, Username, ListName) VALUES (2, 'Public', 'Childbirth Allergies', 'Charlie', 'Charlies Allergies');

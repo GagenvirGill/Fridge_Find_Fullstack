@@ -344,9 +344,7 @@ async function fetchRecipesByCategoryFromDb(Categories) {
             JOIN RecipeHasCategory rhc ON r.RecipeID = rhc.RecipeID
             WHERE rhc.CategoryName IN (${formattedValues})
         `;
-
         const result = await connection.execute(query, bindVariables);
-
         console.log('Fetched Filtered Recipes Successfully');
         return { success: true, data: result.rows };
     }).catch((error) => {
