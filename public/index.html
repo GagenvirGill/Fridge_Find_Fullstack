@@ -225,7 +225,7 @@
 
 <h3>Get All Simple/Complicated Recipes</h3>
 <form id="SimpleOrComplicatedRecipesForm">
-    <select id="SimpleOrComplicatedRecipesFormSelect">
+    <select name="SimpleOrComplicatedRecipesFormSelect" id="SimpleOrComplicatedRecipesFormSelect">
         <option value="Simple">Simple</option>
         <option value="Complicated">Complicated</option>
     </select> <br>
@@ -248,44 +248,51 @@
     </tbody>
 </table>
 
-    <h3>Update a Allergic Ingredient</h3>
-    <form id="updateAllergicIngredient">
-        Ingredient ID: <input type="number" id="updateAllergicIngredientID" placeholder="Enter Allergic Ingredient ID" required> <br><br>
-        New Ingredient Name: <input type="text" id="updateAllergicIngredientName" placeholder="Enter New Allergic Ingredient Name" maxlength="50"> <br><br>
-        </select> <br><br>
+
+<h3>Show and Filter Recipes by Category</h3>
+<form id="filterRecipesForm">
+    <label for="filterRecipes"> Filter the Recipes by the following Categories (Hold shift to select multiple):</label> <br><br>
+    <select name="filterRecipesCategories" id="filterRecipesCategories" multiple> 
+        <!-- Options are displayed dynamically and are not statically known -->
+    </select> 
+    <div id="filterRecipesByCategoryFormResultMsg"></div> <br><br>
 
     <button type="submit"> Filter </button> <br>
 </form>
 <div id="filterRecipesByCategoryTableResultMsg"></div>
 <table id="filteredRecipeTable" border="1">
     <thead>
-    <tr>
-        <th>Category</th>
-        <th>Recipe ID</th>
-        <th>Recipe Name</th>
-        <th>Privacy Level</th>
-        <th>Username</th>
-    </tr>
+        <tr>
+            <th>Category</th>
+            <th>Recipe ID</th>
+            <th>Recipe Name</th>
+            <th>Privacy Level</th>
+            <th>Username</th>
+        </tr>
     </thead>
     <tbody>
     </tbody>
 </table>
 
-    <h3>Delete a Allergic Ingredient</h3>
-    <form id="deleteAllergicIngredient">
-        Ingredient ID: <input type="number" id="deleteAllergicIngredientID" placeholder="Enter Allergic Ingredient ID" required> <br><br>
+<h3>Show and Filter Recipes by Recipe List</h3>
+<form id="filterByRecipeListForm">
+    <label for="filterByRecipeList">Filter the Recipes by the following Recipe Lists: </label>
+    <select name="filterRecipesRecipeLists" id="filterRecipesRecipeLists">
+        <!-- Options are displayed dynamically and are not statically known -->
+    </select> 
+    <div id="filterRecipesByRecipeListFormResultMsg"></div> <br><br>
 
     <button type="submit"> Filter </button> <br>
 </form>
 <div id="recipesByRecipeListMsg"></div>
 <table id="filteredByRecipeListTable" border="1">
     <thead>
-    <tr>
-        <th>Recipe ID</th>
-        <th>Recipe Name</th>
-        <th>Privacy Level</th>
-        <th>Username</th>
-    </tr>
+        <tr>
+            <th>Recipe ID</th>
+            <th>Recipe Name</th>
+            <th>Privacy Level</th>
+            <th>Username</th>
+        </tr>
     </thead>
     <tbody>
     </tbody>

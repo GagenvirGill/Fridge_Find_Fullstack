@@ -212,61 +212,61 @@ async function viewUsersWhoAreFriendsWithEveryone() {
     });
 }
 
-async function insertFriend(username1, username2) {
-    if (!username1 || !username2) {
-        throw new Error("Both 'username1' and 'username2' are required.");
-    }
-    if (username1 === username2) {
-        throw new Error("'username1' and 'username2' cannot be the same.");
-    }
+// async function insertFriend(username1, username2) {
+//     if (!username1 || !username2) {
+//         throw new Error("Both 'username1' and 'username2' are required.");
+//     }
+//     if (username1 === username2) {
+//         throw new Error("'username1' and 'username2' cannot be the same.");
+//     }
 
-    return await withOracleDB(async (connection) => {
-        const result = await connection.execute(
-            `INSERT INTO Friends (Username1, Username2, DateAndTimeCreated)
-             VALUES (:username1, :username2, SYSTIMESTAMP)`,
-            [username1, username2],
-            { autoCommit: true }
-        );
+//     return await withOracleDB(async (connection) => {
+//         const result = await connection.execute(
+//             `INSERT INTO Friends (Username1, Username2, DateAndTimeCreated)
+//              VALUES (:username1, :username2, SYSTIMESTAMP)`,
+//             [username1, username2],
+//             { autoCommit: true }
+//         );
 
-        return result.rowsAffected && result.rowsAffected > 0;
-    }).catch((error) => {
-        console.error('Error inserting friend:', error);
-        return false;
-    });
-}
+//         return result.rowsAffected && result.rowsAffected > 0;
+//     }).catch((error) => {
+//         console.error('Error inserting friend:', error);
+//         return false;
+//     });
+// }
 
-async function deleteFriend(username1, username2) {
-    return await withOracleDB(async (connection) => {
-        const result = await connection.execute(
-            `DELETE FROM Friends
-             WHERE (Username1 = :username1 AND Username2 = :username2)
-                OR (Username1 = :username2 AND Username2 = :username1)`,
-            [username1, username2],
-            { autoCommit: true }
-        );
+// async function deleteFriend(username1, username2) {
+//     return await withOracleDB(async (connection) => {
+//         const result = await connection.execute(
+//             `DELETE FROM Friends
+//              WHERE (Username1 = :username1 AND Username2 = :username2)
+//                 OR (Username1 = :username2 AND Username2 = :username1)`,
+//             [username1, username2],
+//             { autoCommit: true }
+//         );
 
-        return result.rowsAffected && result.rowsAffected > 0;
-    }).catch((error) => {
-        console.error('Error deleting friend:', error);
-        return false;
-    });
-}
+//         return result.rowsAffected && result.rowsAffected > 0;
+//     }).catch((error) => {
+//         console.error('Error deleting friend:', error);
+//         return false;
+//     });
+// }
 
-async function areTheyFriends(username1, username2) {
-    return await withOracleDB(async (connection) => {
-        const result = await connection.execute(
-            `SELECT * FROM Friends
-             WHERE (Username1 = :username1 AND Username2 = :username2)
-                OR (Username1 = :username2 AND Username2 = :username1)`,
-            [username1, username2]
-        );
+// async function areTheyFriends(username1, username2) {
+//     return await withOracleDB(async (connection) => {
+//         const result = await connection.execute(
+//             `SELECT * FROM Friends
+//              WHERE (Username1 = :username1 AND Username2 = :username2)
+//                 OR (Username1 = :username2 AND Username2 = :username1)`,
+//             [username1, username2]
+//         );
 
-        return result.rows.length > 0;
-    }).catch((error) => {
-        console.error('Error checking friend relationship:', error);
-        return false;
-    });
-}
+//         return result.rows.length > 0;
+//     }).catch((error) => {
+//         console.error('Error checking friend relationship:', error);
+//         return false;
+//     });
+// }
 
 // ----------------------------------------------------------
 // Recipe Centric service
