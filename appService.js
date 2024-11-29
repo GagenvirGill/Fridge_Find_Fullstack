@@ -1198,7 +1198,6 @@ async function fetchAllergyListByProjectFromDb(userInput) {
 
         const result = await connection.execute(query);
 
-        //Added
         if (!result.rows || result.rows.length === 0) {
             return { success: true, data: [] };
         }
@@ -1215,7 +1214,6 @@ async function fetchAllergyListByProjectFromDb(userInput) {
     });
 }
 
-// AllergyListHasAllergicIngredient
 async function fetchAllergyListHasAllergicIngredientFromDb() {
     try {
         return await withOracleDB(async (connection) => {
