@@ -1112,7 +1112,6 @@ async function deleteAllergicIngredient(IngredientID) {
     }
 }
 
-// AllergyList
 async function fetchAllergyListFromDb() {
     try {
         return await withOracleDB(async (connection) => {
@@ -1125,7 +1124,6 @@ async function fetchAllergyListFromDb() {
     }
 }
 
-// IngredientListID, PrivacyLevel, ListDescription, Username, ListName
 async function insertAllergyList(IngredientListID, PrivacyLevel, ListDescription, Username, ListName) {
     try {
         return await withOracleDB(async (connection) => {
@@ -1190,7 +1188,7 @@ async function deleteAllergyList(IngredientListID) {
 
 async function fetchAllergyListByProjectFromDb(userInput) {
     return await withOracleDB(async (connection) => {
-        // const formattedColumns = userInput.map(column => `"${column}"`).join(', ');
+
         const formattedColumns = userInput.map(column => column.toUpperCase()).join(', ');
 
         const query = `
