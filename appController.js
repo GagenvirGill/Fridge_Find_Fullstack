@@ -461,9 +461,101 @@ router.delete("/delete-allergic-ingredient", async (req, res) => {
     }
 });
 
+// AllergyList 
+router.get('/allergy-list', async (req, res) => {
+    const tableContent = await appService.fetchAllergyListFromDb();
+    res.json({ data: tableContent });
+});
+
+router.post("/insert-allergy-list", async (req, res) => {
+    const { IngredientListID, PrivacyLevel, ListDescription, Username, ListName } = req.body;
+    try {
+         const insertResult = await appService.insertAllergyList(IngredientListID, PrivacyLevel, ListDescription, Username, ListName);
+         if (insertResult) {
+             res.json({ success: true });
+         } else {
+             res.status(500).json({ success: false });
+         }
+     } catch (error) { 
+         res.status(500).json({ success: false, error: error.message });
+     }
+ });
+
+router.patch("/update-allergy-list", async (req, res) => {
+    const { IngredientListID, PrivacyLevel, ListDescription, Username, ListName } = req.body;
+    try {
+        // const updateResult = await appService.updateAllergyList(IngredientListID, PrivacyLevel, ListDescription, Username, ListName);
+        const updateResult = await appService.updateAllergyList(IngredientListID, PrivacyLevel, ListDescription, Username, ListName);
+        if (updateResult) {
+            res.json({ success: true });
+        } else {
+            res.status(500).json({ success: false });
+        }
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+router.delete("/delete-allergy-list", async (req, res) => {
+    const { IngredientListID } = req.body;
+    try {
+        const deleteResult = await appService.deleteAllergyList(IngredientListID);
+        if (deleteResult) {
+            res.json({ success: true });
+        } else {
+            res.status(500).json({ success: false });
+        }
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
 
 
+router.post("/project-allergy-list", async (req, res) => {
+    const { userInput } = req.body;
 
+    if (!userInput) {
+        return res.status(400).json({ error: "User Input is required." });
+    }
+
+    try {
+        const projectedElement = await appService.fetchAllergyListByProjectFromDb(userInput);
+        res.json(projectedElement);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+
+router.get('/count-privacy', async (req, res) => {
+    try {
+        const privacyLevelCounts = await appService.countPrivacyLevels();
+
+        if (privacyLevelCounts) {
+            res.json({ success: true, data: privacyLevelCounts });
+        } else {
+            res.status(404).json({ success: false, message: "No privacy level counts found." });
+        }
+    } catch (error) {
+        console.error('Error fetching privacy level counts:', error);
+        res.status(500).json({ success: false, message: "Error fetching privacy level counts." });
+    }
+});
+
+router.get('/having-allergy-list', async (req, res) => {
+    try {
+        const havingCounts = await appService.havingAllergyList();  
+        
+        if (havingCounts) {
+            res.json({ success: true, data: havingCounts });
+        } else {
+            res.status(404).json({ success: false, message: "No data found for the query." });
+        }
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        res.status(500).json({ success: false, message: "Error fetching data from the database." });
+    }
+});
 
 
 // ----------------------------------------------------------

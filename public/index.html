@@ -222,12 +222,11 @@
     </tbody>
 </table>
 
-<h3>Show all Simple or Complicted Recipes</h3>
-<form id="simpleOrComplicatedRecipes">
-    <select name="difficulty" id="difficulty">
-        <option value="Simple">Simple</option>
-        <option value="Complicated">Complicated</option>
-    </select>
+    <h3> Create a new Allergic Ingredient </h3>
+    <form id="insertAllergicIngredient">
+        Ingredient ID: <input type="number" id="insertAllergicIngredientID" placeholder="Enter Allergic Ingredient ID" required> <br><br>
+        Ingredient Name: <input type="text" id="insertAllergicIngredientName" placeholder="Enter Allergic Ingredient Name" maxlength="50"> <br><br>
+        </select> <br><br>
 
     <button type="submit"> Get Simple/Complicated Recipes </button> <br>
 </form>
@@ -247,13 +246,11 @@
     </tbody>
 </table>
 
-<h3>Show and Filter Recipes by Category</h3>
-<form id="filterRecipesForm">
-    <label for="filterRecipes"> Filter the Recipes by the following Categories (Hold shift to select multiple):</label> <br><br>
-    <select name="filterRecipesCategories" id="filterRecipesCategories" multiple>
-        <!-- Options are displayed dynamically and are not statically known -->
-    </select>
-    <div id="filterRecipesByCategoryFormResultMsg"></div> <br><br>
+    <h3>Update a Allergic Ingredient</h3>
+    <form id="updateAllergicIngredient">
+        Ingredient ID: <input type="number" id="updateAllergicIngredientID" placeholder="Enter Allergic Ingredient ID" required> <br><br>
+        New Ingredient Name: <input type="text" id="updateAllergicIngredientName" placeholder="Enter New Allergic Ingredient Name" maxlength="50"> <br><br>
+        </select> <br><br>
 
     <button type="submit"> Filter </button> <br>
 </form>
@@ -272,13 +269,9 @@
     </tbody>
 </table>
 
-<h3>Show and Filter Recipes by Recipe List</h3>
-<form id="filterByRecipeListForm">
-    <label for="filterByRecipeList">Filter the Recipes by the following Recipe Lists: </label>
-    <select name="filterRecipesRecipeLists" id="filterRecipesRecipeLists">
-        <!-- Options are displayed dynamically and are not statically known -->
-    </select>
-    <div id="filterRecipesByRecipeListFormResultMsg"></div> <br><br>
+    <h3>Delete a Allergic Ingredient</h3>
+    <form id="deleteAllergicIngredient">
+        Ingredient ID: <input type="number" id="deleteAllergicIngredientID" placeholder="Enter Allergic Ingredient ID" required> <br><br>
 
     <button type="submit"> Filter </button> <br>
 </form>
@@ -565,55 +558,107 @@
 </form>
 <div id="deleteRecipeFromRecipeListResultMsg"></div>
 
+    <h3>Show Allergy List</h3>
+    <table id="allergylist" border="1">
+        <thead>
+            <tr>
+                <th>IngredientListID</th>
+                <th>PrivacyLevel</th>
+                <th>ListDescription</th>
+                <th>Username</th>
+                <th>ListName</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
 
-<br><hr><br> <!-- ========================================================================= -->
-<h2> Ingredient Centric </h2>
+    <h3> Create a new Allergy List </h3>
+    <form id="insertAllergyList">
+        Ingredient List ID: <input type="number" id="insertAllergyListIngredientListID" placeholder="Enter Ingredient List ID" required> <br><br>
+        List Description: <input type="text" id="insertAllergyListListDescription" placeholder="Enter List Description" maxlength="50"> <br><br>
+        List Username: <input type="text" id="insertAllergyListUsername" placeholder="Enter Username" maxlength="50" required> <br><br>
+        List Name: <input type="text" id="insertAllergyListName" placeholder="Enter List Name" maxlength="50"> <br><br>
+        Privacy Level: 
+        <select id="insertAllergyListPrivacyLevel">
+            <option value="Do Not Change">Do Not Change</option>
+            <option value="Private">Private</option>
+            <option value="Public">Public</option>
+            <option value="Friends Only">Friends Only</option>
+        </select> <br><br>
 
-<h3>Show Allergic Ingredient</h3>
-<table id="allergicingredient" border="1">
-    <thead>
-    <tr>
-        <th>IngredientID</th>
-        <th>IngredientName</th>
-    </tr>
-    </thead>
-    <tbody>
-    </tbody>
-</table>
+        <button type="submit"> Create </button> <br>
+    </form>
+    <div id="insertAllergyListResultMsg"></div>
 
-<h3> Create a new Allergic Ingredient </h3>
-<form id="insertAllergicIngredient">
-    Allergic Ingredient ID: <input type="number" id="insertAllergicIngredientID" placeholder="Enter Allergic Ingredient ID" required> <br><br>
-    Allergic Ingredient Name: <input type="text" id="insertAllergicIngredientName" placeholder="Enter Allergic Ingredient Name" maxlength="50"> <br><br>
-    </select> <br><br>
+    <h3>Update a Allergy List</h3>
+    <form id="updateAllergyList">
+        Ingredient List ID: <input type="number" id="updateAllergyListIngredientListID" placeholder="Enter Ingredient List ID" required> <br><br>
+        New List Description: <input type="text" id="updateAllergyListListDescription" placeholder="Enter List Description" maxlength="50"> <br><br>
+        New List Username: <input type="text" id="updateAllergyListUsername" placeholder="Enter Username" maxlength="50" required> <br><br>
+        New List Name: <input type="text" id="updateAllergyListName" placeholder="Enter List Name" maxlength="50"> <br><br>
+        New Privacy Level: 
+        <select id="updateAllergyListPrivacyLevel">
+            <option value="Private">Private</option>
+            <option value="Public">Public</option>
+            <option value="Friends Only">Friends Only</option>
+        </select> <br><br>
 
-    <button type="submit"> Create </button> <br>
-</form>
-<div id="insertAllergicIngredientResultMsg"></div>
+        <button type="submit"> Update </button> <br>
+    </form>
+    <div id="updateAllergyListResultMsg"></div>
 
-<h3>Update a Allergic Ingredient</h3>
-<form id="updateAllergicIngredient">
-    Allergic Ingredient ID: <input type="number" id="updateAllergicIngredientID" placeholder="Enter Allergic Ingredient ID" required> <br><br>
-    New Allergic Ingredient Name: <input type="text" id="updateAllergicIngredientName" placeholder="Enter New Allergic Ingredient Name" maxlength="50"> <br><br>
-    </select> <br><br>
+    <h3>Delete a Allergy List</h3>
+    <form id="deleteAllergyList">
+        Ingredient ID: <input type="number" id="deleteAllergyListIngredientListID" placeholder="Enter Allergic Ingredient List ID" required> <br><br>
 
-    <button type="submit"> Update </button> <br>
-</form>
-<div id="updateAllergicIngredientResultMsg"></div>
+        <button type="submit"> Delete </button> <br>
+    </form>
+    <div id="deleteAllergyListResultMsg"></div>
 
-<h3>Delete a Allergic Ingredient</h3>
-<form id="deleteAllergicIngredient">
-    Allergic Ingredient ID: <input type="number" id="deleteAllergicIngredientID" placeholder="Enter Allergic Ingredient ID" required> <br><br>
+    <h3>Group AllergyList </h3>
+    <form id="privacyCountAllergyListForm">
+        <label for="projectAllergyList">Count the Number of Privacy Levels in AllergyList:</label><br><br>
+        <div id="projectAllergyListResultMsg"></div>
+        <br><br>
+        <button type="button">Count</button> <!-- Changed type to 'button' -->
+    </form>
+    
+    <table id="fetchPrivacyLevelCount" border="1">
+        <thead>
+            <tr>
+                <th>Privacy Level</th>
+                <th>Count</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
 
-    <button type="submit"> Delete </button> <br>
-</form>
-<div id="deleteAllergicIngredientResultMsg"></div>
+    <h3>Having Allergy List</h3>
+    <form id="havingAllergyListForm">
+        <label for="havingAllergyListLabel">Get Usernames Having at least 1 Allergy Lists:</label><br><br>
+        <div id="havingAllergyListResultMsg"></div>
+        <br><br>
+        <button type="button" id="havingAllergyListButton">Count</button>
+    </form>
 
+    <table id="fetchHavingAllergyList" border="1">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Total Lists</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
 
-<br><hr><br> <!-- ========================================================================= -->
-
-<!-- ===================================================================================== -->
-<!-- External JavaScript file that contains the functionality/logic for the operations above. -->
-<script src="scripts.js"></script>
+  
+    <br><hr><br> <!-- ========================================================================= -->
+    
+    <!-- ===================================================================================== -->
+    <!-- External JavaScript file that contains the functionality/logic for the operations above. -->
+    <script src="scripts.js"></script>
 </body>
 </html>
