@@ -288,6 +288,7 @@ router.delete("/delete-allergy-list", async (req, res) => {
     }
 });
 
+
 router.post("/project-allergy-list", async (req, res) => {
     const { userInput } = req.body;
 
@@ -296,137 +297,28 @@ router.post("/project-allergy-list", async (req, res) => {
     }
 
     try {
-        const projectedElement = await appService.projectAllergyList(userInput);
+        const projectedElement = await appService.fetchAllergyListByProjectFromDb(userInput);
         res.json(projectedElement);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 });
 
-// app.post('/group-privacy-level-counts', async (req, res) => {
-//     try {
-//         const result = await fetchPrivacyLevelCounts();
-//         if (result && result.length > 0) {
-//             // If data is found, return success with data
-//             res.json({ success: true, data: result });
-//         } else {
-//             // If no data is found, return an error message
-//             res.status(400).json({ success: false, error: 'No data found' });
-//         }
-//     } catch (error) {
-//         console.error('Database error:', error);
-//         res.status(500).json({ success: false, error: 'Database query error' });
-//     }
-// });
 
+router.get('/count-privacy', async (req, res) => {
+    try {
+        const privacyLevelCounts = await appService.countPrivacyLevels();
 
-
-
-// AllergyListHasAllergicIngredient
-router.get('/allergy-list-has-allergic-ingredient', async (req, res) => {
-    const tableContent = await appService.fetchAllergyListHasAllergicIngredientFromDb();
-    res.json({ data: tableContent });
+        if (privacyLevelCounts && privacyLevelCounts.length > 0) {
+            res.json({ success: true, data: privacyLevelCounts });
+        } else {
+            res.status(404).json({ success: false, message: "No privacy level counts found." });
+        }
+    } catch (error) {
+        console.error('Error fetching privacy level counts:', error);
+        res.status(500).json({ success: false, message: "Error fetching privacy level counts." });
+    }
 });
-
-
-// KitchenInventory
-
-// KitchenIngredientPerishableDate
-
-
-// router.post("/insert-allergy-list-has-allergic-ingredient", async (req, res) => {
-//     const { IngredientListID, IngredientID, Severity } = req.body;
-//     try {
-//          const insertResult = await appService.insertAllergicIngredient(IngredientListID, IngredientID, Severity);
-//          if (insertResult) {
-//              res.json({ success: true });
-//          } else {
-//              res.status(500).json({ success: false });
-//          }
-//      } catch (error) { 
-//          res.status(500).json({ success: false, error: error.message });
-//      }
-//  });
-
-//  router.patch("/update-allergy-list-has-allergic-ingredient", async (req, res) => {
-//     const { IngredientListID, IngredientID, Severity } = req.body;
-//     try {
-//         const updateResult = await appService.updateKitchenIngredient(IngredientListID, IngredientID, Severity);
-//         if (updateResult) {
-//             res.json({ success: true });
-//         } else {
-//             res.status(500).json({ success: false });
-//         }
-//     } catch (error) {
-//         res.status(500).json({ success: false, error: error.message });
-//     }
-// });
-
-// router.delete("/delete-allergy-list-has-allergic-ingredient", async (req, res) => {
-//     const { IngredientListID, IngredientID } = req.body;
-//     try {
-//         const deleteResult = await appService.deleteAllergyList(IngredientListID, IngredientID);
-//         if (deleteResult) {
-//             res.json({ success: true });
-//         } else {
-//             res.status(500).json({ success: false });
-//         }
-//     } catch (error) {
-//         res.status(500).json({ success: false, error: error.message });
-//     }
-// });
-
-// KitchenIngredient
-// router.get('/kitchen-ingredient', async (req, res) => {
-//     const tableContent = await appService.fetchKitchenIngredientFromDb();
-//     res.json({ data: tableContent });
-// });
-
-// // Gives me an error - TODO
-// router.post("/insert-kitchen-ingredient", async (req, res) => {
-//    const { DatePurchased, ShelfLife, IngredientID, IngredientName, IngredientListID, Amount, UnitOfMeasurement } = req.body;
-//    try {
-//         const insertResult = await appService.insertKitchenIngredient(DatePurchased, ShelfLife, IngredientID, IngredientName, IngredientListID, Amount, UnitOfMeasurement);
-//         if (insertResult) {
-//             res.json({ success: true });
-//         } else {
-//             res.status(500).json({ success: false });
-//         }
-//     } catch (error) { 
-//         res.status(500).json({ success: false, error: error.message });
-//     }
-// });
-
-// // Gives me an error - TODO
-// router.patch("/update-kitchen-ingredient", async (req, res) => {
-//     const { DatePurchased, ShelfLife, IngredientID, IngredientName, IngredientListID, Amount, UnitOfMeasurement } = req.body;
-//     try {
-//         const updateResult = await appService.updateKitchenIngredient(DatePurchased, ShelfLife, IngredientID, IngredientName, IngredientListID, Amount, UnitOfMeasurement);
-//         if (updateResult) {
-//             res.json({ success: true });
-//         } else {
-//             res.status(500).json({ success: false });
-//         }
-//     } catch (error) {
-//         res.status(500).json({ success: false, error: error.message });
-//     }
-// });
-
-// router.delete("/delete-kitchen-ingredient", async (req, res) => {
-//     const { IngredientID, IngredientListID  } = req.body;
-//     try {
-//         const deleteResult = await appService.deleteAllergyList(IngredientID, IngredientListID);
-//         if (deleteResult) {
-//             res.json({ success: true });
-//         } else {
-//             res.status(500).json({ success: false });
-//         }
-//     } catch (error) {
-//         res.status(500).json({ success: false, error: error.message });
-//     }
-// });
-
-
 
 
 // ----------------------------------------------------------

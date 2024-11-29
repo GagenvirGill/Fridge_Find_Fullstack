@@ -1081,6 +1081,7 @@ async function projectAllergyList(event) {
         });
 
         const responseData = await response.json();
+        console.log(responseData);
         const projectedAllergyList = responseData.data;
 
         tableHead.innerHTML = '';
@@ -1121,386 +1122,112 @@ async function projectAllergyList(event) {
     }
 }
 
+async function countPrivacyLevels() {
+    const tableElement = document.getElementById("fetchPrivacyLevelCount");
+    const tableBody = tableElement.querySelector("tbody");
 
+    try {
+        // Fetch the privacy level count data from the server
+        const response = await fetch("/count-privacy", { method: "GET" });
+        const responseData = await response.json();
 
+        // Handle errors from the server
+        if (!responseData.success) {
+            document.getElementById("projectAllergyListResultMsg").textContent =
+                responseData.message || "Failed to fetch privacy level counts.";
+            return;
+        }
 
+        const counts = responseData.data;
 
+        // Clear the existing rows in the table body
+        tableBody.innerHTML = "";
 
+        // Loop through each count and display it in the table
+        counts.forEach(([PrivacyLevel, PrivacyLevelCount]) => {
+            const row = tableBody.insertRow();
+            const levelCell = row.insertCell(0);
+            const countCell = row.insertCell(1);
 
-
-// async function groupByAllergyList(event) {
-//     event.preventDefault();
-
-//     // Get values directly from the form elements
-//     const groupByAllergyListValue = document.getElementById('groupByAllergyListUserInput').value;
-//     const groupByAllergyListAggregation = document.getElementById('groupByAllergyListAggregation').value;
-
-//     const response = await fetch('/group-allergy-list', {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify({
-//             userInputGroupBy: groupByAllergyListValue,
-//             userInputAggregation: groupByAllergyListAggregation,
-//         }),
-//     });
-
-//     const responseData = await response.json();
-//     const messageElement = document.getElementById('groupByAllergyListResultMsg');
-
-//     if (response.ok) {
-//         messageElement.textContent = "AllergyList grouped successfully!";
-//         const resultHTML = `<pre>${JSON.stringify(responseData, null, 2)}</pre>`;
-//         messageElement.innerHTML = resultHTML;
-//     } else {
-//         console.error('Error fetching group by result:', responseData.error);
-//         messageElement.textContent = `Unexpected error: ${responseData.error}`;
-//     }
-// }
-
-
-// KitchenIngredient
-// async function fetchAndDisplayKitchenIngredient() {
-//     const response = await fetch('/kitchen-ingredient', {
-//         method: 'GET'
-//     });
-
-//     const responseData = await response.json();
-//     const kitchenIngredientContent = responseData.data;
-
-//     const tableElement = document.getElementById('kitcheningredient'); // from index.html tag
-//     const tableBody = tableElement.querySelector('tbody');
-
-//     if (tableBody) {
-//         tableBody.innerHTML = '';
-//     }
-
-//     kitchenIngredientContent.forEach(kitcheningredient => {
-//         const row = tableBody.insertRow();
-//         kitcheningredient.forEach((field, index) => {
-//             const cell = row.insertCell(index);
-//             cell.textContent = field;
-//         });
-//     });
-// }
-
-// AllergyListHasAllergicIngredient
-async function fetchAndDisplayAllergyListHasAllergicIngredient() {
-    const response = await fetch('/allergy-list-has-allergic-ingredient', {
-        method: 'GET'
-    });
-
-    const responseData = await response.json();
-    const allergyListHasAllergicIngredientContent = responseData.data;
-
-    const tableElement = document.getElementById('allergylisthasallergicingredient'); // from index.html tag
-    const tableBody = tableElement.querySelector('tbody');
-
-    if (tableBody) {
-        tableBody.innerHTML = '';
-    }
-
-    allergyListHasAllergicIngredientContent.forEach(allergylisthasallergicingredient => {
-        const row = tableBody.insertRow();
-        allergylisthasallergicingredient.forEach((field, index) => {
-            const cell = row.insertCell(index);
-            cell.textContent = field;
+            levelCell.textContent = PrivacyLevel;
+            countCell.textContent = PrivacyLevelCount;
         });
-    });
+    } catch (error) {
+        console.error("Error fetching privacy level counts:", error);
+        alert("Error fetching privacy level counts.");
+    }
+};
+
+
+async function projectPrivacyLevelCounts(event) {
+    event.preventDefault();
+
+    const tableElement = document.getElementById('privacyLevelCountTable');
+    const tableHead = tableElement.querySelector('thead');
+    const tableBody = tableElement.querySelector('tbody');
+    const messageElement = document.getElementById('privacyLevelCountResultMsg');
+
+    try {
+        const response = await fetch('/group-privacy-level-counts', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        // Check if the response is a valid JSON
+        const contentType = response.headers.get('Content-Type');
+        if (!contentType || !contentType.includes('application/json')) {
+            throw new Error('Response is not JSON');
+        }
+
+        const responseData = await response.json();
+        const privacyLevelCounts = responseData.data;
+
+        console.log(privacyLevelCounts);  // Check what the backend is returning
+
+        // Clear previous content in table
+        tableHead.innerHTML = '';
+        tableBody.innerHTML = '';
+
+        if (response.ok && privacyLevelCounts && privacyLevelCounts.length > 0) {
+            messageElement.textContent = "Privacy Level Counts projected successfully!";
+
+            const headerRow = document.createElement('tr');
+            const th1 = document.createElement('th');
+            th1.textContent = "Privacy Level";
+            headerRow.appendChild(th1);
+            const th2 = document.createElement('th');
+            th2.textContent = "Count";
+            headerRow.appendChild(th2);
+            tableHead.appendChild(headerRow);
+
+            privacyLevelCounts.forEach(row => {
+                const tableRow = document.createElement('tr');
+
+                const td1 = document.createElement('td');
+                td1.textContent = row.PrivacyLevel;
+                tableRow.appendChild(td1);
+
+                const td2 = document.createElement('td');
+                td2.textContent = row.PrivacyLevelCount;
+                tableRow.appendChild(td2);
+
+                tableBody.appendChild(tableRow);
+            });
+        } else {
+            messageElement.textContent = "No data found for privacy level counts.";
+        }
+    } catch (error) {
+        console.error('Error fetching privacy level counts:', error);
+        messageElement.textContent = `Unexpected error: ${error.message}`;
+    }
 }
-// Frontend: Function to handle the request and display the counts
-// async function projectPrivacyLevelCounts(event) {
-//     event.preventDefault();
-
-//     const tableElement = document.getElementById('privacyLevelCountTable');
-//     const tableHead = tableElement.querySelector('thead');
-//     const tableBody = tableElement.querySelector('tbody');
-//     const messageElement = document.getElementById('privacyLevelCountResultMsg');
-
-//     try {
-//         const response = await fetch('/group-privacy-level-counts', {
-//             method: 'POST',
-//             headers: {
-//                 'Content-Type': 'application/json',
-//             },
-//         });
-
-//         // Check if the response is a valid JSON
-//         const contentType = response.headers.get('Content-Type');
-//         if (!contentType || !contentType.includes('application/json')) {
-//             throw new Error('Response is not JSON');
-//         }
-
-//         const responseData = await response.json();
-//         const privacyLevelCounts = responseData.data;
-
-//         console.log(privacyLevelCounts);  // Check what the backend is returning
-
-//         // Clear previous content in table
-//         tableHead.innerHTML = '';
-//         tableBody.innerHTML = '';
-
-//         if (response.ok && privacyLevelCounts && privacyLevelCounts.length > 0) {
-//             messageElement.textContent = "Privacy Level Counts projected successfully!";
-
-//             const headerRow = document.createElement('tr');
-//             const th1 = document.createElement('th');
-//             th1.textContent = "Privacy Level";
-//             headerRow.appendChild(th1);
-//             const th2 = document.createElement('th');
-//             th2.textContent = "Count";
-//             headerRow.appendChild(th2);
-//             tableHead.appendChild(headerRow);
-
-//             privacyLevelCounts.forEach(row => {
-//                 const tableRow = document.createElement('tr');
-
-//                 const td1 = document.createElement('td');
-//                 td1.textContent = row.PrivacyLevel;
-//                 tableRow.appendChild(td1);
-
-//                 const td2 = document.createElement('td');
-//                 td2.textContent = row.PrivacyLevelCount;
-//                 tableRow.appendChild(td2);
-
-//                 tableBody.appendChild(tableRow);
-//             });
-//         } else {
-//             messageElement.textContent = "No data found for privacy level counts.";
-//         }
-//     } catch (error) {
-//         console.error('Error fetching privacy level counts:', error);
-//         messageElement.textContent = `Unexpected error: ${error.message}`;
-//     }
-// }
 
 
 
 
 
-
-
-
-
-
-// // kitchenIngredient
-// // DatePurchased, ShelfLife, IngredientID, IngredientName, IngredientListID, Amount, UnitOfMeasurement
-// async function insertKitchenIngredient(event) {
-//     event.preventDefault();
-
-//     //const datePurchased = document.getElementById('insertKitchenIngredientDatePurchased').value;
-//     //const formattedDatePurchased = new Date(datePurchased).toISOString().slice(0, 19).replace('T', ' ');
-//     //const formattedDatePurchased = moment(datePurchased).format('YYYY-MM-DD HH:mm:ss');
-
-//     const kitchenIngredientDatePurchased = Datetime(document.getElementById('insertKitchenIngredientDatePurchased').value);
-//     // const kitchenIngredientDatePurchased = document.getElementById('insertKitchenIngredientDatePurchased').value);
-//     const kitchenIngredientShelfLife = Number(document.getElementById('insertKitchenIngredientShelfLife').value);
-//     const kitchenIngredientIngredientID = Number(document.getElementById('insertKitchenIngredientIngredientID').value);
-//     const kitchenIngredientIngredientName = document.getElementById('insertKitchenIngredientIngredientName').value;
-//     const kitchenIngredientIngredientListID = Number(document.getElementById('insertKitchenIngredientIngredientListID').value);
-//     const kitchenIngredientAmount = Number(document.getElementById('insertKitchenIngredientAmount').value);
-//     const kitchenIngredientUnitOfMeasurement = document.getElementById('insertKitchenIngredientUnitOfMeasurement').value;
-
-//     console.log({
-//         DatePurchased: formattedDatePurchased,
-//         ShelfLife: kitchenIngredientShelfLife,
-//         IngredientID: kitchenIngredientIngredientID,
-//         IngredientName: kitchenIngredientIngredientName,
-//         IngredientListID: kitchenIngredientIngredientListID,
-//         Amount: kitchenIngredientAmount,
-//         UnitOfMeasurement: kitchenIngredientUnitOfMeasurement,
-//     });
-
-//     const response = await fetch('/insert-kitchen-ingredient', {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json'
-//         },
-//         body: JSON.stringify({
-//             DatePurchased: kitchenIngredientDatePurchased,
-//             ShelfLife: kitchenIngredientShelfLife,
-//             IngredientID: kitchenIngredientIngredientID,
-//             IngredientName: kitchenIngredientIngredientName,
-//             IngredientListID: kitchenIngredientIngredientListID,
-//             Amount: kitchenIngredientAmount,
-//             UnitOfMeasurement: kitchenIngredientUnitOfMeasurement,
-//         })
-//     });
-
-//     const responseData = await response.json();
-//     const messageElement = document.getElementById('insertKitchenIngredientResultMsg');
-
-//     if (responseData.success) {
-//         messageElement.textContent = "Kitchen Ingredient data inserted successfully!";
-//         fetchTableData(); 
-//     } else {
-//         messageElement.textContent = "Error inserting Kitchen Ingredient data!";
-//     }
-// }
-
-// async function updateKitchenIngredient(event) {
-//     event.preventDefault();
-
-    
-//     const datePurchased2 = document.getElementById('updateKitchenIngredientDatePurchased').value;
-//     // const formattedDatePurchased = new Date(datePurchased).toISOString().slice(0, 19).replace('T', ' ');
-//     const formattedDatePurchased2 = moment(datePurchased2).format('YYYY-MM-DD HH:mm:ss');
-
-//     const kitchenIngredientDatePurchasedValue = formattedDatePurchased2;
-//     const kitchenIngredientShelfLifeValue = Number(document.getElementById('updateKitchenIngredientShelfLife').value);
-//     const kitchenIngredientIngredientIDValue = Number(document.getElementById('updateKitchenIngredientIngredientID').value);
-//     const kitchenIngredientIngredientNameValue = document.getElementById('updateKitchenIngredientIngredientName').value;
-//     const kitchenIngredientIngredientListIDValue = Number(document.getElementById('updateKitchenIngredientIngredientListID').value);
-//     const kitchenIngredientAmountValue = Number(document.getElementById('updateKitchenIngredientAmount').value);
-//     const kitchenIngredientUnitOfMeasuremenValue = document.getElementById('updateKitchenIngredientUnitOfMeasurement').value;
-
-//     const response = await fetch('/update-kitchen-ingredient', {
-//         method: 'PATCH',
-//         headers: {
-//             'Content-Type': 'application/json'
-//         },
-//         body: JSON.stringify({
-//             DatePurchased: kitchenIngredientDatePurchasedValue,
-//             ShelfLife: kitchenIngredientShelfLifeValue,
-//             IngredientID: kitchenIngredientIngredientIDValue,
-//             IngredientName: kitchenIngredientIngredientNameValue,
-//             IngredientListID: kitchenIngredientIngredientListIDValue,
-//             Amount: kitchenIngredientAmountValue,
-//             UnitOfMeasurement: kitchenIngredientUnitOfMeasuremenValue,
-//         })
-//     });
-
-//     const responseData = await response.json();
-//     const messageElement = document.getElementById('updateKitchenIngredientResultMsg');
-
-//     if (responseData.success) {
-//         messageElement.textContent = "Kitchen Ingredient updated successfully!";
-//         fetchTableData();
-//     } else {
-//         messageElement.textContent = "Error updating Kitchen Ingredient!";
-//     }
-// }
-
-// async function deleteKitchenIngredient(event) {
-//     event.preventDefault();
-
-//     const kitchenIngredientIngredientIDDelete = Number(document.getElementById('deleteKitchenIngredientIngredientID').value);
-//     const kitchenIngredientIngredientListIDDelete = Number(document.getElementById('deleteKitchenIngredientIngredientListID').value);
-
-
-//     const response = await fetch('/delete-kitchen-ingredient', {
-//         method: 'DELETE',
-//         headers: {
-//             'Content-Type': 'application/json'
-//         },
-//         body: JSON.stringify({
-//             IngredientID: kitchenIngredientIngredientIDDelete,
-//             IngredientListID: kitchenIngredientIngredientListIDDelete,
-//         })
-//     });
-
-//     const responseData = await response.json();
-//     const messageElement = document.getElementById('deleteKitchenIngredientResultMsg');
-
-//     if (responseData.success) {
-//         messageElement.textContent = "Kitchen Ingredient deleted successfully!";
-//         fetchTableData();
-//     } else {
-//         messageElement.textContent = "Error deleting Kitchen Ingredient!";
-//     }
-// }
-
-
-// IngredientListID, IngredientID, Severity
-// async function insertAllergyListHasAllergicIngredient(event) {
-//     event.preventDefault();
-
-//     const allergyListHasAllergicIngredientIngredientListID = Number(document.getElementById('insertAllergyListHasAllergicIngredientIngredientListID').value);
-//     const allergyListHasAllergicIngredientIngredientID = Number(document.getElementById('insertAllergyListHasAllergicIngredientIngredientID').value);
-//     const allergyListHasAllergicIngredientSeverity = Number(document.getElementById('insertAllergyListHasAllergicIngredientSeverity').value);
-
-
-//     const response = await fetch('/insert-allergy-list-has-allergic-ingredient', {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json'
-//         },
-//         body: JSON.stringify({
-//             IngredientListID: allergyListHasAllergicIngredientIngredientListID,
-//             IngredientID: allergyListHasAllergicIngredientIngredientID,
-//             Severity: allergyListHasAllergicIngredientSeverity, 
-//         })
-//     });
-
-//     const responseData = await response.json();
-//     const messageElement = document.getElementById('insertAllergyListHasAllergicIngredientResultMsg');
-
-//     if (responseData.success) {
-//         messageElement.textContent = "AllergyListHasAllergicIngredient data inserted successfully!";
-//         fetchTableData(); 
-//     } else {
-//         messageElement.textContent = "Error inserting AllergyListHasAllergicIngredient data!";
-//     }
-// }
-
-// async function updateAllergyListHasAllergicIngredient(event) {
-//     event.preventDefault();
-
-//     const allergyListHasAllergicIngredientIngredientListIDValue = Number(document.getElementById('updateAllergyListHasAllergicIngredientIngredientListID').value);
-//     const allergyListHasAllergicIngredientIngredientIDValue = Number(document.getElementById('updateAllergyListHasAllergicIngredientIngredientID').value);
-//     const allergyListHasAllergicIngredientSeverityValue = Number(document.getElementById('updateAllergyListHasAllergicIngredientSeverity').value);
-
-//     const response = await fetch('/update-allergy-list-has-allergic-ingredient', {
-//         method: 'PATCH',
-//         headers: {
-//             'Content-Type': 'application/json'
-//         },
-//         body: JSON.stringify({
-//             IngredientListID: allergyListHasAllergicIngredientIngredientListIDValue,
-//             IngredientID: allergyListHasAllergicIngredientIngredientIDValue,
-//             Severity: allergyListHasAllergicIngredientSeverityValue, 
-//         })
-//     });
-
-//     const responseData = await response.json();
-//     const messageElement = document.getElementById('updateAllergyListHasAllergicIngredientResultMsg');
-
-//     if (responseData.success) {
-//         messageElement.textContent = "AllergyListHasAllergicIngredient updated successfully!";
-//         fetchTableData();
-//     } else {
-//         messageElement.textContent = "Error updating AllergyListHasAllergicIngredient!";
-//     }
-// }
-
-// async function deleteAllergyListHasAllergicIngredient(event) {
-//     event.preventDefault();
-
-//     const allergyListHasAllergicIngredientIngredientListIDDelete = Number(document.getElementById('deleteAllergyListHasAllergicIngredientIngredientListID').value);
-//     const allergyListHasAllergicIngredientIngredientIDDelete = Number(document.getElementById('deleteAllergyListHasAllergicIngredientIngredientID').value);
-
-//     const response = await fetch('/delete-kitchen-ingredient', {
-//         method: 'DELETE',
-//         headers: {
-//             'Content-Type': 'application/json'
-//         },
-//         body: JSON.stringify({
-//             IngredientID: allergyListHasAllergicIngredientIngredientListIDDelete,
-//             IngredientListID: allergyListHasAllergicIngredientIngredientIDDelete,
-//         })
-//     });
-
-//     const responseData = await response.json();
-//     const messageElement = document.getElementById('deleteAllergyListHasAllergicIngredientResultMsg');
-
-//     if (responseData.success) {
-//         messageElement.textContent = "AllergyListHasAllergicIngredient deleted successfully!";
-//         fetchTableData();
-//     } else {
-//         messageElement.textContent = "Error deleting AllergyListHasAllergicIngredient!";
-//     }
-// }
 
 
 
@@ -1572,6 +1299,7 @@ window.onload = function () {
     document.getElementById("deleteAllergyList").addEventListener("submit", deleteAllergyList);
 
     document.getElementById("projectAllergyListForm").addEventListener("submit", projectAllergyList);
+    document.getElementById("privacyCountAllergyListForm").addEventListener("click", countPrivacyLevels);
     // document.getElementById("aggregationButton").addEventListener("click", projectPrivacyLevelCounts);
 
     // document.getElementById("insertKitchenIngredient").addEventListener("submit", insertKitchenIngredient);
@@ -1600,5 +1328,5 @@ function fetchTableData() {
     fetchAndDisplayAllergicIngredient();
     fetchAndDisplayAllergyList();
     // fetchAndDisplayKitchenIngredient();
-    fetchAndDisplayAllergyListHasAllergicIngredient();
+    // fetchAndDisplayAllergyListHasAllergicIngredient();
 }

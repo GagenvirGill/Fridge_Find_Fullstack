@@ -537,242 +537,27 @@
         </tbody>
     </table>
 
-    <!-- <h3>Privacy Level Aggregation</h3>
-    <form id="projectPrivacyLevelForm">
-        Find the Count of all Privacy Levels in Allergy List:
-        <br><br>
-        <button type="button" id="aggregationButton">Do Aggregation</button>
-        <br><br>
-        <div id="privacyLevelCountResultMsg"></div>
-        <br><br>
-        <table id="privacyLevelCountTable" border="1">
-            <thead>
 
-            </thead>
-            <tbody>
-
-            </tbody>
-        </table>
-    </form> -->
-
+    <h3>Privacy Level Counts</h3>
+    <form id="privacyCountAllergyListForm">
+        <label for="projectAllergyList">Count the number of Privacy Levels in AllergyList:</label><br><br>
+        <div id="projectAllergyListResultMsg"></div>
+        <br><br>
+        <button type="button">Count</button> <!-- Changed type to 'button' -->
+    </form>
     
-
-
-    <!-- <h3>Project Allergy List Element</h3>
-    <form id="projectAllergyList">
-        <label for="allergyListProject"> Filter the Recipes by the following Categories (Hold shift to select multiple):</label> <br><br>
-        <select name="projectAllergyList" id="projectAllergyList" multiple> 
-        </select> 
-        <div id="projectAllergyListResultMsg"></div> <br><br>
-
-        <button type="submit"> Filter </button> <br>
-    </form>
-    <div id="projectAllergyListResultMsg"></div>
-    <table id="projectAllergyListTable" border="1">
+    <table id="fetchPrivacyLevelCount" border="1">
         <thead>
             <tr>
-                <th>IngredientListID</th>
-                <th>PrivacyLevel</th>
-                <th>ListDescription</th>
-                <th>Username</th>
-                <th>ListName</th>
-            </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table> -->
-
-    <!-- <h3>Show and Filter Recipes by Category</h3>
-    <form id="filterRecipesForm">
-        <label for="filterRecipes"> Filter the Recipes by the following Categories (Hold shift to select multiple):</label> <br><br>
-        <select name="filterRecipesCategories" id="filterRecipesCategories" multiple> 
-        </select> 
-        <div id="filterRecipesByCategoryFormResultMsg"></div> <br><br>
-
-        <button type="submit"> Filter </button> <br>
-    </form>
-    <div id="filterRecipesByCategoryTableResultMsg"></div>
-    <table id="filteredRecipeTable" border="1">
-        <thead>
-            <tr>
-                <th>Category</th>
-                <th>Recipe ID</th>
-                <th>Recipe Name</th>
                 <th>Privacy Level</th>
-                <th>Username</th>
-            </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table> -->
-
-
-
-
-    <!-- <h3>Filter a Allergy List with Group By Aggregation </h3>
-    <form id="groupByAllergyList">
-        <input type="text" id="groupByAllergyListUserInput" placeholder="Input Group By Element" required> <br><br>
-        <input type="text" id="groupByAllergyListAggregation" placeholder="Input Aggregation Type" required> <br><br>
-        Group By Element:
-        <select id="groupByAllergyListUserInput">
-            <option value="IngredientListID">IngredientListID</option>
-            <option value="PrivacyLevel">PrivacyLevel</option>
-            <option value="ListDescription">ListDescription</option>
-            <option value="Username">Username</option>
-            <option value="ListName">ListName</option>
-        </select>
-        Aggregation Type:
-        <select id="groupByAllergyListAggregation">
-            <option value="Min">Min</option>
-            <option value="Max">Max</option>
-            <option value="Average">Average</option>
-            <option value="Count">Count</option>
-        </select>
-        <button type="submit">Group</button> <br>
-    </form>
-    <div id="groupByAllergyListResultMsg"></div> -->
-
-    <!-- <h3>Filter a Allergy List with Having Aggregation </h3>
-    <form id="havingAllergyList">
-        Having Element: 
-        <input type="text" id="" placeholder="" required> <br><br>
-
-        <button type="submit"> Filter </button> <br>
-    </form>
-    <div id="havingAllergyListResultMsg"></div> -->
-
-
-    <h3> Show Kitchen Ingredient List</h3>
-    <table id="kitcheningredient" border="1">
-        <thead>
-            <tr>
-                <th>DatePurchased</th>
-                <th>ShelfLife</th>
-                <th>IngredientID</th>
-                <th>IngredientName</th>
-                <th>IngredientListID</th>
-                <th>Amount</th>
-                <th>UnitOfMeasurement</th>
+                <th>Count</th>
             </tr>
         </thead>
         <tbody>
         </tbody>
     </table>
 
-    <!-- <h3> Create a new Kitchen Ingredient List </h3>
-    <form id="insertKitchenIngredient">
-        Date Purchased: <input type="datetime-local" id="insertKitchenIngredientDatePurchased" placeholder="Enter Date Purchased" required> <br><br>
-        List ShelfLife: <input type="number" id="insertKitchenIngredientShelfLife" placeholder="Enter Shelf Life" maxlength="50"> <br><br>
-        List IngredientID: <input type="number" id="insertKitchenIngredientIngredientID" placeholder="Enter Ingredient ID" maxlength="50" required> <br><br>
-        List IngredientName: <input type="text" id="insertKitchenIngredientIngredientName" placeholder="Enter Ingredient Name" maxlength="50" required> <br><br>
-        List IngredientListID: <input type="number" id="insertKitchenIngredientIngredientListID" placeholder="Enter Ingredient List ID" maxlength="50" required> <br><br>
-        List Amount: <input type="number" id="insertKitchenIngredientAmount" placeholder="Enter Amount" maxlength="50"> <br><br>
-        List Unit Of Measurement: 
-        <select id="insertKitchenIngredientUnitOfMeasurement">
-            <option value="Do Not Change">Do Not Change</option>
-            <option value="Piece">Piece</option>
-            <option value="Milliliters">Milliliters</option>
-            <option value="Liters">Liters</option>
-            <option value="Ounces">Ounces</option>
-            <option value="Cups">Cups</option>
-            <option value="Grams">Grams</option>
-            <option value="Pounds">Pounds</option>
-            <option value="Kilograms">Kilograms</option>
-            <option value="Tablespoons">Tablespoons</option>
-            <option value="Teaspoons">Teaspoons</option>
-        </select> <br><br>
-
-        <button type="submit"> Create </button> <br>
-    </form>
-    <div id="insertKitchenIngredientResultMsg"></div>
-
-    <h3> Update a new Kitchen Ingredient List </h3>
-    <form id="updateKitchenIngredient">
-        New Date Purchased: <input type="datetime-local" id="updateKitchenIngredientDatePurchased" placeholder="Enter Date Purchased" required> <br><br>
-        New List ShelfLife: <input type="number" id="updateKitchenIngredientShelfLife" placeholder="Enter Shelf Life" maxlength="50"> <br><br>
-        List IngredientID: <input type="number" id="updateKitchenIngredientIngredientID" placeholder="Enter Ingredient ID" maxlength="50" required> <br><br>
-        New List IngredientName: <input type="text" id="updateKitchenIngredientIngredientName" placeholder="Enter Ingredient Name" maxlength="50" required> <br><br>
-        List IngredientListID: <input type="number" id="updateKitchenIngredientIngredientListID" placeholder="Enter Ingredient List ID" maxlength="50" required> <br><br>
-        New List Amount: <input type="number" id="updateKitchenIngredientAmount" placeholder="Enter Amount" maxlength="50"> <br><br>
-        New List Unit Of Measurement: 
-        <select id="updateKitchenIngredientUnitOfMeasurement">
-            <option value="Do Not Change">Do Not Change</option>
-            <option value="Piece">Piece</option>
-            <option value="Milliliters">Milliliters</option>
-            <option value="Liters">Liters</option>
-            <option value="Ounces">Ounces</option>
-            <option value="Cups">Cups</option>
-            <option value="Grams">Grams</option>
-            <option value="Pounds">Pounds</option>
-            <option value="Kilograms">Kilograms</option>
-            <option value="Tablespoons">Tablespoons</option>
-            <option value="Teaspoons">Teaspoons</option>
-        </select> <br><br>
-
-        <button type="submit"> Create </button> <br>
-    </form>
-    <div id="updateKitchenIngredientResultMsg"></div>
-
-    <h3>Delete a Kitchen Ingredient List</h3>
-    <form id="deleteKitchenIngredient">
-        Ingredient ID: <input type="number" id="deleteKitchenIngredientIngredientID" placeholder="Enter Kitchen Ingredient List ID" required> <br><br>
-        Ingredient List ID: <input type="number" id="deleteKitchenIngredientIngredientListID" placeholder="Enter Kitchen Ingredient List ID" required> <br><br>
-
-        <button type="submit"> Delete </button> <br>
-    </form>
-    <div id="deleteKitchenIngredientResultMsg"></div> -->
-
-    
-    <h3> Show Allergy List Has Allergic Ingredient List</h3>
-    <table id="allergylisthasallergicingredient" border="1">
-        <thead>
-            <tr>
-                <th>IngredientListID</th>
-                <th>IngredientID</th>
-                <th>Severity</th>
-            </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
-
-    
-    <!-- <h3> Create a new Allergy List Has Allergic Ingredient List </h3>
-    <form id="insertAllergyListHasAllergicIngredient">
-        IngredientListID: <input type="number" id="insertAllergyListHasAllergicIngredientIngredientListID" placeholder="Enter Ingredient List ID" required> <br><br>
-        IngredientID: <input type="number" id="insertAllergyListHasAllergicIngredientIngredientID" placeholder="Enter Ingredient ID" maxlength="50" required> <br><br>
-        Severity: <input type="number" id="insertAllergyListHasAllergicIngredientSeverity" min="1" max="10">
-        </select> <br><br>
-
-        <button type="submit"> Create </button> <br>
-    </form>
-    <div id="insertAllergyListHasAllergicIngredientResultMsg"></div>
-
-    <h3>Update a Allergy List Has Allergic Ingredient List</h3>
-    <form id="updateAllergyListHasAllergicIngredient">
-        IngredientListID: <input type="number" id="insertAllergyListHasAllergicIngredientIngredientListID" placeholder="Enter Ingredient List ID" required> <br><br>
-        IngredientID: <input type="number" id="insertAllergyListHasAllergicIngredientIngredientID" placeholder="Enter Ingredient ID" maxlength="50" required> <br><br>
-        Severity: <input type="number" id="insertAllergyListHasAllergicIngredientSeverity" min="1" max="10">
-        </select> <br><br>
-
-        <button type="submit"> Update </button> <br>
-    </form>
-    <div id="updateAllergyListHasAllergicIngredientResultMsg"></div>
-
-    <h3>Delete a Allergy List Has Allergic Ingredient List</h3>
-    <form id="deleteAllergyListHasAllergicIngredient">
-        Ingredient ID: <input type="number" id="deleteAllergyListHasAllergicIngredientIngredientListID" placeholder="Enter Ingredient List ID" required> <br><br>
-        Ingredient List ID: <input type="number" id="deleteAllergyListHasAllergicIngredientIngredientID" placeholder="Enter Ingredient ID" required> <br><br>
-
-        <button type="submit"> Delete </button> <br>
-    </form>
-    <div id="deleteAllergyListHasAllergicIngredientResultMsg"></div> -->
-    
-
-
-
-
-
+  
     <br><hr><br> <!-- ========================================================================= -->
     
     <!-- ===================================================================================== -->
