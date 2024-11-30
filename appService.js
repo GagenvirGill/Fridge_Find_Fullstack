@@ -271,21 +271,21 @@ async function viewUsersWhoAreFriendsWithEveryone() {
 //     });
 // }
 
-// async function areTheyFriends(username1, username2) {
-//     return await withOracleDB(async (connection) => {
-//         const result = await connection.execute(
-//             `SELECT * FROM Friends
-//              WHERE (Username1 = :username1 AND Username2 = :username2)
-//                 OR (Username1 = :username2 AND Username2 = :username1)`,
-//             [username1, username2]
-//         );
+async function areTheyFriends(username1, username2) {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            `SELECT * FROM Friends
+             WHERE (Username1 = :username1 AND Username2 = :username2)
+                OR (Username1 = :username2 AND Username2 = :username1)`,
+            [username1, username2]
+        );
 
-//         return result.rows.length > 0;
-//     }).catch((error) => {
-//         console.error('Error checking friend relationship:', error);
-//         return false;
-//     });
-// }
+        return result.rows.length > 0;
+    }).catch((error) => {
+        console.error('Error checking friend relationship:', error);
+        return false;
+    });
+}
 
 // ----------------------------------------------------------
 // Recipe Centric service
@@ -1434,7 +1434,7 @@ module.exports = {
     updateUser,
     viewUsersWithPublicPrivacy,
     viewUsersWhoAreFriendsWithEveryone,
-    // areTheyFriends,
+    areTheyFriends,
     // insertFriend,
     // deleteFriend,
 

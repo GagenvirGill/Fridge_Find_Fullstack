@@ -312,32 +312,32 @@ async function fetchAndDisplayUsersWhoAreFriendsWithEveryone() {
 //     }
 // }
 
-// async function areTheyFriends(event) {
-//     event.preventDefault();
+async function areTheyFriends(event) {
+    event.preventDefault();
 
-//     const username1 = document.getElementById('checkFriendsUsername1').value;
-//     const username2 = document.getElementById('checkFriendsUsername2').value;
+    const username1 = document.getElementById('checkFriendsUsername1').value;
+    const username2 = document.getElementById('checkFriendsUsername2').value;
 
-//     if (!username1 || !username2) {
-//         alert('Both usernames are required to check friendship!');
-//         return;
-//     }
+    if (!username1 || !username2) {
+        alert('Both usernames are required to check friendship!');
+        return;
+    }
 
-//     try {
-//         const response = await fetch(`/are-they-friends?username1=${username1}&username2=${username2}`, {
-//             method: 'GET',
-//         });
+    try {
+        const response = await fetch(`/are-they-friends?username1=${username1}&username2=${username2}`, {
+            method: 'GET',
+        });
 
-//         const responseData = await response.json();
-//         const messageElement = document.getElementById('checkFriendsResultMsg');
-//         messageElement.textContent = responseData.areFriends
-//             ? `${username1} and ${username2} are friends.`
-//             : `${username1} and ${username2} are not friends.`;
-//     } catch (error) {
-//         console.error('Error checking friendship:', error);
-//         alert('Error checking friendship.');
-//     }
-// }
+        const responseData = await response.json();
+        const messageElement = document.getElementById('checkFriendsResultMsg');
+        messageElement.textContent = responseData.areFriends
+            ? `${username1} and ${username2} are friends.`
+            : `${username1} and ${username2} are not friends.`;
+    } catch (error) {
+        console.error('Error checking friendship:', error);
+        alert('Error checking friendship.');
+    }
+}
 
 // ----------------------------------------------------------
 // Recipe Centric methods
@@ -1568,7 +1568,7 @@ window.onload = function () {
 
     // document.getElementById('insertFriendForm').addEventListener('submit', insertFriend);
     // document.getElementById('deleteFriendForm').addEventListener('submit', deleteFriend);
-    // document.getElementById('areTheyFriendsForm').addEventListener('submit', areTheyFriends);
+    document.getElementById('areTheyFriendsForm').addEventListener('submit', areTheyFriends);
     document.getElementById('findWhosFriendsWithEveryoneButton').addEventListener('click', fetchAndDisplayUsersWhoAreFriendsWithEveryone);
 
     // recipe centric

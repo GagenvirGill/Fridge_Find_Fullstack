@@ -125,22 +125,22 @@ router.get('/friends-with-everyone', async (req, res) => {
 
 // Working in progress!!
 
-// router.get('/are-they-friends', async (req, res) => {
-//     const { username1, username2 } = req.query;
-//     if (!username1 || !username2) {
-//         return res.status(400).json({
-//             success: false,
-//             message: "Both 'username1' and 'username2' are required."
-//         });
-//     }
-//     try {
-//         const areFriends = await appService.areTheyFriends(username1, username2);
-//         res.json({ success: true, areFriends });
-//     } catch (error) {
-//         console.error('Error checking friendship:', error);
-//         res.status(500).json({ success: false, message: "Internal server error." });
-//     }
-// });
+router.get('/are-they-friends', async (req, res) => {
+    const { username1, username2 } = req.query;
+    if (!username1 || !username2) {
+        return res.status(400).json({
+            success: false,
+            message: "Both 'username1' and 'username2' are required."
+        });
+    }
+    try {
+        const areFriends = await appService.areTheyFriends(username1, username2);
+        res.json({ success: true, areFriends });
+    } catch (error) {
+        console.error('Error checking friendship:', error);
+        res.status(500).json({ success: false, message: "Internal server error." });
+    }
+});
 
 // router.post('/insert-friend', async (req, res) => {
 //     const { username1, username2 } = req.body;
