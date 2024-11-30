@@ -149,6 +149,11 @@ async function deleteUser(event) {
 
     const username = document.getElementById('deleteUsername').value;
 
+    if (!username) {
+        alert('Username is required for deletion.');
+        return;
+    }
+
     try {
         const response = await fetch('/delete-user', {
             method: 'DELETE',
@@ -158,11 +163,11 @@ async function deleteUser(event) {
         const responseData = await response.json();
         const messageElement = document.getElementById('deleteUserResultMsg');
 
-        if (responseData.success) {
-            messageElement.textContent = 'User deleted successfully!';
+        if (response.ok && responseData.success) {
+            messageElement.textContent = responseData.message || 'User deleted successfully!';
             fetchTableData();
         } else {
-            messageElement.textContent = 'Error deleting user.';
+            messageElement.textContent = responseData.message || 'Error deleting user.';
         }
     } catch (error) {
         console.error('Error deleting user:', error);
@@ -173,28 +178,44 @@ async function deleteUser(event) {
 async function fetchAndDisplayPublicUsers() {
     const tableElement = document.getElementById('fetchPublicUser');
     const tableBody = tableElement.querySelector('tbody');
+    const messageElement = document.getElementById('fetchPublicUserResultMsg');
 
     try {
         const response = await fetch('/public-users', { method: 'GET' });
         const responseData = await response.json();
-        const users = responseData.data;
 
+        // 기존 테이블 내용을 지우기
         if (tableBody) {
             tableBody.innerHTML = '';
         }
 
-        users.forEach(user => {
-            const row = tableBody.insertRow();
-            user.forEach((field, index) => {
-                const cell = row.insertCell(index);
-                cell.textContent = field;
+        if (response.ok && responseData.success && responseData.data.length > 0) {
+            const users = responseData.data;
+
+            // 사용자 데이터로 테이블 채우기
+            users.forEach(user => {
+                const row = tableBody.insertRow();
+                user.forEach((field, index) => {
+                    const cell = row.insertCell(index);
+                    cell.textContent = field;
+                });
             });
-        });
+
+            messageElement.textContent = ''; // 성공적으로 데이터를 가져왔으면 메시지를 지움
+        } else if (response.ok && responseData.data.length === 0) {
+            // Public 유저가 없는 경우
+            messageElement.textContent = 'There are no public users.';
+        } else {
+            // 에러 메시지 처리
+            messageElement.textContent = responseData.message || 'Failed to fetch public users.';
+        }
     } catch (error) {
         console.error('Error fetching public users:', error);
-        alert('Error fetching public users.');
+        const messageElement = document.getElementById('fetchPublicUserResultMsg');
+        messageElement.textContent = 'An error occurred while fetching public users.';
     }
 }
+
 
 async function fetchAndDisplayUsersWhoAreFriendsWithEveryone() {
     const tableElement = document.getElementById('fetchUsersWhoAreFriendsWithEveryone');

@@ -118,7 +118,7 @@ async function insertUser(Username, Email, FullName, DefaultPrivacyLevel) {
 async function deleteUser(Username) {
     const isUsernameValid = await validateUsername(Username);
     if (!isUsernameValid) {
-        return { success: false, message: `This username does not exist` };
+        throw new Error(`A user with the username '${Username}' does not exist.`);
     }
 
     return await withOracleDB(async (connection) => {
@@ -127,11 +127,15 @@ async function deleteUser(Username) {
             [Username],
             { autoCommit: true }
         );
-        console.log('Deleted AppUser Successfully')
-        return { success: result.rowsAffected && result.rowsAffected > 0 };
+        if (result.rowsAffected && result.rowsAffected > 0) {
+            console.log('Deleted AppUser Successfully');
+            return { success: true };
+        } else {
+            throw new Error("Failed to delete user. No rows were affected.");
+        }
     }).catch((error) => {
         console.error('Database error:', error);
-        return false;
+        throw new Error("An unexpected error occurred while deleting the user.");
     });
 }
 
@@ -193,10 +197,10 @@ async function viewUsersWithPublicPrivacy() {
             return { success: true, message: 'There are no users with public privacy.', data: [] };
         }
 
-        return result.rows;
+        return { success: true, data: result.rows };
     }).catch((error) => {
         console.error('Error fetching users with public privacy level:', error);
-        return [];
+        throw new Error('Error fetching users with public privacy level.');
     });
 }
 

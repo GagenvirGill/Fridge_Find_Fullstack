@@ -56,17 +56,14 @@ router.delete('/delete-user', async (req, res) => {
     try {
         const { Username } = req.body;
         if (!Username) {
-            return res.status(400).json({ error: 'Username is required' });
+            return res.status(400).json({ success: false, message: 'Username is required.' });
         }
 
-        const returnValue = await appService.deleteUser(Username);
-        if (returnValue.success) {
-            res.json({ success: true });
-        } else {
-            res.status(500).json({ success: false, message: "Failed to update user." });
-        }
+        const result = await appService.deleteUser(Username);
+        res.json({ success: true, message: 'User deleted successfully.' });
     } catch (error) {
-        res.status(500).json({ success: false, message: "Internal server error." });
+        console.error('Error in delete-user route:', error);
+        res.status(400).json({ success: false, message: error.message });
     }
 });
 
@@ -88,12 +85,14 @@ router.patch('/update-user', async (req, res) => {
 router.get('/public-users', async (req, res) => {
     try {
         const publicUsers = await appService.viewUsersWithPublicPrivacy();
-        if (publicUsers.length > 0) {
-            res.json({ success: true, data: publicUsers });
+
+        if (publicUsers.data.length > 0) {
+            res.json({ success: true, data: publicUsers.data });
         } else {
-            res.status(404).json({ success: false, message: "No public users found." });
+            res.json({ success: true, data: [], message: "There are no users with public privacy." });
         }
     } catch (error) {
+        console.error('Error in public-users route:', error);
         res.status(500).json({ success: false, message: "Error fetching public users." });
     }
 });
