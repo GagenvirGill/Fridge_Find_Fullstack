@@ -184,6 +184,7 @@ async function fetchAndDisplayPublicUsers() {
         const response = await fetch('/public-users', { method: 'GET' });
         const responseData = await response.json();
 
+        // 기존 테이블 내용을 지우기
         if (tableBody) {
             tableBody.innerHTML = '';
         }
@@ -191,6 +192,7 @@ async function fetchAndDisplayPublicUsers() {
         if (response.ok && responseData.success && responseData.data.length > 0) {
             const users = responseData.data;
 
+            // 사용자 데이터로 테이블 채우기
             users.forEach(user => {
                 const row = tableBody.insertRow();
                 user.forEach((field, index) => {
@@ -199,10 +201,12 @@ async function fetchAndDisplayPublicUsers() {
                 });
             });
 
-            messageElement.textContent = '';
+            messageElement.textContent = ''; // 성공적으로 데이터를 가져왔으면 메시지를 지움
         } else if (response.ok && responseData.data.length === 0) {
+            // Public 유저가 없는 경우
             messageElement.textContent = 'There are no public users.';
         } else {
+            // 에러 메시지 처리
             messageElement.textContent = responseData.message || 'Failed to fetch public users.';
         }
     } catch (error) {
@@ -216,26 +220,37 @@ async function fetchAndDisplayPublicUsers() {
 async function fetchAndDisplayUsersWhoAreFriendsWithEveryone() {
     const tableElement = document.getElementById('fetchUsersWhoAreFriendsWithEveryone');
     const tableBody = tableElement.querySelector('tbody');
+    const messageElement = document.getElementById('fetchFriendsWithEveryoneResultMsg');
 
     try {
         const response = await fetch('/friends-with-everyone', { method: 'GET' });
         const responseData = await response.json();
-        const users = responseData.data;
 
         if (tableBody) {
             tableBody.innerHTML = '';
         }
 
-        users.forEach(user => {
-            const row = tableBody.insertRow();
-            const cell = row.insertCell(0);
-            cell.textContent = user;
-        });
+        if (response.ok && responseData.success && responseData.data.length > 0) {
+            const users = responseData.data;
+
+            users.forEach(user => {
+                const row = tableBody.insertRow();
+                const cell = row.insertCell(0);
+                cell.textContent = user[0];
+            });
+
+            messageElement.textContent = '';
+        } else if (response.ok && responseData.data.length === 0) {
+            messageElement.textContent = 'No users who are friends with everyone.';
+        } else {
+            messageElement.textContent = responseData.message || 'Failed to fetch users who are friends with everyone.';
+        }
     } catch (error) {
         console.error('Error fetching users who are friends with everyone:', error);
-        alert('Error fetching users who are friends with everyone.');
+        messageElement.textContent = 'An error occurred while fetching users who are friends with everyone.';
     }
 }
+
 
 // async function insertFriend(event) {
 //     event.preventDefault();

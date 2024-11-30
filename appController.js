@@ -100,13 +100,14 @@ router.get('/public-users', async (req, res) => {
 router.get('/friends-with-everyone', async (req, res) => {
     try {
         const usersWhoAreFriendsWithEveryone = await appService.viewUsersWhoAreFriendsWithEveryone();
-        if (usersWhoAreFriendsWithEveryone.length > 0) {
-            res.json({ success: true, data: usersWhoAreFriendsWithEveryone });
+        if (usersWhoAreFriendsWithEveryone.data.length > 0) {
+            res.json({ success: true, data: usersWhoAreFriendsWithEveryone.data });
         } else {
-            res.status(404).json({ success: false, message: "No users who are friends with everyone found.", data: [] });
+            res.json({ success: true, data: [], message: 'No users who are friends with everyone.' });
         }
     } catch (error) {
-        res.status(500).json({ success: false, message: "Error fetching users who are friends with everyone.", data: [] });
+        console.error('Error in friends-with-everyone route:', error);
+        res.status(500).json({ success: false, message: 'Error fetching users who are friends with everyone.', data: [] });
     }
 });
 
