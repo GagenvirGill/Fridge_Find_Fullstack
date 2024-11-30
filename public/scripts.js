@@ -132,11 +132,11 @@ async function updateUser(event) {
         const responseData = await response.json();
         const messageElement = document.getElementById('updateUserResultMsg');
 
-        if (responseData.success) {
-            messageElement.textContent = 'User updated successfully!';
+        if (response.ok && responseData.success) {
+            messageElement.textContent = responseData.message || 'User updated successfully!';
             fetchTableData();
         } else {
-            messageElement.textContent = 'Error updating user.';
+            messageElement.textContent = responseData.message || 'Error updating user.';
         }
     } catch (error) {
         console.error('Error updating user:', error);

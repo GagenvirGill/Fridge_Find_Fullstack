@@ -30,16 +30,6 @@ router.get('/users', async (req, res) => {
 });
 
 router.post('/insert-user', async (req, res) => {
-    // const { Username, Email, FullName, DefaultPrivacyLevel } = req.body;
-    // if (!Username) {
-    //     return res.status(400).json({ success: false, message: "Missing required fields: Username" });
-    // }
-    // const insertResult = await appService.insertUser(Username, Email, FullName, DefaultPrivacyLevel);
-    // if (insertResult) {
-    //     res.json({ success: true });
-    // } else {
-    //     res.status(500).json({ success: false });
-    // }
     try {
         const { Username, Email, FullName, DefaultPrivacyLevel } = req.body;
         if (!Username) {
@@ -88,13 +78,10 @@ router.patch('/update-user', async (req, res) => {
     }
     try {
         const updateResult = await appService.updateUser(Username, NewEmail, NewFullName, NewDefaultPrivacyLevel);
-        if (updateResult) {
-            res.json({ success: true });
-        } else {
-            res.status(500).json({ success: false, message: "Failed to update user." });
-        }
+        res.json({ success: true, message: updateResult.message });
     } catch (error) {
-        res.status(500).json({ success: false, message: "Internal server error." });
+        console.error('Error in update-user route:', error);
+        res.status(400).json({ success: false, message: error.message });
     }
 });
 
