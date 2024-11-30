@@ -184,7 +184,6 @@ async function fetchAndDisplayPublicUsers() {
         const response = await fetch('/public-users', { method: 'GET' });
         const responseData = await response.json();
 
-        // 기존 테이블 내용을 지우기
         if (tableBody) {
             tableBody.innerHTML = '';
         }
@@ -192,7 +191,6 @@ async function fetchAndDisplayPublicUsers() {
         if (response.ok && responseData.success && responseData.data.length > 0) {
             const users = responseData.data;
 
-            // 사용자 데이터로 테이블 채우기
             users.forEach(user => {
                 const row = tableBody.insertRow();
                 user.forEach((field, index) => {
@@ -201,12 +199,10 @@ async function fetchAndDisplayPublicUsers() {
                 });
             });
 
-            messageElement.textContent = ''; // 성공적으로 데이터를 가져왔으면 메시지를 지움
+            messageElement.textContent = '';
         } else if (response.ok && responseData.data.length === 0) {
-            // Public 유저가 없는 경우
             messageElement.textContent = 'There are no public users.';
         } else {
-            // 에러 메시지 처리
             messageElement.textContent = responseData.message || 'Failed to fetch public users.';
         }
     } catch (error) {
