@@ -11,4 +11,4 @@ FridgeFind is a kitchen management application that allows users to organize the
 - Mave Hur
 
 ### Note for TA
-- Please find the milestone 1, 2, 3 deliverables in the 'Milestones' folder.
+- Please find the milestone 1, 2, 3, 4 deliverables in the 'Milestones' folder.
