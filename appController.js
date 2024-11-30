@@ -30,15 +30,29 @@ router.get('/users', async (req, res) => {
 });
 
 router.post('/insert-user', async (req, res) => {
-    const { Username, Email, FullName, DefaultPrivacyLevel } = req.body;
-    if (!Username) {
-        return res.status(400).json({ success: false, message: "Missing required fields: Username" });
-    }
-    const insertResult = await appService.insertUser(Username, Email, FullName, DefaultPrivacyLevel);
-    if (insertResult) {
-        res.json({ success: true });
-    } else {
-        res.status(500).json({ success: false });
+    // const { Username, Email, FullName, DefaultPrivacyLevel } = req.body;
+    // if (!Username) {
+    //     return res.status(400).json({ success: false, message: "Missing required fields: Username" });
+    // }
+    // const insertResult = await appService.insertUser(Username, Email, FullName, DefaultPrivacyLevel);
+    // if (insertResult) {
+    //     res.json({ success: true });
+    // } else {
+    //     res.status(500).json({ success: false });
+    // }
+    try {
+        const { Username, Email, FullName, DefaultPrivacyLevel } = req.body;
+        if (!Username) {
+            return res.status(400).json({ success: false, message: 'Missing required fields: Username.' });
+        }
+        const success = await appService.insertUser(Username, Email, FullName, DefaultPrivacyLevel);
+        if (success) {
+            res.json({ success: true });
+        } else {
+            res.status(500).json({ success: false, message: 'Failed to insert user' });
+        }
+    } catch (error) {
+        res.status(400).json({ success: false, message: error.message });
     }
 });
 
@@ -310,7 +324,7 @@ router.post('/insert-recipe', async (req, res) => {
             res.json({ success: true });
         } else {
             res.status(500).json({ success: false, message: 'Failed to insert recipe' });
-        } 
+        }
     } catch (error) {
         res.status(500).json({ success: false, message: 'Internal server error.' });
     }
@@ -400,7 +414,7 @@ router.post('/insert-recipe-ingredient', async (req, res) => {
 
 router.patch('/update-recipe-ingredient', async (req, res) => {
     const { RecipeIngredientID, RecipeID, RecipeIngredientName, Amount, UnitOfMeasurement } = req.body;
-    
+
     if (!RecipeIngredientID || !RecipeID) {
         return res.status(400).json({ success: false, message: 'RecipeIngredientID and RecipeID are required for update.' });
     }
@@ -488,7 +502,7 @@ router.patch('/update-recipe-step', async (req, res) => {
         if (updateResult) {
             res.json({ success: true });
         } else {
-            res.status(500).json({ success: false, message: 'Failed to update recipe step.' }); 
+            res.status(500).json({ success: false, message: 'Failed to update recipe step.' });
         }
     } catch (error) {
         res.status(500).json({ success: false, message: 'Internal server error.' });

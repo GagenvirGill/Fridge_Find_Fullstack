@@ -89,23 +89,43 @@ async function fetchUserFromDb() {
     });
 }
 
+
 async function insertUser(Username, Email, FullName, DefaultPrivacyLevel) {
+    const isUsernameValid = await validateUsername(Username);
+    if (isUsernameValid) {
+        throw new Error(`A User with the Username \'${Username}\' already exists`);
+    }
+
     if (!Username || !Email || !FullName) {
         throw new Error('Required fields (Username, Email, FullName) are missing');
     }
 
-    return await withOracleDB(async (connection) => {
-        const result = await connection.execute(
-            `INSERT INTO AppUser(Username, Email, FullName, DefaultPrivacyLevel) VALUES (:Username, :Email, :FullName, :DefaultPrivacyLevel)`,
-            [Username, Email, FullName, DefaultPrivacyLevel || 'Private'],
-            { autoCommit: true }
-        );
+    // return await withOracleDB(async (connection) => {
+    //     const result = await connection.execute(
+    //         `INSERT INTO AppUser(Username, Email, FullName, DefaultPrivacyLevel) VALUES (:Username, :Email, :FullName, :DefaultPrivacyLevel)`,
+    //         [Username, Email, FullName, DefaultPrivacyLevel || 'Private'],
+    //         { autoCommit: true }
+    //     );
 
-        return result.rowsAffected && result.rowsAffected > 0;
-    }).catch((error) => {
+    //     return result.rowsAffected && result.rowsAffected > 0;
+    // }).catch((error) => {
+    //     console.error('Error inserting user:', error);
+    //     return false;
+    // });
+    try {
+        return await withOracleDB(async (connection) => {
+            const result = await connection.execute(
+                `INSERT INTO AppUser(Username, Email, FullName, DefaultPrivacyLevel) VALUES (:Username, :Email, :FullName, :DefaultPrivacyLevel)`,
+                [Username, Email, FullName, DefaultPrivacyLevel || 'Private'],
+                { autoCommit: true }
+            );
+
+            return result.rowsAffected && result.rowsAffected > 0;
+        });
+    } catch (error) {
         console.error('Error inserting user:', error);
-        return false;
-    });
+        throw new Error('Database error: Unable to insert user');
+    }
 }
 
 async function deleteUser(Username) {
@@ -132,7 +152,7 @@ async function updateUser(Username, NewEmail, NewFullName, NewDefaultPrivacyLeve
     const isUsernameValid = await validateUsername(Username);
 
     if (!isUsernameValid) {
-        return { success: false, message: `This username does not exist` };
+        return { success: false, message: `A User with the Username \'${Username}\' does not exist` };
     }
 
     let queryParams = [];
@@ -181,6 +201,10 @@ async function viewUsersWithPublicPrivacy() {
              WHERE DefaultPrivacyLevel = 'Public'`
         );
 
+        if (!result.rows || result.rows.length === 0) {
+            return { success: true, message: 'There are no users with public privacy.', data: [] };
+        }
+
         return result.rows;
     }).catch((error) => {
         console.error('Error fetching users with public privacy level:', error);
@@ -205,6 +229,10 @@ async function viewUsersWhoAreFriendsWithEveryone() {
                  )
              )`
         );
+        if (!result.rows || result.rows.length === 0) {
+            return { success: true, message: 'There are no users who are friends with everyone.', data: [] };
+        }
+
         return result.rows;
     }).catch((error) => {
         console.error('Error fetching users who are friends with everyone:', error);
@@ -341,7 +369,7 @@ async function fetchRecipesByCategoryFromDb(Categories) {
         const query = `
             SELECT rhc.CategoryName, r.*
             FROM Recipe r
-            JOIN RecipeHasCategory rhc ON r.RecipeID = rhc.RecipeID
+                     JOIN RecipeHasCategory rhc ON r.RecipeID = rhc.RecipeID
             WHERE rhc.CategoryName IN (${formattedValues})
         `;
 
@@ -375,7 +403,7 @@ async function fetchRecipesByRecipeListFromDb(RecipeListID) {
         const query = `
             SELECT r.*
             FROM Recipe r
-            JOIN RecipeListHasRecipe rlhr ON r.RecipeID = rlhr.RecipeID
+                     JOIN RecipeListHasRecipe rlhr ON r.RecipeID = rlhr.RecipeID
             WHERE rlhr.RecipeListID=:RecipeListID
         `;
 
@@ -489,10 +517,10 @@ async function fetchRecipeIngredientsForRecipeFromDb(RecipeID) {
 
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(`
-            SELECT ri.*
-            FROM RecipeIngredient ri 
-            JOIN Recipe r ON r.RecipeID = ri.RecipeID 
-            WHERE ri.RecipeID =: RecipeID`,
+                    SELECT ri.*
+                    FROM RecipeIngredient ri
+                             JOIN Recipe r ON r.RecipeID = ri.RecipeID
+                    WHERE ri.RecipeID =: RecipeID`,
             [intRecipeID]
         );
 
@@ -621,10 +649,10 @@ async function fetchRecipeStepsForRecipe(RecipeID) {
 
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(`
-            SELECT rs.*
-        FROM RecipeStep rs 
-            JOIN Recipe r ON r.RecipeID = rs.RecipeID 
-            WHERE rs.RecipeID =: RecipeID`,
+                    SELECT rs.*
+                    FROM RecipeStep rs
+                             JOIN Recipe r ON r.RecipeID = rs.RecipeID
+                    WHERE rs.RecipeID =: RecipeID`,
             [intRecipeID]
         );
 
@@ -879,9 +907,9 @@ async function fetchRecipeList(RecipeListID) {
 
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(`
-            SELECT RecipeListID, RecipeListName, Username
-            FROM RecipeList
-            WHERE RecipeListID =: RecipeListID`,
+                    SELECT RecipeListID, RecipeListName, Username
+                    FROM RecipeList
+                    WHERE RecipeListID =: RecipeListID`,
             [intRecipeListID]
         );
 
@@ -1079,7 +1107,7 @@ async function updateAllergicIngredient(IngredientID, newIngredientName) {
     try {
         return await withOracleDB(async (connection) => {
             const result = await connection.execute(
-                `UPDATE AllergicIngredient 
+                `UPDATE AllergicIngredient
                  SET IngredientName = :newIngredientName
                  WHERE IngredientID = :IngredientID`,
                 [newIngredientName, IngredientID],
@@ -1128,8 +1156,8 @@ async function insertAllergyList(IngredientListID, PrivacyLevel, ListDescription
     try {
         return await withOracleDB(async (connection) => {
             const result = await connection.execute(
-                `INSERT INTO AllergyList(IngredientListID, PrivacyLevel, ListDescription, Username, ListName) 
-                VALUES (:IngredientListID, :PrivacyLevel, :ListDescription, :Username, :ListName)`,
+                `INSERT INTO AllergyList(IngredientListID, PrivacyLevel, ListDescription, Username, ListName)
+                 VALUES (:IngredientListID, :PrivacyLevel, :ListDescription, :Username, :ListName)`,
                 [IngredientListID, PrivacyLevel, ListDescription, Username, ListName],
                 { autoCommit: true }
             );
@@ -1147,7 +1175,7 @@ async function updateAllergyList(IngredientListID, newPrivacyLevel, newListDescr
     try {
         return await withOracleDB(async (connection) => {
             const result = await connection.execute(
-                `UPDATE AllergyList 
+                `UPDATE AllergyList
                  SET PrivacyLevel = :newPrivacyLevel, ListDescription = :newListDescription, Username = :newUsername, ListName = :newListName
                  WHERE IngredientListID = :IngredientListID`,
                 {
@@ -1242,9 +1270,9 @@ async function fetchAllergyListPrivacyLevelCounts() {
 async function fetchNumAllergiesPerUserHaving() {
     return await withOracleDB(async (connection) => {
         const result = await connection.execute(`
-            SELECT al.Username, COUNT(DISTINCT alhai.IngredientID) AS NumberOfAllergies 
-            FROM AllergyList al 
-            JOIN AllergyListHasAllergicIngredient alhai ON al.IngredientListID = alhai.IngredientListID
+            SELECT al.Username, COUNT(DISTINCT alhai.IngredientID) AS NumberOfAllergies
+            FROM AllergyList al
+                     JOIN AllergyListHasAllergicIngredient alhai ON al.IngredientListID = alhai.IngredientListID
             GROUP BY al.Username
             HAVING COUNT(DISTINCT alhai.IngredientID) > 0`
         );

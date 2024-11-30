@@ -96,7 +96,7 @@ async function insertUser(event) {
             messageElement.textContent = 'User inserted successfully!';
             fetchTableData();
         } else {
-            messageElement.textContent = 'Error inserting user.';
+            messageElement.textContent = responseData.message || 'Error inserting user.';
         }
     } catch (error) {
         console.error('Error inserting user:', error);
